@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, '../dist')));
 
 // Handle Client-side Routing
 // Return index.html for any route not handled by the API above
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
 
