@@ -24,7 +24,7 @@ import { AuthProvider } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
 
-const GOOGLE_CLIENT_ID = "114229759269-qogqc4t0fiee8mab609gnig8m4n6g4uc.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "377779076570-a0b1cd4d4f59veo9m2c403qjb7i349qn.apps.googleusercontent.com";
 
 const App = () => (
   <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
