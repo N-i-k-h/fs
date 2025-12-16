@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import workspaces from "../data/workspaces"; 
+import workspaces from "../data/workspaces";
 import { Button } from "@/components/ui/button";
 import { MapPin, Users, IndianRupee, ArrowRight, ImageOff, Search, ChevronDown, ChevronUp, Filter } from "lucide-react";
 import {
@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Header from "@/components/Header"; 
-import Footer from "@/components/Footer"; 
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const MICRO_MARKETS = {
   bangalore: ["Koramangala", "Indiranagar", "HSR Layout", "Whitefield", "MG Road"],
@@ -23,7 +23,7 @@ const MICRO_MARKETS = {
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   // State for Results
   const [filteredSpaces, setFilteredSpaces] = useState([]);
   const [suggestedSpaces, setSuggestedSpaces] = useState([]);
@@ -48,7 +48,7 @@ const SearchPage = () => {
   // --- FILTER LOGIC (UPDATED) ---
   useEffect(() => {
     const data = workspaces || [];
-    
+
     // Get raw params
     const locParam = searchParams.get("location");
     const mktParam = searchParams.get("market");
@@ -60,10 +60,10 @@ const SearchPage = () => {
     // If a parameter is NULL/EMPTY, it means "Match Anything".
     // If it HAS VALUE, it must match.
     const exactMatches = data.filter((space) => {
-      
+
       // City (Main Location)
       if (locParam && space.city.toLowerCase() !== locParam.toLowerCase()) return false;
-      
+
       // Market: Fuzzy match on location string
       if (mktParam) {
         const spaceLoc = space.location.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -120,9 +120,9 @@ const SearchPage = () => {
     if (selectedType) params.append("type", selectedType);
     if (selectedPrice) params.append("price", selectedPrice);
     if (selectedSeats) params.append("seats", selectedSeats);
-    
+
     navigate(`/search?${params.toString()}`);
-    setIsFiltersOpen(false); 
+    setIsFiltersOpen(false);
   };
 
   const handleClearFilters = () => {
@@ -139,31 +139,31 @@ const SearchPage = () => {
 
   // --- CARD RENDERER ---
   const renderSpaceCard = (space) => (
-    <div 
-      key={space.id} 
+    <div
+      key={space.id}
       className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-border cursor-pointer flex flex-col h-full"
       onClick={() => navigate(`/space/${space.id}`)}
     >
       <div className="h-60 w-full relative overflow-hidden bg-gray-100">
-          <div className="absolute inset-0 bg-navy/10 group-hover:bg-navy/0 transition-all z-10" />
-          {space.images && space.images.length > 0 ? (
-            <img 
-              src={space.images[0]} 
-              alt={space.name} 
-              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-              onError={(e) => { e.target.src = "https://via.placeholder.com/800x600?text=No+Image"; }} 
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageOff className="w-10 h-10" /></div>
-          )}
-          
-          <div className="absolute top-4 left-4 z-20">
-            <span className="bg-navy text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm uppercase tracking-wide">
-              {formatType(space.type)}
-            </span>
-          </div>
+        <div className="absolute inset-0 bg-navy/10 group-hover:bg-navy/0 transition-all z-10" />
+        {space.images && space.images.length > 0 ? (
+          <img
+            src={space.images[0]}
+            alt={space.name}
+            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+            onError={(e) => { e.target.src = "https://via.placeholder.com/800x600?text=No+Image"; }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageOff className="w-10 h-10" /></div>
+        )}
+
+        <div className="absolute top-4 left-4 z-20">
+          <span className="bg-navy text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm uppercase tracking-wide">
+            {formatType(space.type)}
+          </span>
+        </div>
       </div>
-      
+
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-xl font-bold text-foreground group-hover:text-teal transition-colors line-clamp-1">{space.name}</h3>
@@ -181,13 +181,13 @@ const SearchPage = () => {
             </div>
           </div>
           <div className="flex flex-col items-end">
-              <span className="text-xs text-muted-foreground mb-0.5">Capacity</span>
-              <div className="flex items-center text-foreground font-medium"><Users className="w-4 h-4 mr-1.5 text-teal" />{space.seats} Seats</div>
+            <span className="text-xs text-muted-foreground mb-0.5">Capacity</span>
+            <div className="flex items-center text-foreground font-medium"><Users className="w-4 h-4 mr-1.5 text-teal" />{space.seats} Seats</div>
           </div>
         </div>
-        
-        <Button 
-          className="w-full bg-teal hover:bg-teal/90 text-white transition-all duration-300 font-bold" 
+
+        <Button
+          className="w-full bg-teal hover:bg-teal/90 text-white transition-all duration-300 font-bold"
           onClick={(e) => { e.stopPropagation(); navigate(`/space/${space.id}`); }}
         >
           View Details <ArrowRight className="w-4 h-4 ml-2" />
@@ -201,16 +201,16 @@ const SearchPage = () => {
       <Header />
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-full xl:max-w-7xl">
-          
+
           {/* --- FILTER BAR --- */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 mb-10">
-            
-            <div 
+
+            <div
               className="flex items-center justify-between cursor-pointer md:cursor-default md:hidden mb-4 md:mb-0"
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
               <div className="flex items-center gap-2 text-navy font-bold text-sm uppercase tracking-wider">
-                 <Filter className="w-4 h-4" /> Filter Workspace
+                <Filter className="w-4 h-4" /> Filter Workspace
               </div>
               <div className="text-gray-500">
                 {isFiltersOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -218,7 +218,7 @@ const SearchPage = () => {
             </div>
 
             <div className={`${isFiltersOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-4 items-end`}>
-              
+
               {/* City (Filter) */}
               <div className="w-full md:w-1/6 space-y-1.5">
                 <label className="text-xs font-bold text-navy">City</label>
@@ -254,7 +254,7 @@ const SearchPage = () => {
                 <Select value={selectedType} onValueChange={setSelectedType}>
                   <SelectTrigger className="h-10 bg-white border-gray-200 focus:ring-teal"><SelectValue placeholder="Any Type" /></SelectTrigger>
                   <SelectContent>
-                     {/* Allow clearing this filter */}
+                    {/* Allow clearing this filter */}
                     <SelectItem value="all-types">All Types</SelectItem>
                     <SelectItem value="private-office">Private Office</SelectItem>
                     <SelectItem value="dedicated-desk">Dedicated Desk</SelectItem>
@@ -297,20 +297,20 @@ const SearchPage = () => {
 
               {/* Buttons */}
               <div className="flex gap-2 w-full md:w-auto flex-1">
-                 <Button 
-                    onClick={handleUpdateSearch} 
-                    className="flex-1 bg-teal hover:bg-teal/90 text-white font-bold h-10 shadow-sm"
-                  >
-                    Search
-                 </Button>
-                 
-                 <Button 
-                    onClick={handleClearFilters} 
-                    variant="outline"
-                    className="flex-1 border-teal text-teal hover:bg-teal/10 hover:text-teal h-10 font-bold"
-                  >
-                    Clear
-                 </Button>
+                <Button
+                  onClick={handleUpdateSearch}
+                  className="flex-1 bg-teal hover:bg-teal/90 text-white font-bold h-10 shadow-sm"
+                >
+                  Search
+                </Button>
+
+                <Button
+                  onClick={handleClearFilters}
+                  variant="outline"
+                  className="flex-1 border-teal text-teal hover:bg-teal/10 hover:text-teal h-10 font-bold"
+                >
+                  Clear
+                </Button>
               </div>
 
             </div>
@@ -318,45 +318,45 @@ const SearchPage = () => {
 
           {/* Results Header */}
           {(filteredSpaces.length > 0 || suggestedSpaces.length > 0) && (
-             <div className="mb-6 flex items-baseline justify-between">
-                <h1 className="text-2xl font-bold text-navy">
-                  Search Results
-                </h1>
-                <span className="text-sm font-bold text-teal">
-                  {filteredSpaces.length} Exact Matches Found
-                </span>
-             </div>
+            <div className="mb-6 flex items-baseline justify-between">
+              <h1 className="text-2xl font-bold text-navy">
+                Search Results
+              </h1>
+              <span className="text-sm font-bold text-teal">
+                {filteredSpaces.length} Exact Matches Found
+              </span>
+            </div>
           )}
 
           {/* 1. EXACT MATCHES */}
           {filteredSpaces.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                {filteredSpaces.map(renderSpaceCard)}
+              {filteredSpaces.map(renderSpaceCard)}
             </div>
           ) : (
-             <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-12 text-center mb-12">
-               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 text-gray-400" />
-               </div>
-               <h3 className="text-xl font-bold text-navy mb-2">No exact matches found</h3>
-               <p className="text-gray-500 max-w-md mx-auto">
-                 Try adjusting your filters (e.g., select 'Any Type' or 'Any Budget') to see more results.
-               </p>
-             </div>
+            <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-12 text-center mb-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-bold text-navy mb-2">No exact matches found</h3>
+              <p className="text-gray-500 max-w-md mx-auto">
+                Try adjusting your filters (e.g., select 'Any Type' or 'Any Budget') to see more results.
+              </p>
+            </div>
           )}
 
           {/* 2. SUGGESTIONS */}
           {suggestedSpaces.length > 0 && (
             <div className="pt-8 border-t border-gray-200">
-               <div className="flex items-center gap-2 mb-6">
-                 <MapPin className="w-5 h-5 text-teal" />
-                 <h2 className="text-xl font-bold text-navy">
-                   More options in <span className="capitalize">{selectedCity || "this city"}</span>
-                 </h2>
-               </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {suggestedSpaces.map(renderSpaceCard)}
-               </div>
+              <div className="flex items-center gap-2 mb-6">
+                <MapPin className="w-5 h-5 text-teal" />
+                <h2 className="text-xl font-bold text-navy">
+                  More options in <span className="capitalize">{selectedCity || "this city"}</span>
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {suggestedSpaces.map(renderSpaceCard)}
+              </div>
             </div>
           )}
 

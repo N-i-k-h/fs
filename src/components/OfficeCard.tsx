@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Heart, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +15,34 @@ interface OfficeCardProps {
 
 const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: OfficeCardProps) => {
   const navigate = useNavigate();
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    const savedIds = JSON.parse(localStorage.getItem("savedSpaces") || "[]");
+    setIsSaved(savedIds.includes(String(id)) || savedIds.includes(Number(id)));
+  }, [id]);
+
+  const toggleSave = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    e.preventDefault();
+
+    const savedIds = JSON.parse(localStorage.getItem("savedSpaces") || "[]");
+    const strId = String(id);
+    const numId = Number(id);
+
+    let newSavedIds;
+    if (isSaved) {
+      newSavedIds = savedIds.filter((sid: any) => String(sid) !== strId && Number(sid) !== numId);
+    } else {
+      newSavedIds = [...savedIds, id];
+    }
+
+    localStorage.setItem("savedSpaces", JSON.stringify(newSavedIds));
+    setIsSaved(!isSaved);
+
+    // Notify Dashboard
+    window.dispatchEvent(new Event('savedSpacesUpdated'));
+  };
 
   return (
     <div className="group bg-card rounded-2xl overflow-hidden shadow-card hover-lift cursor-pointer border border-border/50">
@@ -24,20 +53,24 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: Off
           alt={name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        
+
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
+
         {/* Featured Badge */}
         {isFeatured && (
           <div className="absolute top-3 left-3 px-3 py-1 bg-teal text-accent-foreground text-xs font-bold rounded-full shadow-md">
             Featured
           </div>
         )}
-        
+
         {/* Heart Button */}
-        <button className="absolute top-3 right-3 w-9 h-9 bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-card transition-all shadow-md hover:scale-110">
-          <Heart className="w-4 h-4 text-foreground" />
+        <button
+          onClick={toggleSave}
+          className={`absolute top-3 right-3 w-9 h-9 backdrop-blur-sm rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${isSaved ? "bg-red-500 text-white" : "bg-card/90 text-foreground hover:bg-card"
+            }`}
+        >
+          <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
         </button>
       </div>
 
@@ -46,7 +79,7 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: Off
         <h3 className="font-bold text-foreground text-lg mb-1.5 group-hover:text-teal transition-colors">
           {name}
         </h3>
-        
+
         <div className="flex items-center gap-1.5 text-muted-foreground text-sm mb-4">
           <MapPin className="w-4 h-4 text-teal" />
           <span>{location}</span>
@@ -63,9 +96,9 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: Off
           </div>
         </div>
 
-        <Button 
-          variant="teal" 
-          className="w-full font-semibold" 
+        <Button
+          variant="teal"
+          className="w-full font-semibold"
           size="default"
           onClick={() => navigate(`/space/${id}`)}
         >

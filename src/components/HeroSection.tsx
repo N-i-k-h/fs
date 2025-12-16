@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ChatBot from "@/components/ChatBot";
 import heroBg from "@/assets/hero.png";
+
+
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,9 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const HeroSection = () => {
   const navigate = useNavigate();
+
 
   // State for filters
   const [location, setLocation] = useState("");
@@ -28,14 +32,14 @@ const HeroSection = () => {
   };
 
   // Helper to safely format string to slug
-  const toSlug = (str) => {
+  const toSlug = (str: string) => {
     return str ? str.toLowerCase().replace(/\s+/g, "-") : "";
   };
 
   // Handle City Change
-  const handleLocationChange = (val) => {
+  const handleLocationChange = (val: string) => {
     setLocation(val);
-    setMicroMarket(""); 
+    setMicroMarket("");
   };
 
   const handleSearch = () => {
@@ -56,20 +60,20 @@ const HeroSection = () => {
           backgroundPosition: "center 70%",
         }}
       >
-        <div className="absolute inset-0 bg-navy/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-navy/40 pointer-events-none mix-blend-multiply" />
       </div>
 
       <div className="relative z-20 container mx-auto px-4 pt-20 pb-12 w-full">
         {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8 items-center max-w-7xl mx-auto">
-          
+
           {/* 1. TEXT SECTION */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left w-full lg:row-start-1 lg:col-start-1">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
               Find your perfect workspace <span className="text-teal">in seconds</span>
             </h1>
             <p className="text-lg md:text-xl text-white mb-0 lg:mb-6 font-light max-w-2xl mx-auto lg:mx-0">
-              Let AI help you discover the ideal coworking space for your 
+              Let AI help you discover the ideal coworking space for your
               team or search directly below.
             </p>
           </div>
@@ -84,11 +88,11 @@ const HeroSection = () => {
           {/* 3. SEARCH SECTION */}
           <div className="w-full lg:row-start-2 lg:col-start-1 relative isolate">
             {/* --- TEAL GLOW EFFECT --- */}
-            <div 
-              className="absolute -inset-3 bg-teal/40 rounded-[2rem] blur-3xl -z-10 opacity-80" 
+            <div
+              className="absolute -inset-3 bg-teal/40 rounded-[2rem] blur-3xl -z-10 opacity-80"
               aria-hidden="true"
             />
-            
+
             <div className="bg-white rounded-2xl shadow-xl shadow-teal/10 p-4 md:p-6 border border-teal/10 text-left relative">
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
                 <Search className="w-4 h-4 text-teal" />
@@ -159,7 +163,7 @@ const HeroSection = () => {
                 <div>
                   <Button
                     onClick={handleSearch}
-                    variant="default" 
+                    variant="default"
                     size="lg"
                     className="h-11 w-full rounded-xl font-bold text-sm shadow-lg bg-teal hover:bg-teal/90"
                   >
@@ -174,7 +178,8 @@ const HeroSection = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/50 to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+      </div>
     </section>
   );
 };

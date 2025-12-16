@@ -1,73 +1,132 @@
-# Welcome to your Lovable project
+# FlickSpace 🚀
 
-## Project info
+**The Modern Workspace Booking Platform**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+FlickSpace is a premium, full-stack web application designed to simplify the process of finding and booking flexible office spaces. Whether you're a freelancer looking for a hot desk or a startup needing a private office, FlickSpace connects you with the perfect environment.
 
-## How can I edit this code?
+Built with a focus on aesthetics, user experience, and robust administration, FlickSpace features a responsive React frontend and a scalable Node.js/Express backend.
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## ✨ Key Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 🏢 For Users
+- **Smart Search & Filtering**: Find workspaces by City, Location (Market), Type (Private Office, Dedicated Desk, etc.), Price, and Capacity.
+- **AI Workspace Assistant**: An interactive ChatBot that guides users to their ideal workspace based on natural language inputs.
+- **Interactive Maps**: (Optional) Integrated map view to visualize workspace locations.
+- **Detailed Listings**: High-quality image galleries, amenity lists, and live pricing for every space.
+- **Seamless Booking**: Easy inquiry and tour booking process.
+- **Google Authentication**: Secure and quick login/signup using Google.
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🛡️ For Admins
+- **Comprehensive Dashboard**: Real-time analytics on Revenue, Active Users, Pending Requests, and Total Spaces.
+- **Visual Analytics**: Interactive charts and trend lines for booking data.
+- **Request Management**: Approve or Reject booking requests with automated email notifications.
+- **Space Management**: Full Create, Read, Update, Delete (CRUD) capabilities for workspace listings.
+- **User Management**: View and manage registered users.
+- **Mobile-First Admin Panel**: Fully responsive admin interface with drawer navigation for on-the-go management.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠️ Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Frontend
+- **Framework**: React (Vite)
+- **Styling**: Tailwind CSS, Shadcn UI (`@components/ui`)
+- **Icons**: Lucide React
+- **Charts**: Recharts
+- **State Management**: Context API (AuthContext)
+- **Routing**: React Router DOM
 
-Follow these steps:
+### Backend
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB (Mongoose)
+- **Authentication**: JWT (JSON Web Tokens), Google OAuth
+- **Email Service**: Brevo (formerly Sendinblue) / Nodemailer
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🚀 Getting Started
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Prerequisites
+- Node.js (v18+)
+- npm or yarn
+- MongoDB Connection URI
+- Google OAuth Credentials
+- Brevo/SMTP API Key
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/flickspace.git
+   cd flickspace
+   ```
+
+2. **Install Frontend Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Install Backend Dependencies**
+   ```bash
+   cd server
+   npm install
+   cd ..
+   ```
+
+4. **Environment Setup**
+   Create a `.env` file in the `server/` directory with the following:
+   ```env
+   PORT=5000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   BREVO_USER=your_brevo_email
+   BREVO_PASS=your_brevo_smtp_key
+   ```
+
+### Running Locally
+
+You can run both frontend and backend concurrently (if setup) or in separate terminals.
+
+**Terminal 1 (Backend):**
+```bash
+cd server
+npm run dev  # or node index.js
+```
+
+**Terminal 2 (Frontend):**
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Visit `http://localhost:5173` to view the app!
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## ☁️ Deployment (Render)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This project is configured for monolithic deployment on **Render**.
 
-## What technologies are used for this project?
+1. Create a new **Web Service** on Render.
+2. Connect your GitHub repository.
+3. **Build Command**: `./render-build.sh` (This script installs dependencies for both folders and builds the React app).
+4. **Start Command**: `node server/index.js`
+5. Add your Environment Variables in the Render dashboard.
 
-This project is built with:
+The backend is configured to serve the static Frontend build files in production, making it a unified deployment.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🤝 Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## 📄 License
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is open-source and available under the [MIT License](LICENSE).
