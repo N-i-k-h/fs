@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     // Verify token and get user from backend
                     // Note: In development, you might need to hardcode the URL if proxy isn't set up yet
                     // For now, assuming standard localhost:5000 or proxy
-                    const res = await axios.get('http://localhost:5000/api/auth/me');
+                    const res = await axios.get('/api/auth/me');
                     setUser({ ...res.data, id: res.data._id }); // Map _id to id
                 } catch (err) {
                     console.error("Auth check failed:", err);

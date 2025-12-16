@@ -27,7 +27,7 @@ const AdminSpaces = () => {
     // Fetch Spaces
     const fetchSpaces = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/spaces');
+            const res = await axios.get('/api/spaces');
             setSpaces(res.data);
             setLoading(false);
         } catch (err) {
@@ -44,7 +44,7 @@ const AdminSpaces = () => {
     // Toggle Featured
     const toggleFeatured = async (id: string, currentStatus: boolean) => {
         try {
-            await axios.put(`http://localhost:5000/api/spaces/${id}`, { isFeatured: !currentStatus });
+            await axios.put(`/api/spaces/${id}`, { isFeatured: !currentStatus });
             setSpaces(spaces.map(s => s._id === id ? { ...s, isFeatured: !currentStatus } : s));
             toast.success(currentStatus ? "Removed from featured" : "Marked as featured");
         } catch (err) {
@@ -57,7 +57,7 @@ const AdminSpaces = () => {
         if (!confirm("Are you sure you want to delete this workspace? This action cannot be undone.")) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/spaces/${id}`);
+            await axios.delete(`/api/spaces/${id}`);
             setSpaces(spaces.filter(s => s._id !== id));
             toast.success("Workspace deleted successfully");
         } catch (err) {

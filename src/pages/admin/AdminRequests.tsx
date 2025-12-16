@@ -26,7 +26,7 @@ const AdminRequests = () => {
 
     const fetchRequests = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/requests');
+            const res = await axios.get('/api/requests');
             setRequests(res.data);
         } catch (err) {
             console.error(err);
@@ -42,7 +42,7 @@ const AdminRequests = () => {
 
     const updateStatus = async (id: string, newStatus: string) => {
         try {
-            await axios.put(`http://localhost:5000/api/requests/${id}/status`, { status: newStatus });
+            await axios.put(`/api/requests/${id}/status`, { status: newStatus });
             setRequests(prev => prev.map(req => req._id === id ? { ...req, status: newStatus } : req));
             toast.success(`Request marked as ${newStatus}`);
         } catch (err) {

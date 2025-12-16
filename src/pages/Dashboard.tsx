@@ -81,7 +81,7 @@ const Dashboard = () => {
         const fetchBookings = async () => {
             if (user?.email) {
                 try {
-                    const res = await axios.get(`http://localhost:5000/api/requests/user/${user.email}`);
+                    const res = await axios.get(`/api/requests/user/${user.email}`);
                     setAppointments(res.data);
                 } catch (err) {
                     console.error("Failed to fetch bookings", err);

@@ -27,7 +27,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+            const res = await axios.post('/api/auth/login', formData);
             login(res.data.token, res.data.user);
             toast.success("Welcome back!");
             navigate(res.data.user.role === 'admin' ? '/admin' : '/');
@@ -58,7 +58,7 @@ const Login = () => {
 
     const loginWithProfile = async (profile: any) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/google-data', {
+            const res = await axios.post('/api/auth/google-data', {
                 element: profile
             });
             login(res.data.token, res.data.user);

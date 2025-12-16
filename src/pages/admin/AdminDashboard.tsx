@@ -20,15 +20,15 @@ const AdminDashboard = () => {
         const fetchStats = async () => {
             try {
                 // Feature 1: User Count
-                const userRes = await axios.get('http://localhost:5000/api/users/count');
+                const userRes = await axios.get('/api/users/count');
                 setUserCount(userRes.data.count);
 
                 // Feature 2: Space Count
-                const spaceRes = await axios.get('http://localhost:5000/api/spaces');
+                const spaceRes = await axios.get('/api/spaces');
                 setSpaceCount(spaceRes.data.length);
 
                 // Feature 3: Advanced Analytics (Revenue, Chart, Activity)
-                const analyticsRes = await axios.get('http://localhost:5000/api/requests/analytics');
+                const analyticsRes = await axios.get('/api/requests/analytics');
                 setAnalytics(analyticsRes.data);
 
             } catch (err) {

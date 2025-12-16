@@ -113,7 +113,7 @@ const SpaceDetail = () => {
     window.scrollTo({ top: 0, behavior: "instant" });
     const fetchSpace = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/spaces/${id}`);
+        const res = await axios.get(`/api/spaces/${id}`);
         setSpace(res.data);
       } catch (err) {
         console.error(err);
@@ -384,7 +384,7 @@ const SpaceDetail = () => {
                       };
 
                       try {
-                        await axios.post('http://localhost:5000/api/requests/tour', tourData);
+                        await axios.post('/api/requests/tour', tourData);
                         toast.success("Tour requested successfully! Our team will contact you shortly.");
                         setShowTourForm(false);
                       } catch (err) {
