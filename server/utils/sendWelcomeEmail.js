@@ -21,7 +21,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
           <p>Hi ${userName},</p>
           <p>Thanks for joining FlickSpace.</p>
           <p>You can now start looking for workspaces and booking them directly from our platform.</p>
-          <p>Click here to explore: <a href="http://localhost:5173">http://localhost:5173</a></p>
+          <p>Click here to explore: <a href="https://fs-5-70hj.onrender.com">https://fs-5-70hj.onrender.com</a></p>
           <br>
           <p>Best,</p>
           <p>FlickSpace Team</p>

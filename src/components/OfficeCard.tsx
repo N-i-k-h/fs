@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import { Heart, MapPin, Users } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Heart, MapPin, CheckCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 interface OfficeCardProps {
   id: string;
@@ -11,9 +12,12 @@ interface OfficeCardProps {
   price: number;
   seats: number;
   isFeatured?: boolean;
+  video?: string;
+  type?: string;
+  rating?: number;
 }
 
-const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: OfficeCardProps) => {
+const OfficeCard = ({ id, image, name, location, price, seats, isFeatured, video, type, rating }: OfficeCardProps) => {
   const navigate = useNavigate();
   const [isSaved, setIsSaved] = useState(false);
 
@@ -23,9 +27,8 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: Off
   }, [id]);
 
   const toggleSave = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
+    e.stopPropagation();
     e.preventDefault();
-
     const savedIds = JSON.parse(localStorage.getItem("savedSpaces") || "[]");
     const strId = String(id);
     const numId = Number(id);
@@ -39,35 +42,42 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: Off
 
     localStorage.setItem("savedSpaces", JSON.stringify(newSavedIds));
     setIsSaved(!isSaved);
-
-    // Notify Dashboard
     window.dispatchEvent(new Event('savedSpacesUpdated'));
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="group bg-card rounded-2xl overflow-hidden shadow-card hover-lift cursor-pointer border border-border/50">
+    <div
+      className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 flex flex-col h-full"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => navigate(`/space/${id}`)}
+    >
       {/* Image Container */}
-      <div className="relative h-52 overflow-hidden">
+      <div className="relative h-48 w-full overflow-hidden">
         <img
           src={image}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-        {/* Featured Badge */}
-        {isFeatured && (
-          <div className="absolute top-3 left-3 px-3 py-1 bg-teal text-accent-foreground text-xs font-bold rounded-full shadow-md">
-            Featured
-          </div>
-        )}
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          {type && (
+            <Badge className="bg-[#002b4d] text-white hover:bg-[#002b4d] text-[10px] uppercase font-bold tracking-wider rounded-sm px-2 py-0.5 shadow-sm">
+              {type.replace("-", " ")}
+            </Badge>
+          )}
+          <Badge className="bg-teal text-white hover:bg-teal text-[10px] uppercase font-bold tracking-wider rounded-sm px-2 py-0.5 shadow-sm flex items-center gap-1 w-fit">
+            <CheckCircle className="w-3 h-3" /> VERIFIED
+          </Badge>
+        </div>
 
         {/* Heart Button */}
         <button
           onClick={toggleSave}
-          className={`absolute top-3 right-3 w-9 h-9 backdrop-blur-sm rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${isSaved ? "bg-red-500 text-white" : "bg-card/90 text-foreground hover:bg-card"
+          className={`absolute top-3 right-3 z-20 p-2 rounded-full transition-all duration-300 ${isSaved ? "bg-red-50 text-red-500" : "bg-white/90 text-gray-400 hover:text-red-500 hover:bg-white"
             }`}
         >
           <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
@@ -75,35 +85,62 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured }: Off
       </div>
 
       {/* Content */}
-      <div className="p-5">
-        <h3 className="font-bold text-foreground text-lg mb-1.5 group-hover:text-teal transition-colors">
-          {name}
-        </h3>
-
-        <div className="flex items-center gap-1.5 text-muted-foreground text-sm mb-4">
-          <MapPin className="w-4 h-4 text-teal" />
-          <span>{location}</span>
+      <div className="p-4 flex flex-col flex-1 gap-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-bold text-navy text-lg leading-tight line-clamp-1 group-hover:text-teal transition-colors">
+              {name}
+            </h3>
+            <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
+              <MapPin className="w-3 h-3" />
+              <span className="line-clamp-1">{location}</span>
+            </div>
+          </div>
+          {rating && (
+            <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded text-green-700 text-xs font-bold">
+              <span>{rating}</span>
+              <Star className="w-3 h-3 fill-current" />
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center justify-between mb-4 pb-4 border-b border-border">
-          <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-            <Users className="w-4 h-4" />
-            <span>{seats} seats</span>
+        {/* Amenities / Features Badges (Simulated) */}
+        <div className="flex gap-2 mt-2">
+          <div className="bg-gray-50 text-gray-600 text-[10px] px-2 py-1 rounded-sm font-medium flex items-center gap-1">
+            24/7 Access
           </div>
-          <div className="text-right">
-            <span className="text-teal font-bold text-xl">₹{price.toLocaleString()}</span>
-            <span className="text-muted-foreground text-xs">/seat</span>
+          <div className="bg-gray-50 text-gray-600 text-[10px] px-2 py-1 rounded-sm font-medium flex items-center gap-1">
+            Parking
           </div>
         </div>
 
-        <Button
-          variant="teal"
-          className="w-full font-semibold"
-          size="default"
-          onClick={() => navigate(`/space/${id}`)}
-        >
-          View Details
-        </Button>
+        <div className="mt-auto pt-4 flex items-end justify-between border-t border-gray-100 gap-2">
+          <div className="flex-1">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Starting Price</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-navy font-bold text-lg">₹{price.toLocaleString()}</span>
+              <span className="text-gray-400 text-[10px]">/seat</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 w-[110px] shrink-0">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-[10px] border-teal text-teal hover:bg-teal hover:text-white w-full rounded-md font-semibold"
+              onClick={(e) => { e.stopPropagation(); navigate(`/space/${id}?action=tour`); }}
+            >
+              Schedule Tour
+            </Button>
+            <Button
+              size="sm"
+              className="h-8 text-[11px] bg-[#002b4d] hover:bg-teal text-white w-full rounded-md shadow-sm transition-colors font-semibold"
+              onClick={(e) => { e.stopPropagation(); navigate(`/quote/${id}`); }}
+            >
+              Get Quote
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

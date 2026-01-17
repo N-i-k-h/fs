@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Send, X, Sparkles, Bot, ChevronRight } from "lucide-react";
+import { Send, X, Sparkles, Bot, ChevronRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -156,37 +156,38 @@ const ChatBot = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto relative z-20">
+    <div className="relative z-20">
 
       {/* --- TEASER BAR --- */}
       {!isOpen && (
         <div
           onClick={() => setIsOpen(true)}
-          className="bg-white/90 backdrop-blur-md p-3 rounded-2xl md:rounded-full shadow-xl border border-gray-200 cursor-pointer group flex items-center justify-between gap-4 animate-in fade-in zoom-in-95"
+          className="bg-gray-100/90 backdrop-blur-md p-2 pr-4 rounded-[3rem] shadow-2xl flex items-center gap-3 max-w-lg w-auto border border-white/20 cursor-pointer group"
         >
-          <div className="flex items-center gap-3 pl-2 flex-1">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-navy to-teal flex items-center justify-center shadow-lg flex-shrink-0">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="text-[10px] font-bold text-teal uppercase tracking-wider mb-0.5">AI Assistant</span>
-              {/* FIXED: Removed fixed width and nowrap to allow text to wrap on mobile */}
-              <p className="text-sm font-medium text-navy leading-tight pr-2">
-                {teaserText}
-              </p>
-            </div>
+          {/* Icon Circle */}
+          <div className="w-14 h-14 rounded-full bg-teal flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden group">
+            <div className="absolute inset-0 bg-white/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <Search className="w-6 h-6 text-white relative z-10" />
           </div>
 
-          {/* SIDE BUTTON - HIDDEN ON MOBILE */}
-          <div className="hidden md:flex w-10 h-10 rounded-full bg-gray-50 group-hover:bg-teal group-hover:text-white text-gray-400 items-center justify-center transition-colors flex-shrink-0">
-            <ChevronRight className="w-5 h-5" />
+          {/* Text Content */}
+          <div className="flex-1 min-w-0 px-2">
+            <p className="text-teal font-bold text-[10px] uppercase tracking-wider mb-0.5">AI Assistant</p>
+            <p className="text-navy text-base font-bold leading-tight whitespace-nowrap">
+              {teaserText || "Hi! Need help finding a workspace?"}
+            </p>
           </div>
+
+          {/* Arrow Button */}
+          <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 shadow-md group-hover:bg-gray-50 transition-transform group-hover:scale-105 active:scale-95">
+            <ChevronRight className="w-5 h-5 text-gray-400" />
+          </button>
         </div>
       )}
 
       {/* --- FULL CHAT CARD --- */}
       {isOpen && (
-        <div className="w-full flex flex-col overflow-hidden shadow-2xl rounded-2xl border border-gray-200 bg-white ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-300">
+        <div className="absolute top-12 right-0 w-80 md:w-96 flex flex-col overflow-hidden shadow-2xl rounded-2xl border border-gray-200 bg-white ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-300 origin-top-right z-50">
 
           {/* Header */}
           <div className="bg-gradient-to-r from-navy via-navy to-teal px-5 py-4 flex items-center justify-between shadow-md relative z-10">
@@ -213,7 +214,7 @@ const ChatBot = () => {
           {/* Messages Area */}
           <div
             ref={messagesContainerRef}
-            className="h-72 overflow-y-auto p-4 space-y-4 bg-gray-50/50 scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+            className="h-56 overflow-y-auto p-4 space-y-4 bg-gray-50/50 scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
           >
             {messages.map((message) => (
               <div

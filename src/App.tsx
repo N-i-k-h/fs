@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import SpaceDetail from "./pages/SpaceDetail";
 import SearchPage from "./pages/SearchPage";
 // import Dashboard from "./pages/Dashboard"; 
+import GetQuotePage from "./pages/GetQuotePage";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -51,6 +52,7 @@ const App = () => (
 
               {/* Space Detail Page */}
               <Route path="/space/:id" element={<SpaceDetail />} />
+              <Route path="/quote/:id" element={<GetQuotePage />} />
 
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>

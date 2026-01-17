@@ -1,34 +1,45 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import SearchSection from "@/components/SearchSection";
+// import SearchSection from "@/components/SearchSection"; 
 import FeaturedSpaces from "@/components/FeaturedSpaces";
-import WorkspaceCategories from "@/components/WorkspaceCategories"; // Import the new component
+import WorkspaceCategories from "@/components/WorkspaceCategories";
 import HowItWorks from "@/components/HowItWorks";
-import CTABand from "@/components/CTABand";
+import Industries from "@/components/Industries";
+import ContactSection from "@/components/ContactSection";
+import Testimonials from "@/components/Testimonials";
+// import CTABand from "@/components/CTABand";
 import Footer from "@/components/Footer";
+import SearchDirectly from "@/components/SearchDirectly";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-sans">
       <Header />
       <main>
-        {/* Optional top label */}
-        <div className="text-center py-2 text-sm text-muted-foreground hidden">
-          Find your perfect workspace
-        </div>
-        
-        {/* 1. Hero Section with ChatBot & Search Bar */}
+        {/* 1. Hero Section Includes Search */}
         <HeroSection />
 
-        {/* 2. Workspace Categories (Private Cabin, Hot Desk, etc.) */}
-        <WorkspaceCategories />
+        {/* 2. Structured Search Directly (Overlapping Hero) */}
+        <SearchDirectly />
+
+        {/* 3. Workspace Categories (Solutions) */}
+        <div className="relative z-10">
+          <WorkspaceCategories />
+        </div>
 
         {/* 3. Featured Individual Spaces */}
         <FeaturedSpaces />
 
-        {/* 4. Process & CTA */}
+        {/* 4. Streamline Process */}
         <HowItWorks />
-        <CTABand />
+
+        {/* 5. Industries We Serve */}
+        <Industries />
+
+        {/* 6. Contact & Testimonials */}
+        <ContactSection />
+        <Testimonials />
+
       </main>
       <Footer />
     </div>

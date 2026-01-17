@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import workspaces from "../data/workspaces";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, IndianRupee, ArrowRight, ImageOff, Search, ChevronDown, ChevronUp, Filter } from "lucide-react";
+import { MapPin, Filter, ChevronDown, Check, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -11,357 +11,311 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Header from "@/components/Header";
+import OfficeCard from "@/components/OfficeCard";
 import Footer from "@/components/Footer";
 
-const MICRO_MARKETS = {
-  bangalore: ["Koramangala", "Indiranagar", "HSR Layout", "Whitefield", "MG Road"],
-  mumbai: ["Bandra", "Andheri", "Powai", "Lower Parel", "BKC"],
-  delhi: ["Connaught Place", "Saket", "Nehru Place", "Hauz Khas", "Dwarka"],
-  hyderabad: ["Hitech City", "Gachibowli", "Jubilee Hills", "Banjara Hills", "Madhapur"],
-};
+// Import Videos
+import vid1 from "@/assets/WhatsApp Video 2026-01-06 at 10.16.59 PM.mp4";
+import vid2 from "@/assets/Office_Scene_Video_Generation.mp4";
+import vid3 from "@/assets/manyathy1.mp4";
+import vid4 from "@/assets/manyathy2.mp4";
+import vid5 from "@/assets/Realistic_Coworking_Space_Video_Generation.mp4";
+import vid6 from "@/assets/Hero_Section_Video_Prompt_Generation.mp4";
+
+const videos = [vid1, vid2, vid3, vid4, vid5, vid6];
+
+const AMENITIES_OPTIONS = [
+  { id: "wifi", label: "High Speed WiFi" },
+  { id: "security", label: "24/7 Access" },
+  { id: "parking", label: "Parking" },
+  { id: "cafe", label: "In-house Cafe" },
+  { id: "meeting", label: "Meeting Rooms" },
+  { id: "printer", label: "Printer & Scanner" },
+];
 
 const SearchPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // State for Results
+  // --- STATE INITIALIZATION ---
+  const initialQuery = searchParams.get("query") || "";
+  const initialCity = searchParams.get("location") || "";
+  const initialBudget = searchParams.get("price") || "";
+  const initialSeats = searchParams.get("seats") || "";
+  const initialAmenities = searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [];
+
+  const [query, setQuery] = useState(initialQuery);
+  const [selectedCity, setSelectedCity] = useState(initialCity);
+  const [selectedBudget, setSelectedBudget] = useState(initialBudget);
+  const [selectedAvailability, setSelectedAvailability] = useState(initialSeats);
+  const [selectedAmenities, setSelectedAmenities] = useState(initialAmenities);
+
   const [filteredSpaces, setFilteredSpaces] = useState([]);
-  const [suggestedSpaces, setSuggestedSpaces] = useState([]);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const [amenitiesOpen, setAmenitiesOpen] = useState(false);
+  const amenitiesRef = useRef(null);
 
-  // Local State for Filters
-  const [selectedCity, setSelectedCity] = useState(searchParams.get("location") || "");
-  const [selectedMarket, setSelectedMarket] = useState(searchParams.get("market") || "");
-  const [selectedType, setSelectedType] = useState(searchParams.get("type") || "");
-  const [selectedPrice, setSelectedPrice] = useState(searchParams.get("price") || "");
-  const [selectedSeats, setSelectedSeats] = useState(searchParams.get("seats") || "");
+  // --- FILTER & SYNC LOGIC ---
+  const updateFilters = (updates) => {
+    const newParams = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) {
+        if (Array.isArray(value)) {
+          if (value.length > 0) newParams.set(key, value.join(","));
+          else newParams.delete(key);
+        } else {
+          newParams.set(key, value);
+        }
+      } else {
+        newParams.delete(key);
+      }
+    });
+    newParams.delete("page");
+    setSearchParams(newParams);
+  };
 
-  // Sync state with URL when URL changes
   useEffect(() => {
-    setSelectedCity(searchParams.get("location") || "");
-    setSelectedMarket(searchParams.get("market") || "");
-    setSelectedType(searchParams.get("type") || "");
-    setSelectedPrice(searchParams.get("price") || "");
-    setSelectedSeats(searchParams.get("seats") || "");
-  }, [searchParams]);
+    const qParam = searchParams.get("query") || "";
+    const cityParam = searchParams.get("location") || "";
+    const priceParam = searchParams.get("price") || "";
+    const seatsParam = searchParams.get("seats") || "";
+    const amParam = searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [];
 
-  // --- FILTER LOGIC (UPDATED) ---
-  useEffect(() => {
+    setQuery(qParam);
+    setSelectedCity(cityParam);
+    setSelectedBudget(priceParam);
+    setSelectedAvailability(seatsParam);
+    setSelectedAmenities(amParam);
+
     const data = workspaces || [];
+    const lowerQ = qParam.toLowerCase();
 
-    // Get raw params
-    const locParam = searchParams.get("location");
-    const mktParam = searchParams.get("market");
-    const typeParam = searchParams.get("type");
-    const priceParam = searchParams.get("price");
-    const seatsParam = searchParams.get("seats");
-
-    // 1. EXACT MATCHES LOGIC
-    // If a parameter is NULL/EMPTY, it means "Match Anything".
-    // If it HAS VALUE, it must match.
-    const exactMatches = data.filter((space) => {
-
-      // City (Main Location)
-      if (locParam && space.city.toLowerCase() !== locParam.toLowerCase()) return false;
-
-      // Market: Fuzzy match on location string
-      if (mktParam) {
-        const spaceLoc = space.location.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const searchLoc = mktParam.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (!spaceLoc.includes(searchLoc)) return false;
+    const matches = data.filter((space) => {
+      let match = true;
+      if (lowerQ) {
+        const quickMatch =
+          space.name.toLowerCase().includes(lowerQ) ||
+          space.city.toLowerCase().includes(lowerQ) ||
+          space.location.toLowerCase().includes(lowerQ);
+        if (!quickMatch && !cityParam) match = false;
       }
+      if (cityParam && space.city.toLowerCase() !== cityParam.toLowerCase()) match = false;
+      if (priceParam === "below-10k" && space.price >= 10000) match = false;
+      if (priceParam === "10k-20k" && (space.price < 10000 || space.price > 20000)) match = false;
+      if (priceParam === "20k-50k" && (space.price < 20000 || space.price > 50000)) match = false;
+      if (priceParam === "50k-plus" && space.price <= 50000) match = false;
+      if (seatsParam === "1-5" && space.seats > 5) match = false;
+      if (seatsParam === "6-10" && (space.seats < 6 || space.seats > 10)) match = false;
+      if (seatsParam === "11-20" && (space.seats < 11 || space.seats > 20)) match = false;
+      if (seatsParam === "20-plus" && space.seats < 20) match = false;
 
-      // Type
-      if (typeParam && space.type !== typeParam) return false;
-
-      // Price
-      if (priceParam) {
-        const p = space.price;
-        if (priceParam === "below-10k" && p >= 10000) return false;
-        if (priceParam === "10k-20k" && (p < 10000 || p > 20000)) return false;
-        if (priceParam === "20k-50k" && (p < 20000 || p > 50000)) return false;
-        if (priceParam === "50k-plus" && p <= 50000) return false;
-      }
-
-      // Seats
-      if (seatsParam) {
-        const s = parseInt(space.seats) || 0;
-        if (seatsParam === "1-5" && s > 5) return false;
-        if (seatsParam === "6-10" && (s < 6 || s > 10)) return false;
-        if (seatsParam === "11-20" && (s < 11 || s > 20)) return false;
-        if (seatsParam === "20-plus" && s < 20) return false;
-      }
-
-      return true;
+      return match;
     });
 
-    setFilteredSpaces(exactMatches);
+    const matchesWithVideo = matches.map((space, index) => ({
+      ...space,
+      image: space.images?.[0] || "",
+      video: videos[index % videos.length]
+    }));
 
-    // 2. SUGGESTIONS
-    // Show other spaces in the same city if the specific filters yielded 0 results, 
-    // or just generally suggest things in the same city.
-    let suggestions = [];
-    if (locParam) {
-      suggestions = data.filter(space => {
-        const isSameCity = space.city.toLowerCase() === locParam.toLowerCase();
-        const isAlreadyShown = exactMatches.find(match => match.id === space.id);
-        return isSameCity && !isAlreadyShown;
-      });
-    }
-    setSuggestedSpaces(suggestions);
-
+    setFilteredSpaces(matchesWithVideo);
   }, [searchParams]);
 
-  const handleUpdateSearch = () => {
-    const params = new URLSearchParams();
-    // Only append if they have a value. If empty, don't append (allows "Any").
-    if (selectedCity) params.append("location", selectedCity);
-    if (selectedMarket) params.append("market", selectedMarket);
-    if (selectedType) params.append("type", selectedType);
-    if (selectedPrice) params.append("price", selectedPrice);
-    if (selectedSeats) params.append("seats", selectedSeats);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (amenitiesRef.current && !amenitiesRef.current.contains(event.target)) setAmenitiesOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    navigate(`/search?${params.toString()}`);
-    setIsFiltersOpen(false);
+  const handleCityChange = (val) => updateFilters({ location: val });
+  const handleBudgetChange = (val) => updateFilters({ price: val });
+  const handleSeatsChange = (val) => updateFilters({ seats: val });
+  const handleAmenityToggle = (id) => setSelectedAmenities(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const applyAmenities = () => updateFilters({ amenities: selectedAmenities });
+  const handleSearchSubmit = () => updateFilters({ query: query });
+  const clearAll = () => setSearchParams(new URLSearchParams());
+
+  const totalPages = Math.ceil(filteredSpaces.length / itemsPerPage);
+  const currentSpaces = filteredSpaces.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    document.getElementById("results-top")?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const handleClearFilters = () => {
-    setSelectedCity("");
-    setSelectedMarket("");
-    setSelectedType("");
-    setSelectedPrice("");
-    setSelectedSeats("");
-    navigate("/search");
-    setIsFiltersOpen(false);
-  };
-
-  const formatType = (type) => type ? type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "Workspace";
-
-  // --- CARD RENDERER ---
-  const renderSpaceCard = (space) => (
-    <div
-      key={space.id}
-      className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-border cursor-pointer flex flex-col h-full"
-      onClick={() => navigate(`/space/${space.id}`)}
-    >
-      <div className="h-60 w-full relative overflow-hidden bg-gray-100">
-        <div className="absolute inset-0 bg-navy/10 group-hover:bg-navy/0 transition-all z-10" />
-        {space.images && space.images.length > 0 ? (
-          <img
-            src={space.images[0]}
-            alt={space.name}
-            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-            onError={(e) => { e.target.src = "https://via.placeholder.com/800x600?text=No+Image"; }}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageOff className="w-10 h-10" /></div>
-        )}
-
-        <div className="absolute top-4 left-4 z-20">
-          <span className="bg-navy text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm uppercase tracking-wide">
-            {formatType(space.type)}
-          </span>
-        </div>
-      </div>
-
-      <div className="p-6 flex-1 flex flex-col">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-foreground group-hover:text-teal transition-colors line-clamp-1">{space.name}</h3>
-          <div className="flex items-center text-xs font-bold text-muted-foreground bg-secondary px-2 py-1 rounded shrink-0">★ {space.rating}</div>
-        </div>
-        <div className="flex items-center text-muted-foreground text-sm mb-6">
-          <MapPin className="w-4 h-4 mr-1.5 text-teal shrink-0" />
-          <span className="capitalize truncate">{space.location}, {space.city}</span>
-        </div>
-        <div className="mt-auto grid grid-cols-2 gap-4 pt-4 border-t border-border/50 mb-6">
-          <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground mb-0.5">Starting at</span>
-            <div className="flex items-center text-foreground font-bold">
-              <IndianRupee className="w-4 h-4" />{space.price.toLocaleString()}<span className="text-xs font-normal text-muted-foreground ml-1">/mo</span>
-            </div>
-          </div>
-          <div className="flex flex-col items-end">
-            <span className="text-xs text-muted-foreground mb-0.5">Capacity</span>
-            <div className="flex items-center text-foreground font-medium"><Users className="w-4 h-4 mr-1.5 text-teal" />{space.seats} Seats</div>
-          </div>
-        </div>
-
-        <Button
-          className="w-full bg-teal hover:bg-teal/90 text-white transition-all duration-300 font-bold"
-          onClick={(e) => { e.stopPropagation(); navigate(`/space/${space.id}`); }}
-        >
-          View Details <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
-      </div>
-    </div>
-  );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-gray-50/30">
       <Header />
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-full xl:max-w-7xl">
 
-          {/* --- FILTER BAR --- */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 mb-10">
+      {/* CENTERED FILTER HEADER - Sticky */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md pt-24 pb-4 border-b border-gray-200 shrink-0">
+        <div className="px-4 mx-auto w-full max-w-[1600px] flex flex-col items-center gap-4">
 
-            <div
-              className="flex items-center justify-between cursor-pointer md:cursor-default md:hidden mb-4 md:mb-0"
-              onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-            >
-              <div className="flex items-center gap-2 text-navy font-bold text-sm uppercase tracking-wider">
-                <Filter className="w-4 h-4" /> Filter Workspace
+          {/* 1. Search Bar */}
+          <div className="w-full max-w-2xl">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400 group-focus-within:text-teal transition-colors" />
               </div>
-              <div className="text-gray-500">
-                {isFiltersOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-              </div>
-            </div>
-
-            <div className={`${isFiltersOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-4 items-end`}>
-
-              {/* City (Filter) */}
-              <div className="w-full md:w-1/6 space-y-1.5">
-                <label className="text-xs font-bold text-navy">City</label>
-                <Select value={selectedCity} onValueChange={(val) => { setSelectedCity(val); setSelectedMarket(""); }}>
-                  <SelectTrigger className="h-10 bg-white border-gray-200 focus:ring-teal"><SelectValue placeholder="City" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bangalore">Bangalore</SelectItem>
-                    <SelectItem value="mumbai">Mumbai</SelectItem>
-                    <SelectItem value="delhi">Delhi</SelectItem>
-                    <SelectItem value="hyderabad">Hyderabad</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Location/Market (Filter) */}
-              <div className="w-full md:w-1/6 space-y-1.5">
-                <label className="text-xs font-bold text-navy">Location</label>
-                <Select value={selectedMarket} onValueChange={setSelectedMarket} disabled={!selectedCity}>
-                  <SelectTrigger className="h-10 bg-white border-gray-200 focus:ring-teal"><SelectValue placeholder={selectedCity ? "Any Area" : "Select City"} /></SelectTrigger>
-                  <SelectContent>
-                    {/* Add "Any Area" option to clear market filter */}
-                    <SelectItem value="all-areas">All Areas</SelectItem>
-                    {selectedCity && MICRO_MARKETS[selectedCity]?.map((area) => (
-                      <SelectItem key={area} value={area.toLowerCase().replace(/\s+/g, '-')}>{area}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Type (Filter) */}
-              <div className="w-full md:w-1/6 space-y-1.5">
-                <label className="text-xs font-bold text-navy">Type</label>
-                <Select value={selectedType} onValueChange={setSelectedType}>
-                  <SelectTrigger className="h-10 bg-white border-gray-200 focus:ring-teal"><SelectValue placeholder="Any Type" /></SelectTrigger>
-                  <SelectContent>
-                    {/* Allow clearing this filter */}
-                    <SelectItem value="all-types">All Types</SelectItem>
-                    <SelectItem value="private-office">Private Office</SelectItem>
-                    <SelectItem value="dedicated-desk">Dedicated Desk</SelectItem>
-                    <SelectItem value="hot-desk">Hot Desk</SelectItem>
-                    <SelectItem value="meeting-room">Meeting Room</SelectItem>
-                    <SelectItem value="virtual-office">Virtual Office</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Price (Filter) */}
-              <div className="w-full md:w-1/6 space-y-1.5">
-                <label className="text-xs font-bold text-navy">Price Range</label>
-                <Select value={selectedPrice} onValueChange={setSelectedPrice}>
-                  <SelectTrigger className="h-10 bg-white border-gray-200 focus:ring-teal"><SelectValue placeholder="Any Budget" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all-prices">Any Budget</SelectItem>
-                    <SelectItem value="below-10k">&lt; ₹10k</SelectItem>
-                    <SelectItem value="10k-20k">₹10k - ₹20k</SelectItem>
-                    <SelectItem value="20k-50k">₹20k - ₹50k</SelectItem>
-                    <SelectItem value="50k-plus">₹50k+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Size (Filter) */}
-              <div className="w-full md:w-1/6 space-y-1.5">
-                <label className="text-xs font-bold text-navy">Size</label>
-                <Select value={selectedSeats} onValueChange={setSelectedSeats}>
-                  <SelectTrigger className="h-10 bg-white border-gray-200 focus:ring-teal"><SelectValue placeholder="Any Size" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all-sizes">Any Size</SelectItem>
-                    <SelectItem value="1-5">1 - 5 Seats</SelectItem>
-                    <SelectItem value="6-10">6 - 10 Seats</SelectItem>
-                    <SelectItem value="11-20">11 - 20 Seats</SelectItem>
-                    <SelectItem value="20-plus">20+ Seats</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-2 w-full md:w-auto flex-1">
-                <Button
-                  onClick={handleUpdateSearch}
-                  className="flex-1 bg-teal hover:bg-teal/90 text-white font-bold h-10 shadow-sm"
-                >
-                  Search
-                </Button>
-
-                <Button
-                  onClick={handleClearFilters}
-                  variant="outline"
-                  className="flex-1 border-teal text-teal hover:bg-teal/10 hover:text-teal h-10 font-bold"
-                >
-                  Clear
-                </Button>
-              </div>
-
+              <input
+                className="block w-full pl-11 pr-32 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-teal/20 focus:border-teal transition-all shadow-sm hover:shadow-md"
+                placeholder="Search for locations, amenities, or workspace types..."
+                value={query || ""}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
+              />
+              <Button
+                className="absolute right-1.5 top-1.5 bottom-1.5 rounded-full bg-teal hover:bg-teal/90 px-6 h-auto shadow-sm"
+                onClick={handleSearchSubmit}
+              >
+                Search
+              </Button>
             </div>
           </div>
 
-          {/* Results Header */}
-          {(filteredSpaces.length > 0 || suggestedSpaces.length > 0) && (
-            <div className="mb-6 flex items-baseline justify-between">
-              <h1 className="text-2xl font-bold text-navy">
-                Search Results
-              </h1>
-              <span className="text-sm font-bold text-teal">
-                {filteredSpaces.length} Exact Matches Found
-              </span>
-            </div>
-          )}
+          {/* 2. Horizontal Filter Pills */}
+          <div className="flex flex-row flex-wrap items-center justify-center gap-3 w-full">
+            <Select value={selectedCity || ""} onValueChange={handleCityChange}>
+              <SelectTrigger className={`h-10 px-5 w-auto min-w-[140px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedCity ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="City" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bangalore">Bengaluru</SelectItem>
+                <SelectItem value="mumbai">Mumbai</SelectItem>
+                <SelectItem value="delhi">Delhi</SelectItem>
+                <SelectItem value="hyderabad">Hyderabad</SelectItem>
+              </SelectContent>
+            </Select>
 
-          {/* 1. EXACT MATCHES */}
-          {filteredSpaces.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {filteredSpaces.map(renderSpaceCard)}
-            </div>
-          ) : (
-            <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-12 text-center mb-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-bold text-navy mb-2">No exact matches found</h3>
-              <p className="text-gray-500 max-w-md mx-auto">
-                Try adjusting your filters (e.g., select 'Any Type' or 'Any Budget') to see more results.
-              </p>
-            </div>
-          )}
+            <Select value={selectedBudget || ""} onValueChange={handleBudgetChange}>
+              <SelectTrigger className={`h-10 px-5 w-auto min-w-[140px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedBudget ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="Budget" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="below-10k">Below ₹10k</SelectItem>
+                <SelectItem value="10k-20k">₹10k - ₹20k</SelectItem>
+                <SelectItem value="20k-50k">₹20k - ₹50k</SelectItem>
+                <SelectItem value="50k-plus">Above ₹50k</SelectItem>
+              </SelectContent>
+            </Select>
 
-          {/* 2. SUGGESTIONS */}
-          {suggestedSpaces.length > 0 && (
-            <div className="pt-8 border-t border-gray-200">
-              <div className="flex items-center gap-2 mb-6">
-                <MapPin className="w-5 h-5 text-teal" />
-                <h2 className="text-xl font-bold text-navy">
-                  More options in <span className="capitalize">{selectedCity || "this city"}</span>
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {suggestedSpaces.map(renderSpaceCard)}
-              </div>
-            </div>
-          )}
+            <Select value={selectedAvailability || ""} onValueChange={handleSeatsChange}>
+              <SelectTrigger className={`h-10 px-5 w-auto min-w-[160px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedAvailability ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="Available Seats" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1-5">1-5 Seats</SelectItem>
+                <SelectItem value="6-10">6-10 Seats</SelectItem>
+                <SelectItem value="11-20">11-20 Seats</SelectItem>
+                <SelectItem value="20-plus">20+ Seats</SelectItem>
+              </SelectContent>
+            </Select>
 
+            <div className="relative" ref={amenitiesRef}>
+              <button
+                className={`h-10 px-5 rounded-full border flex items-center gap-2 text-sm font-medium transition-all ${amenitiesOpen || selectedAmenities.length > 0 ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700 hover:border-teal/50"}`}
+                onClick={() => setAmenitiesOpen(!amenitiesOpen)}
+              >
+                Amenities
+                {selectedAmenities.length > 0 && <span className="bg-teal text-white text-[10px] px-1.5 py-0.5 rounded-full ml-1">{selectedAmenities.length}</span>}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${amenitiesOpen ? "rotate-180" : ""}`} />
+              </button>
+              {amenitiesOpen && (
+                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-xl border border-gray-100 w-[280px] p-4 z-50 animate-in fade-in zoom-in-95 duration-200">
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Select Amenities</h4>
+                  <div className="space-y-2 mb-4 max-h-[200px] overflow-y-auto custom-scrollbar">
+                    {AMENITIES_OPTIONS.map(opt => (
+                      <div key={opt.id} className="flex items-center justify-between cursor-pointer group p-1 hover:bg-gray-50 rounded" onClick={() => handleAmenityToggle(opt.id)}>
+                        <span className="text-gray-700 text-sm">{opt.label}</span>
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedAmenities.includes(opt.id) ? "bg-teal border-teal" : "border-gray-300"}`}>{selectedAmenities.includes(opt.id) && <Check className="w-3 h-3 text-white" />}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <button className="text-xs font-semibold text-gray-500 hover:text-red-500" onClick={() => setSelectedAmenities([])}>Reset</button>
+                    <button className="bg-navy text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-teal transition-colors" onClick={() => { applyAmenities(); setAmenitiesOpen(false); }}>Apply</button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="h-6 w-px bg-gray-200 mx-2 hidden sm:block"></div>
+            <Button variant="ghost" className="text-teal hover:text-teal/80 hover:bg-teal/5 h-10 px-4 rounded-full text-sm" onClick={clearAll}>Clear All</Button>
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* MAIN CONTENT SPLIT (60% List / 40% Map) - Full Page Scroll */}
+      <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 pb-0">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 h-full">
+
+          {/* LEFT: RESULTS (60%) */}
+          <div className="md:col-span-3 flex flex-col gap-6">
+            <div className="flex items-center justify-between" id="results-top">
+              <div>
+                <h2 className="text-xl font-bold text-navy">
+                  {filteredSpaces.length > 0 ? `${filteredSpaces.length} Workspaces Found` : "No Workspaces Found"}
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {selectedCity ? `Showing results in ${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}` : "Showing all available spaces"}
+                </p>
+              </div>
+            </div>
+
+            {filteredSpaces.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {currentSpaces.map((space) => (
+                  <OfficeCard key={space.id} {...space} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6"><Search className="w-8 h-8 text-gray-400" /></div>
+                <h3 className="text-xl font-bold text-navy">No matches found</h3>
+                <p className="text-gray-500 max-w-sm mx-auto mt-2 mb-6">We couldn't find any workspaces matching your specific criteria. Try removing some filters.</p>
+                <Button className="bg-teal hover:bg-teal/90 rounded-full px-8" onClick={clearAll}>Clear All Filters</Button>
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-12 mb-12 gap-2">
+                <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="h-8 w-8 p-0 rounded-full"><ChevronLeft className="w-4 h-4" /></Button>
+                <span className="flex items-center px-4 text-sm font-bold text-navy bg-white border border-gray-200 rounded-full h-8">Page {currentPage} of {totalPages}</span>
+                <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="h-8 w-8 p-0 rounded-full"><ChevronRight className="w-4 h-4" /></Button>
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT: MAP (40%) - Sticky */}
+          <div className="hidden md:block md:col-span-2 relative">
+            <div className="sticky top-44 h-[calc(100vh-200px)] min-h-[500px] w-full bg-[#f0f0f0] rounded-xl border border-gray-200 shadow-xl overflow-hidden z-10">
+              {/* Map Image Layer */}
+              <div className="absolute inset-0 w-full h-full">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg"
+                  className="w-full h-full object-cover opacity-10 absolute inset-0 z-0"
+                  alt="Map Background"
+                />
+                <div className="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google_Maps_Logo_2020.svg/2275px-Google_Maps_Logo_2020.svg.png')] opacity-10 bg-repeat space-x-4"></div>
+                <div className="absolute inset-0 bg-[#e5e3df] mix-blend-multiply opacity-50"></div>
+              </div>
+
+              <div className="absolute top-4 right-4 bg-white rounded-sm shadow-md flex flex-col cursor-pointer z-20">
+                <div className="p-2 hover:bg-gray-50 border-b border-gray-100" title="Zoom In">+</div>
+                <div className="p-2 hover:bg-gray-50" title="Zoom Out">-</div>
+              </div>
+
+              <div className="absolute top-[30%] left-[45%] group cursor-pointer hover:z-50 z-10 transition-transform hover:scale-110"><MapPin className="w-10 h-10 text-[#ea4335] fill-[#ea4335] stroke-white stroke-[2px] drop-shadow-xl origin-bottom" /></div>
+              <div className="absolute top-[45%] left-[60%] group cursor-pointer hover:z-50 z-10 transition-transform hover:scale-110"><MapPin className="w-10 h-10 text-[#ea4335] fill-[#ea4335] stroke-white stroke-[2px] drop-shadow-xl origin-bottom" /></div>
+              <div className="absolute top-[60%] left-[35%] group cursor-pointer hover:z-50 z-10 transition-transform hover:scale-110"><MapPin className="w-10 h-10 text-[#ea4335] fill-[#ea4335] stroke-white stroke-[2px] drop-shadow-xl origin-bottom" /></div>
+              <div className="absolute bottom-[25%] right-[30%] group cursor-pointer hover:z-50 z-10 transition-transform hover:scale-110"><MapPin className="w-10 h-10 text-[#ea4335] fill-[#ea4335] stroke-white stroke-[2px] drop-shadow-xl origin-bottom" /></div>
+              <div className="absolute top-[20%] right-[20%] group cursor-pointer hover:z-50 z-10 transition-transform hover:scale-110"><MapPin className="w-10 h-10 text-[#ea4335] fill-[#ea4335] stroke-white stroke-[2px] drop-shadow-xl origin-bottom" /></div>
+
+              <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur px-3 py-1.5 rounded-md shadow-sm text-[10px] text-gray-500 font-medium z-20 flex items-center gap-1">
+                <span className="font-bold text-blue-500">G</span>
+                <span>Google Maps</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <Footer />
     </div>
   );

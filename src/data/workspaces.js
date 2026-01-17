@@ -1,583 +1,682 @@
 export const workspaces = [
-  // =================================================================
-  // BANGALORE (Koramangala, Indiranagar, HSR, Whitefield, MG Road)
-  // =================================================================
-
-  // 1. The "Budget Private Office"
+  // ===================================
+  // CO-WORKING SPACES (Type: coworking)
+  // ===================================
   {
-    id: 1,
-    description: "A vibrant startup hub located in the heart of Koramangala. Perfect for small teams looking for energy and collaboration.",
-    name: "Startup Den Koramangala",
-    city: "Bangalore",
-    location: "Koramangala",
-    type: "private-office",
-    price: 8500,        // < 10k
-    seats: 4,           // 1-5
-    rating: 4.8,
-    images: [
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800", // Main: People working
-      "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=800", // Bright office
-      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=800"  // Meeting area
-    ],
-    amenities: ["WiFi", "Coffee", "24/7 Access"]
-  },
-  // 2. Mid-Range Dedicated Desk
-  {
-    id: 2,
-    description: "Modern dedicated desks in a premium setting. Ideal for freelancers and remote workers who need a professional environment.",
-    name: "IndiQube Gamma",
-    city: "Bangalore",
-    location: "Koramangala",
-    type: "dedicated-desk",
-    price: 12000,       // 10k-20k
-    seats: 30,          // 20+
-    rating: 4.2,
-    images: [
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800", // Main: Glass office
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800", // Open desk area
-      "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&q=80&w=800"  // Reception
-    ],
-    amenities: ["Gym", "Food Court"]
-  },
-  // 3. Luxury Team Office
-  {
-    id: 3,
-    description: "Luxury private offices with state-of-the-art amenities. Designed for established companies valuing prestige and comfort.",
-    name: "WeWork Prestige",
-    city: "Bangalore",
-    location: "MG Road",
-    type: "private-office",
-    price: 65000,       // 50k+
-    seats: 15,          // 11-20
-    rating: 4.9,
-    images: [
-      "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=800", // Main: Luxury Interior
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", // Wide open space
-      "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800", // Executive cabin
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800"  // Lounge
-    ],
-    amenities: ["Concierge", "Valet", "Premium Lounge"]
-  },
-  // 4. Standard Hot Desk
-  {
-    id: 4,
-    description: "A bustling hot desk area in HSR Layout. great for networking and meeting like-minded entrepreneurs.",
-    name: "Bhive HSR Sector 6",
-    city: "Bangalore",
-    location: "HSR Layout",
-    type: "hot-desk",
-    price: 6500,        // < 10k
-    seats: 100,         // 20+
-    rating: 4.4,
-    images: [
-      "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800", // Main: Busy workspace
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800", // Group working
-      "https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&q=80&w=800"  // Desk row
-    ],
-    amenities: ["Tea/Coffee", "Printer"]
-  },
-  // 5. Small Meeting Room
-  {
-    id: 5,
-    description: "Compact and efficient meeting room equipped with whiteboard and projector. Suitable for quick team syncs and interviews.",
-    name: "CoWrks Indiranagar",
-    city: "Bangalore",
-    location: "Indiranagar",
-    type: "meeting-room",
-    price: 1500,        // < 10k
-    seats: 6,           // 6-10
-    rating: 4.7,
-    images: [
-      "https://images.unsplash.com/photo-1517502884422-41e157d5ed93?auto=format&fit=crop&q=80&w=800", // Main: Meeting room
-      "https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&q=80&w=800", // Conference table
-      "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800"  // Presentation area
-    ],
-    amenities: ["Projector", "Whiteboard"]
-  },
-  // 6. Large Meeting Room
-  {
-    id: 6,
-    description: "Spacious meeting room with video conferencing facilities. Perfect for board meetings and client presentations.",
-    name: "91Springboard 7th Block",
-    city: "Bangalore",
-    location: "Koramangala",
-    type: "meeting-room",
-    price: 3500,        // < 10k
-    seats: 15,          // 11-20
-    rating: 4.5,
-    images: [
-      "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800", // Main: Large room
-      "https://images.unsplash.com/photo-1556761175-4b46a89116bc?auto=format&fit=crop&q=80&w=800", // Collaborative space
-      "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800"  // Boardroom
-    ],
-    amenities: ["Video Conf", "Catering"]
-  },
-  // 7. Tech Park Desk
-  {
-    id: 7,
-    description: "Professional dedicated desks in the IT hub of Whitefield. Surrounded by tech parks and major corporate offices.",
-    name: "Urban Vault Whitefield",
-    city: "Bangalore",
-    location: "Whitefield",
-    type: "dedicated-desk",
-    price: 9500,        // < 10k
-    seats: 50,          // 20+
-    rating: 4.3,
-    images: [
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800", // Main: Modern office
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800", // Building Exterior
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800"  // Desks
-    ],
-    amenities: ["Parking", "Cafeteria"]
-  },
-  // 8. Virtual Office
-  {
-    id: 8,
-    description: "Prestigious virtual office address on MG Road. Includes mail handling and reception services for your business registration.",
-    name: "Regus Barton Centre",
-    city: "Bangalore",
-    location: "MG Road",
-    type: "virtual-office",
-    price: 2500,        // < 10k
-    seats: 0,           // 0 seats
-    rating: 4.3,
-    images: [
-      "https://images.unsplash.com/photo-1664575602276-acd073f104c1?auto=format&fit=crop&q=80&w=800", // Main: Reception
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", // Lobby
-      "https://images.unsplash.com/photo-1556761175-4b46a89116bc?auto=format&fit=crop&q=80&w=800"  // Signage area
-    ],
-    amenities: ["Mailing Address", "Reception"]
-  },
-  // 9. Premium Private Office
-  {
-    id: 9,
-    description: "High-end private cabins in Indiranagar. Features wellness rooms and a swimming pool for a balanced work-life experience.",
+    id: 101,
     name: "WeWork Galaxy",
     city: "Bangalore",
-    location: "Indiranagar",
-    type: "private-office",
-    price: 45000,       // 20k-50k
-    seats: 10,          // 6-10
+    location: "Residency Road",
+    type: "coworking",
+    price: 12000,
+    seats: 1,
     rating: 4.8,
-    images: [
-      "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=800", // Main: Bright
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800", // Fancy furniture
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800"  // Glass cabin
+    images: ["https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=800", "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["WiFi", "Coffee", "Community Events", "Pray Room", "Wellness Room"],
+    description: "Vibrant coworking space in the heart of Bangalore. Perfect for freelancers and startups.",
+    snapshot: {
+      capacity: "1-100 Seats",
+      area: "25,000 Sq. Ft.",
+      lock_in: "1 Month"
+    },
+    highlights: [
+      { title: "Metro Access", desc: "Located right next to MG Road Metro Station." },
+      { title: "Community", desc: "Active community with weekly events and workshops." },
+      { title: "Wellness", desc: "Dedicated wellness room and meditation zone." },
+      { title: "24/7 Access", desc: "Round the clock access for all members." }
     ],
-    amenities: ["Wellness Room", "Pool"]
+    commercials: [
+      { component: "Monthly Rent", cost: "₹12,000 / seat", remarks: "Includes electricity & internet" },
+      { component: "Security Deposit", cost: "2 Months", remarks: "Refundable at end of tenure" },
+      { component: "Lock-in Period", cost: "1 Month", remarks: "Flexible terms available" }
+    ],
+    compliance: [
+      { title: "Fire NOC Status", status: "Certified & Active", desc: " compliant with 2024 safety standards" },
+      { title: "Occupancy Certificate", status: "Available", desc: "Property is fully compliant for commercial use" }
+    ]
   },
-  // 10. Mid-sized Office
   {
-    id: 10,
-    description: "Cozy mid-sized office with a beautiful terrace garden. A calm and creative space for growing teams.",
-    name: "ClayWorks JP Nagar",
+    id: 102,
+    name: "91Springboard Koramangala",
     city: "Bangalore",
-    location: "HSR Layout",
-    type: "private-office",
-    price: 18000,       // 10k-20k
-    seats: 6,           // 6-10
-    rating: 4.1,
-    images: [
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800", // Terrace
-      "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800"  // Cabin
-    ],
-    amenities: ["Terrace Garden"]
-  },
-
-  // =================================================================
-  // MUMBAI (Bandra, Andheri, Powai, Lower Parel, BKC)
-  // =================================================================
-
-  // 11. Cheap Hot Desk
-  {
-    id: 11,
-    description: "Affordable hot desks in Andheri near the Metro. A popular choice for digital nomads and early-stage startups.",
-    name: "91Springboard Andheri",
-    city: "Mumbai",
-    location: "Andheri",
-    type: "hot-desk",
-    price: 8000,        // < 10k
-    seats: 120,         // 20+
+    location: "Koramangala",
+    type: "coworking",
+    price: 9500,
+    seats: 1,
     rating: 4.5,
-    images: [
-      "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800", // Open desk
-      "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800"  // Detail
+    images: ["https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["24/7 Access", "Gaming Zone", "Pet Friendly", "Event Space"],
+    description: "A fun and energetic workspace with a strong community vibe.",
+    snapshot: {
+      capacity: "1-200 Seats",
+      area: "18,000 Sq. Ft.",
+      lock_in: "3 Months"
+    },
+    highlights: [
+      { title: "Gaming Zone", desc: "Relax with PS5 and Table Tennis." },
+      { title: "Pet Friendly", desc: "Bring your furry friends to work." },
+      { title: "Startup Hub", desc: "Surrounded by top startups and VCs." },
+      { title: "Rooftop Cafe", desc: "Amazing views and great coffee." }
     ],
-    amenities: ["Metro Access"]
+    commercials: [
+      { component: "Monthly Rent", cost: "₹9,500 / seat", remarks: "All inclusive price" },
+      { component: "Security Deposit", cost: "3 Months", remarks: "Negotiable for large teams" },
+      { component: "Maintenance", cost: "Inclusive", remarks: "Daily cleaning included" }
+    ],
+    compliance: [
+      { title: "Zoning", status: "Commercial", desc: "Approved for IT/ITES usage" },
+      { title: "Safety", status: "Audited", desc: "Monthly safety drills conducted" }
+    ]
   },
-  // 12. Ultra Luxury Office
   {
-    id: 12,
-    description: "Ultra-luxury office suites in BKC using premium materials. Offers concierge services, gym, and spa access.",
-    name: "WeWork BKC One",
+    id: 103,
+    name: "Innov8 CP",
+    city: "Delhi",
+    location: "Connaught Place",
+    type: "coworking",
+    price: 14000,
+    seats: 1,
+    rating: 4.7,
+    images: ["https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Metro Access", "Rooftop Cafe", "Heritage Building"],
+    description: "Premium coworking in a heritage building with modern interiors.",
+    snapshot: {
+      capacity: "10-150 Seats",
+      area: "12,000 Sq. Ft.",
+      lock_in: "6 Months"
+    },
+    highlights: [
+      { title: "Heritage", desc: "Work inside a restored heritage property." },
+      { title: "Central Loc", desc: "Heart of Delhi, CP Outer Circle." },
+      { title: "Premium Interiors", desc: "Design focused on productivity." },
+      { title: "Networking", desc: "High profile member base." }
+    ],
+    commercials: [
+      { component: "Monthly Rent", cost: "₹14,000 / seat", remarks: "Premium cabling included" },
+      { component: "Security Deposit", cost: "2 Months", remarks: "Standard terms" }
+    ],
+    compliance: [
+      { title: "Heritage Status", status: "Approved", desc: "ASI approved restoration" }
+    ]
+  },
+  {
+    id: 104,
+    name: "Ministry of New",
     city: "Mumbai",
-    location: "BKC",
-    type: "private-office",
-    price: 85000,       // 50k+
-    seats: 12,          // 11-20
+    location: "Fort",
+    type: "coworking",
+    price: 18000,
+    seats: 1,
     rating: 4.9,
-    images: [
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=800", // Lobby
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800"  // Modern team
+    images: ["https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Library", "Art Gallery", "Studio"],
+    description: "An inspiring, design-led coworking space for creatives.",
+    snapshot: {
+      capacity: "5-80 Seats",
+      area: "8,000 Sq. Ft.",
+      lock_in: "3 Months"
+    },
+    highlights: [
+      { title: "Design", desc: "Award winning interior design." },
+      { title: "Quiet Zones", desc: "Dedicated library for deep work." },
+      { title: "Creative", desc: "In-house photo studio available." },
+      { title: "Location", desc: "Historic Fort district." }
     ],
-    amenities: ["Bar", "Gym", "Spa"]
+    commercials: [
+      { component: "Monthly Rent", cost: "₹18,000 / seat", remarks: "Includes library access" },
+      { component: "Security Deposit", cost: "3 Months", remarks: "Refundable" }
+    ],
+    compliance: [
+      { title: "Fire Safety", status: "Certified", desc: "Updated 2024" }
+    ]
   },
-  // 13. Creative Studio
   {
-    id: 13,
-    description: "Creative studio space in Bandra with inspiring sea views. tailored for design agencies and media professionals.",
-    name: "Redbrick Bandra",
-    city: "Mumbai",
-    location: "Bandra",
-    type: "private-office",
-    price: 35000,       // 20k-50k
-    seats: 4,           // 1-5
+    id: 105,
+    name: "CoWrks Skyview",
+    city: "Hyderabad",
+    location: "Hitech City",
+    type: "coworking",
+    price: 11000,
+    seats: 1,
     rating: 4.6,
-    images: [
-      "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800", // Creative
-      "https://images.unsplash.com/photo-1534190239940-9ba8944ea261?auto=format&fit=crop&q=80&w=800"  // View
+    images: ["https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Gym Access", "Event Hall"],
+    description: "Located in a prime tech park, offering great networking opportunities.",
+    snapshot: {
+      capacity: "50-500 Seats",
+      area: "40,000 Sq. Ft.",
+      lock_in: "12 Months"
+    },
+    highlights: [
+      { title: "Tech Park", desc: "Inside RMZ Skyview." },
+      { title: "Scalability", desc: "Expand your team easily." },
+      { title: "Enterprise Grade", desc: "Cisco Meraki WiFi & Firewall." },
+      { title: "Lifestyle", desc: "Shopping & Dining in same complex." }
     ],
-    amenities: ["Sea View", "WiFi"]
+    commercials: [
+      { component: "Monthly Rent", cost: "₹11,000 / seat", remarks: "Volume discounts available" },
+      { component: "Security Deposit", cost: "6 Months", remarks: "Standard for parks" }
+    ],
+    compliance: [
+      { title: "SEZ Status", status: "Available", desc: "SEZ benefits applicable" }
+    ]
   },
-  // 14. Lake View Desk
   {
-    id: 14,
-    description: "Scenic dedicated desks overlooking Powai Lake. A peaceful and productive environment away from the city noise.",
+    id: 106,
     name: "Awfis Powai",
     city: "Mumbai",
     location: "Powai",
-    type: "dedicated-desk",
-    price: 13000,       // 10k-20k
-    seats: 25,          // 20+
-    rating: 4.3,
-    images: [
-      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800", // Workspace
-      "https://images.unsplash.com/photo-1504384764586-bb4cdc1707b0?auto=format&fit=crop&q=80&w=800"  // Coffee area
-    ],
-    amenities: ["Lake View"]
-  },
-  // 15. Corporate Suite
-  {
-    id: 15,
-    description: "Corporate suites in Lower Parel's business district. Includes expansive lounge areas and ample parking.",
-    name: "Mosaic Lower Parel",
-    city: "Mumbai",
-    location: "Lower Parel",
-    type: "private-office",
-    price: 48000,       // 20k-50k
-    seats: 10,          // 6-10
-    rating: 4.7,
-    images: [
-      "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800", // Meeting room
-      "https://images.unsplash.com/photo-1556761175-4b46a89116bc?auto=format&fit=crop&q=80&w=800"  // Lounge
-    ],
-    amenities: ["Lounge", "Parking"]
-  },
-  // 16. BKC Virtual
-  {
-    id: 16,
-    description: "Virtual office solution in the financial heart of Mumbai (BKC). Establish a premium presence instantly.",
-    name: "The Hive BKC",
-    city: "Mumbai",
-    location: "BKC",
-    type: "virtual-office",
-    price: 6000,        // < 10k
-    seats: 0,
-    rating: 4.2,
-    images: [
-      "https://images.unsplash.com/photo-1664575602276-acd073f104c1?auto=format&fit=crop&q=80&w=800", // Reception
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800", // Building
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800"  // Interior
-    ],
-    amenities: ["Mail Handling"]
-  },
-  // 17. Meeting Room
-  {
-    id: 17,
-    description: "Premium meeting room in Lower Parel with high-speed internet and catering options. Ideal for client pitches.",
-    name: "Dextrus Lower Parel",
-    city: "Mumbai",
-    location: "Lower Parel",
-    type: "meeting-room",
-    price: 4000,        // < 10k
-    seats: 8,           // 6-10
-    rating: 4.8,
-    images: [
-      "https://images.unsplash.com/photo-1517502884422-41e157d5ed93?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&q=80&w=800", // Table
-      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800"  // Coffee
-    ],
-    amenities: ["Premium Coffee"]
-  },
-
-  // =================================================================
-  // DELHI (Connaught Place, Saket, Nehru Place, Hauz Khas, Dwarka)
-  // =================================================================
-
-  // 18. Budget Meeting Room
-  {
-    id: 18,
-    description: "Budget-friendly meeting space in Connaught Place. centrally located and accessible, perfect for quick consultations.",
-    name: "Innov8 Cyber Hub",
-    city: "Delhi",
-    location: "Connaught Place",
-    type: "meeting-room",
-    price: 2500,        // < 10k
-    seats: 10,          // 6-10
-    rating: 4.9,
-    images: [
-      "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1556761175-4b46a89116bc?auto=format&fit=crop&q=80&w=800", // Side view
-      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800"  // Chairs
-    ],
-    amenities: ["Projector"]
-  },
-  // 19. Central Desk
-  {
-    id: 19,
-    description: "Central dedicated desks in CP with excellent metro connectivity. vibrant community of professionals.",
-    name: "Awfis Connaught Place",
-    city: "Delhi",
-    location: "Connaught Place",
-    type: "dedicated-desk",
-    price: 14000,       // 10k-20k
-    seats: 40,          // 20+
+    type: "coworking",
+    price: 10500,
+    seats: 1,
     rating: 4.4,
-    images: [
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800", // Team
-      "https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&q=80&w=800"  // Desks
+    images: ["https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Lake View", "Cafe"],
+    description: "Scenic workspace overlooking Powai lake.",
+    snapshot: {
+      capacity: "1-100 Seats",
+      area: "15,000 Sq. Ft.",
+      lock_in: "2 Months"
+    },
+    highlights: [
+      { title: "Lake View", desc: "Amazing views of Powai Lake." },
+      { title: "Connectivity", desc: "Easy access to JVLR." }
     ],
-    amenities: ["Metro Access"]
-  },
-  // 20. Affordable Office
-  {
-    id: 20,
-    description: "Affordable private offices in Nehru Place. Includes essential IT support and infrastructure for tech teams.",
-    name: "91Springboard Nehru Place",
-    city: "Delhi",
-    location: "Nehru Place",
-    type: "private-office",
-    price: 28000,       // 20k-50k
-    seats: 6,           // 6-10
-    rating: 4.3,
-    images: [
-      "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800", // Cabin
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800"  // Detail
+    commercials: [
+      { component: "Rent", cost: "₹10,500", remarks: "Base rate" }
     ],
-    amenities: ["IT Support"]
+    compliance: []
   },
-  // 21. Luxury Mall Office
   {
-    id: 21,
-    description: "Luxury office space within a premium mall in Saket. combines work with world-class dining and shopping access.",
-    name: "CoWrks Saket",
-    city: "Delhi",
-    location: "Saket",
-    type: "private-office",
-    price: 52000,       // 50k+
-    seats: 18,          // 11-20
-    rating: 4.7,
-    images: [
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", // Wide
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800"  // Lounge
-    ],
-    amenities: ["Mall Access"]
-  },
-  // 22. Social Hub
-  {
-    id: 22,
-    description: "Social hub and coworking space in Hauz Khas. Features a cafe and bar setting for a relaxed work culture.",
-    name: "Social Hauz Khas",
-    city: "Delhi",
-    location: "Hauz Khas",
-    type: "hot-desk",
-    price: 6000,        // < 10k
-    seats: 60,          // 20+
-    rating: 4.8,
-    images: [
-      "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800", // Cafe style
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800"  // People
-    ],
-    amenities: ["Cafe", "Bar"]
-  },
-  // 23. Suburb Office
-  {
-    id: 23,
-    description: "Quiet suburb office in Dwarka. Offers a distraction-free environment with easy parking.",
-    name: "GoHive Dwarka",
-    city: "Delhi",
-    location: "Dwarka",
-    type: "private-office",
-    price: 18000,       // 10k-20k
-    seats: 4,           // 1-5
-    rating: 4.1,
-    images: [
-      "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800", // Desk
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800"  // Outside
-    ],
-    amenities: ["Parking"]
-  },
-
-  // =================================================================
-  // HYDERABAD (Hitech City, Gachibowli, Jubilee Hills, Banjara Hills, Madhapur)
-  // =================================================================
-
-  // 24. Tech Hub Office
-  {
-    id: 24,
-    description: "Tech-focused office in Hitech City with modern amenities. Includes access to a gym and ergonomic furniture.",
-    name: "CoWrks Hitech City",
-    city: "Hyderabad",
-    location: "Hitech City",
-    type: "private-office",
-    price: 35000,       // 20k-50k
-    seats: 12,          // 11-20
-    rating: 4.8,
-    images: [
-      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800", // Office
-      "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800"  // Tech
-    ],
-    amenities: ["Gym"]
-  },
-  // 25. Budget Desk
-  {
-    id: 25,
-    description: "Budget dedicated desks in Gachibowli. A large open floor plan fostering collaboration among startups.",
-    name: "Awfis Gachibowli",
-    city: "Hyderabad",
-    location: "Gachibowli",
-    type: "dedicated-desk",
-    price: 8500,        // < 10k
-    seats: 50,          // 20+
-    rating: 4.3,
-    images: [
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800", // Desks
-      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800"  // Cafe
-    ],
-    amenities: ["Cafeteria"]
-  },
-  // 26. Premium Villa Office
-  {
-    id: 26,
-    description: "Exquisite villa office in Jubilee Hills. Features private gardens and luxurious lounges for VIP meetings.",
-    name: "Rent A Desk Jubilee Hills",
-    city: "Hyderabad",
-    location: "Jubilee Hills",
-    type: "private-office",
-    price: 60000,       // 50k+
-    seats: 15,          // 11-20
-    rating: 4.9,
-    images: [
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800", // Garden view
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800"  // Lounge
-    ],
-    amenities: ["Garden", "Lounge"]
-  },
-  // 27. Small Meeting Room
-  {
-    id: 27,
-    description: "Compact meeting facility in Banjara Hills. Equipped with video conferencing gear for global calls.",
-    name: "iSprout Banjara Hills",
-    city: "Hyderabad",
-    location: "Banjara Hills",
-    type: "meeting-room",
-    price: 2000,        // < 10k
-    seats: 5,           // 1-5
-    rating: 4.4,
-    images: [
-      "https://images.unsplash.com/photo-1517502884422-41e157d5ed93?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&q=80&w=800", // Table
-      "https://images.unsplash.com/photo-1556761175-4b46a89116bc?auto=format&fit=crop&q=80&w=800"  // Presentation
-    ],
-    amenities: ["VC Facility"]
-  },
-  // 28. Large Hot Desk Area
-  {
-    id: 28,
-    description: "Large scale hot desk area in Madhapur. Hosts regular networking events and has a massive event space.",
-    name: "WeWork Krishe Emerald",
-    city: "Hyderabad",
-    location: "Madhapur",
-    type: "hot-desk",
-    price: 11500,       // 10k-20k
-    seats: 200,         // 20+
-    rating: 4.7,
-    images: [
-      "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", // Wide
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800"  // People
-    ],
-    amenities: ["Event Space"]
-  },
-  // 29. Start-up Pod
-  {
-    id: 29,
-    description: "Incubator-style startup pods in Madhapur. offers mentorship opportunities and 24/7 access.",
-    name: "Hatch Station",
-    city: "Hyderabad",
-    location: "Madhapur",
-    type: "private-office",
-    price: 15000,       // 10k-20k
-    seats: 4,           // 1-5
-    rating: 4.2,
-    images: [
-      "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800", // People
-      "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800"  // Small room
-    ],
-    amenities: ["24/7 Access"]
-  },
-
-  // =================================================================
-  // EDGE CASES (Mixing Categories for robustness)
-  // =================================================================
-  {
-    id: 30,
-    description: "A rare budget private office in Indiranagar. Minimalist design focused on productivity.",
-    name: "Budget Pod Indiranagar",
+    id: 107,
+    name: "IndiQube Golf View",
     city: "Bangalore",
     location: "Indiranagar",
-    type: "private-office",
-    price: 9000,        // < 10k Private Office (Rare!)
-    seats: 2,           // 1-5
-    rating: 4.0,
-    images: [
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800", // Desk
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800"  // Detail
-    ],
-    amenities: ["WiFi Only"]
+    type: "coworking",
+    price: 13000,
+    seats: 1,
+    rating: 4.3,
+    images: ["https://images.unsplash.com/photo-1556761175-4b46a89116bc?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Golf Course View", "Valet"],
+    description: "Executive coworking space with premium finishings.",
+    snapshot: { capacity: "10-200", area: "22,000 sqft", lock_in: "6 mo" },
+    highlights: [{ title: "Golf View", desc: "Overlooking KGA Golf Course" }],
+    commercials: [{ component: "Rent", cost: "₹13,000", remarks: "" }],
+    compliance: []
   },
   {
-    id: 31,
-    description: "Exclusive luxury dedicated desk in Whitefield. Includes butler service and premium privacy.",
-    name: "Luxury Desk Whitefield",
+    id: 108,
+    name: "DevX Ahmedabad",
+    city: "Ahmedabad",
+    location: "SG Highway",
+    type: "coworking",
+    price: 8000,
+    seats: 1,
+    rating: 4.5,
+    images: ["https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Mentorship", "3D Printing"],
+    description: "Gujarat's largest coworking space with tech labs.",
+    snapshot: { capacity: "50-1000", area: "50,000 sqft", lock_in: "12 mo" },
+    highlights: [{ title: "Accelerator", desc: "In-house accelerator program" }],
+    commercials: [{ component: "Rent", cost: "₹8,000", remarks: "" }],
+    compliance: []
+  },
+
+  // ===================================
+  // MANAGED OFFICES (Type: managed)
+  // ===================================
+  {
+    id: 201,
+    name: "Table Space Tech Park",
     city: "Bangalore",
-    location: "Whitefield",
-    type: "dedicated-desk",
-    price: 22000,       // 20k-50k (Expensive Desk)
-    seats: 1,           // 1-5
-    rating: 4.9,
-    images: [
-      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800", // Main
-      "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=800", // Lobby
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800"  // High end
+    location: "Bellandur",
+    type: "managed",
+    price: 85000,
+    seats: 20,
+    rating: 4.7,
+    images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["IT Support", "Custom Branding"],
+    description: "Fully managed office floor for mid-sized tech companies.",
+    snapshot: {
+      capacity: "100-500 Seats",
+      area: "35,000 Sq. Ft.",
+      lock_in: "3 Years"
+    },
+    highlights: [
+      { title: "Custom Branding", desc: "Your logo, your colors, your office." },
+      { title: "Managed IT", desc: "Server rooms and enterprise grade security." },
+      { title: "Grade A Building", desc: "LEED Gold certified building." },
+      { title: "Food Court", desc: "Large cafeteria with multiple cuisines." }
     ],
-    amenities: ["Butler Service"]
+    commercials: [
+      { component: "Monthly Rent", cost: "₹85,000 / seat", remarks: "Fully managed" },
+      { component: "Security Deposit", cost: "6 Months", remarks: "Bank Guarantee accepted" },
+      { component: "Fitout Cost", cost: "Amortized", remarks: "Included in rent" }
+    ],
+    compliance: [
+      { title: "Fire NOC", status: "Valid", desc: "Valid till 2028" },
+      { title: "Building Plan", status: "Approved", desc: "BBMP Approved" }
+    ]
+  },
+  {
+    id: 202,
+    name: "Smartworks Equinox",
+    city: "Mumbai",
+    location: "BKC",
+    type: "managed",
+    price: 120000,
+    seats: 30,
+    rating: 4.6,
+    images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Concierge", "Visitor Management"],
+    description: "Premium managed workspace in the financial district.",
+    snapshot: { capacity: "50-300", area: "20,000 sqft", lock_in: "2 Years" },
+    highlights: [{ title: "BKC Loc", desc: "Best address in Mumbai" }],
+    commercials: [{ component: "Rent", cost: "₹1,20,000", remarks: "" }],
+    compliance: []
+  },
+  {
+    id: 203,
+    name: "Skootr Cyber City",
+    city: "Delhi",
+    location: "Gurgaon",
+    type: "managed",
+    price: 90000,
+    seats: 25,
+    rating: 4.8,
+    images: ["https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["IoT Enabled", "Fine Dining"],
+    description: "Intelligent workspace solutions for modern enterprises.",
+    snapshot: { capacity: "30-150", area: "10,000 sqft", lock_in: "18 mo" },
+    highlights: [{ title: "Smart Office", desc: "IoT controls for lights/AC" }],
+    commercials: [{ component: "Rent", cost: "₹90,000", remarks: "" }],
+    compliance: []
+  },
+  // ... All other items should utilize defaults if fields missing in UI logic ...
+  // Keeping the rest as is for brevity, they will default in UI if fields missing.
+  {
+    id: 204,
+    name: "Urban Vault HSR",
+    city: "Bangalore",
+    location: "HSR Layout",
+    type: "managed",
+    price: 45000,
+    seats: 10,
+    rating: 4.4,
+    images: ["https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Private Entry", "Pantry"],
+    description: "Standalone building option for complete privacy."
+  },
+  {
+    id: 205,
+    name: "IndiQube Alpha",
+    city: "Bangalore",
+    location: "Marathahalli",
+    type: "managed",
+    price: 60000,
+    seats: 15,
+    rating: 4.2,
+    images: ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Transport Service", "Food Court"],
+    description: "Campus-style managed office with employee transport."
+  },
+  {
+    id: 206,
+    name: "Awfis Gold",
+    city: "Hyderabad",
+    location: "Banjara Hills",
+    type: "managed",
+    price: 70000,
+    seats: 12,
+    rating: 4.9,
+    images: ["https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Gold Standard Service", "Lounge"],
+    description: "Ultra-luxury managed suites for VIPs."
+  },
+
+  // ===================================
+  // ENTERPRISE SOLUTIONS (Type: enterprise)
+  // ===================================
+  {
+    id: 301,
+    name: "Embassy Tech Village",
+    city: "Bangalore",
+    location: "ORR",
+    type: "enterprise",
+    price: 500000,
+    seats: 100,
+    rating: 4.8,
+    images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Campus", "Helipad"],
+    description: "Large scale campus solution for MNCs."
+  },
+  {
+    id: 302,
+    name: "DLF Cyber Park",
+    city: "Delhi",
+    location: "Gurgaon",
+    type: "enterprise",
+    price: 450000,
+    seats: 150,
+    rating: 4.9,
+    images: ["https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Retail Plaza", "Gym"],
+    description: "Integrated business district for headquarters."
+  },
+  {
+    id: 303,
+    name: "Mindspace Malad",
+    city: "Mumbai",
+    location: "Malad",
+    type: "enterprise",
+    price: 300000,
+    seats: 80,
+    rating: 4.5,
+    images: ["https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Recreation Zone", "Parking"],
+    description: "Cost-effective enterprise spaces in Mumbai suburbs."
+  },
+  {
+    id: 304,
+    name: "Prestige Tech Park",
+    city: "Bangalore",
+    location: "Marathahalli",
+    type: "enterprise",
+    price: 400000,
+    seats: 120,
+    rating: 4.6,
+    images: ["https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Auditorium", "Sports Complex"],
+    description: "Tech-focused park with world-class amenities."
+  },
+  {
+    id: 305,
+    name: "One BKC",
+    city: "Mumbai",
+    location: "BKC",
+    type: "enterprise",
+    price: 800000,
+    seats: 100,
+    rating: 5.0,
+    images: ["https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["High Security", "Fine Dining"],
+    description: "The most prestigious business address in India."
+  },
+
+  // ===================================
+  // DAY PASSES (Type: day-pass)
+  // ===================================
+  {
+    id: 401,
+    name: "WeWork Day Pass",
+    city: "Bangalore",
+    location: "Galaxy, Residency Rd",
+    type: "day-pass",
+    price: 800,
+    seats: 1,
+    rating: 4.8,
+    images: ["https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["WiFi", "Unlimited Coffee"],
+    description: "Access any open desk/lounge area for the day."
+  },
+  {
+    id: 402,
+    name: "Bhive Day Pass",
+    city: "Bangalore",
+    location: "HSR Layout",
+    type: "day-pass",
+    price: 450,
+    seats: 1,
+    rating: 4.3,
+    images: ["https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["High Speed Internet", "Community Access"],
+    description: "Affordable productivity for digital nomads."
+  },
+  {
+    id: 403,
+    name: "Awfis Flexi Pass",
+    city: "Delhi",
+    location: "Connaught Place",
+    type: "day-pass",
+    price: 550,
+    seats: 1,
+    rating: 4.5,
+    images: ["https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Meeting Room Credits", "Hot Desk"],
+    description: "Flexible access across Delhi NCR centers."
+  },
+  {
+    id: 404,
+    name: "91Springboard Day Access",
+    city: "Mumbai",
+    location: "Andheri East",
+    type: "day-pass",
+    price: 600,
+    seats: 1,
+    rating: 4.6,
+    images: ["https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Networking Events", "Pantry"],
+    description: "Join the community for a day."
+  },
+  {
+    id: 405,
+    name: "GoWork Day Pass",
+    city: "Delhi",
+    location: "Gurgaon",
+    type: "day-pass",
+    price: 350,
+    seats: 1,
+    rating: 4.2,
+    images: ["https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Shuttle Service", "Big Campus"],
+    description: "Experience the world's largest coworking campus."
+  },
+  {
+    id: 406,
+    name: "MyBranch Day Pass",
+    city: "Hyderabad",
+    location: "Banjara Hills",
+    type: "day-pass",
+    price: 400,
+    seats: 1,
+    rating: 4.1,
+    images: ["https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Basic WiFi", "Desk"],
+    description: "Simple, no-frills workspace for focused work."
+  },
+
+  // ===================================
+  // PRIVATE OFFICES (Type: private)
+  // ===================================
+  {
+    id: 501,
+    name: "Regus Private Suite",
+    city: "Bangalore",
+    location: "UB City",
+    type: "private",
+    price: 45000,
+    seats: 4,
+    rating: 4.9,
+    images: ["https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Prestige Address", "Secretary"],
+    description: "Global standard private offices in Bangalore's luxury landmark."
+  },
+  {
+    id: 502,
+    name: "WeWork Private Cabin",
+    city: "Mumbai",
+    location: "Vikhroli",
+    type: "private",
+    price: 35000,
+    seats: 5,
+    rating: 4.7,
+    images: ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Sound Proof", "Glass Walls"],
+    description: "Modern glass cabins perfect for small teams."
+  },
+  {
+    id: 503,
+    name: "Innov8 Office",
+    city: "Delhi",
+    location: "Saket",
+    type: "private",
+    price: 28000,
+    seats: 3,
+    rating: 4.5,
+    images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Mall Access", "Ergonomic Chairs"],
+    description: "Stylish private offices inside Select Citywalk mall."
+  },
+  {
+    id: 504,
+    name: "ClayWorks Office",
+    city: "Bangalore",
+    location: "JP Nagar",
+    type: "private",
+    price: 22000,
+    seats: 4,
+    rating: 4.3,
+    images: ["https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Terrace", "Showers"],
+    description: "Private office in a boutique building with charm."
+  },
+  {
+    id: 505,
+    name: "Dextrus Cabin",
+    city: "Mumbai",
+    location: "Lower Parel",
+    type: "private",
+    price: 60000,
+    seats: 6,
+    rating: 4.8,
+    images: ["https://images.unsplash.com/photo-1517502884422-41e157d5ed93?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Sea View", "Premium Coffee"],
+    description: "High-end cabins with breathtaking views."
+  },
+  {
+    id: 506,
+    name: "Smartworks Cabin",
+    city: "Hyderabad",
+    location: "Hitech City",
+    type: "private",
+    price: 40000,
+    seats: 8,
+    rating: 4.6,
+    images: ["https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Gaming", "Gym"],
+    description: "Spacious private offices for tech teams."
+  },
+
+  // ===================================
+  // BUILT-TO-SUIT OFFICES (Type: built-to-suit)
+  // ===================================
+  {
+    id: 601,
+    name: "Bagmane Compel",
+    city: "Bangalore",
+    location: "Mahadevapura",
+    type: "built-to-suit",
+    price: 1500000,
+    seats: 500,
+    rating: 4.9,
+    images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Custom Layout", "Dedicated Entrance"],
+    description: "Fully customizable building for large enterprises."
+  },
+  {
+    id: 602,
+    name: "RMZ Ecoworld Block 3",
+    city: "Bangalore",
+    location: "Bellandur",
+    type: "built-to-suit",
+    price: 1200000,
+    seats: 300,
+    rating: 4.8,
+    images: ["https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Lakeside", "Food Court"],
+    description: "Shell space ready for YOUR interior design."
+  },
+  {
+    id: 603,
+    name: "DLF Cyber City Tower 8",
+    city: "Delhi",
+    location: "Gurgaon",
+    type: "built-to-suit",
+    price: 2000000,
+    seats: 600,
+    rating: 4.9,
+    images: ["https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Metro Connected", "LEED Platinum"],
+    description: "Green building ready for custom fitouts."
+  },
+  {
+    id: 604,
+    name: "K Raheja Mindspace",
+    city: "Hyderabad",
+    location: "Madhapur",
+    type: "built-to-suit",
+    price: 900000,
+    seats: 250,
+    rating: 4.7,
+    images: ["https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Campus Feel", "Ample Parking"],
+    description: "Custom office solutions in the IT heart of Hyderabad."
+  },
+  {
+    id: 605,
+    name: "Godrej One",
+    city: "Mumbai",
+    location: "Vikhroli",
+    type: "built-to-suit",
+    price: 1100000,
+    seats: 300,
+    rating: 4.8,
+    images: ["https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Mangroves View", "Sustainable"],
+    description: "Eco-friendly built-to-suit options."
+  },
+
+  // ===================================
+  // MEETING ROOMS (Type: meeting)
+  // ===================================
+  {
+    id: 701,
+    name: "Boardroom @ WeWork",
+    city: "Bangalore",
+    location: "Residency Road",
+    type: "meeting",
+    price: 3000,
+    seats: 12,
+    rating: 4.8,
+    images: ["https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Video Conf", "Catering"],
+    description: "Premium boardroom for high-stakes meetings."
+  },
+  {
+    id: 702,
+    name: "Huddle Room",
+    city: "Mumbai",
+    location: "Andheri",
+    type: "meeting",
+    price: 1000,
+    seats: 4,
+    rating: 4.3,
+    images: ["https://images.unsplash.com/photo-1517502884422-41e157d5ed93?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Whiteboard", "TV"],
+    description: "Small room for quick syncs and interviews."
+  },
+  {
+    id: 703,
+    name: "Training Room",
+    city: "Delhi",
+    location: "Nehru Place",
+    type: "meeting",
+    price: 5000,
+    seats: 30,
+    rating: 4.4,
+    images: ["https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800"],
+    amenities: ["Projector", "Classroom Style"],
+    description: "Ideal for workshops and training sessions."
   }
 ];
 
