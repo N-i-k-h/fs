@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, FileText, PlusCircle, LogOut, Building2, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, FileText, PlusCircle, LogOut, Building2, Menu, X, DollarSign, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const AdminLayout = () => {
@@ -22,7 +22,9 @@ const AdminLayout = () => {
 
     const menuItems = [
         { icon: LayoutDashboard, label: "Analysis", path: "/admin" },
-        { icon: FileText, label: "Requests", path: "/admin/requests" },
+        { icon: FileText, label: "Tour Requests", path: "/admin/requests" },
+        { icon: DollarSign, label: "User Quotes", path: "/admin/quotes" },
+        { icon: Download, label: "Downloaded Brochures", path: "/admin/brochures" },
         { icon: Building2, label: "Spaces", path: "/admin/spaces" },
         { icon: Users, label: "Users", path: "/admin/users" },
         { icon: PlusCircle, label: "Add Space", path: "/admin/add-space" },

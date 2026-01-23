@@ -15,6 +15,119 @@ import { toast } from "sonner";
 import { workspaces } from "@/data/workspaces";
 import mapPlaceholder from "@/assets/map-placeholder.png";
 
+// --- HELPER: SCHEDULE FORM COMPONENT ---
+import axios from "axios";
+
+const ScheduleForm = ({ space }: { space: any }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    teamSize: "1-5",
+    date: ""
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await axios.post('/api/requests/tour', {
+        user: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        space: space.name,
+        date: formData.date,
+        time: "Not Specified", // Defaulting as this form doesn't have time input yet
+        seats: parseInt(formData.teamSize.split('-')[0]) || 1
+      });
+      toast.success("Tour Requested Successfully!");
+      setFormData({ name: "", email: "", phone: "", teamSize: "1-5", date: "" });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to request tour");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <div>
+        <label className="text-xs font-bold text-navy uppercase tracking-wide">Full Name</label>
+        <input
+          name="name"
+          type="text"
+          className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+          placeholder="John Doe"
+          required
+          value={formData.name}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <label className="text-xs font-bold text-navy uppercase tracking-wide">Email</label>
+        <input
+          name="email"
+          type="email"
+          className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+          placeholder="john@example.com"
+          required
+          value={formData.email}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <label className="text-xs font-bold text-navy uppercase tracking-wide">Phone</label>
+        <input
+          name="phone"
+          type="tel"
+          className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+          placeholder="+91 98765 43210"
+          required
+          value={formData.phone}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Team Size</label>
+          <select
+            name="teamSize"
+            className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+            value={formData.teamSize}
+            onChange={handleChange}
+          >
+            <option>1-5</option>
+            <option>6-10</option>
+            <option>11-20</option>
+            <option>20+</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Tour Date</label>
+          <input
+            name="date"
+            type="date"
+            className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+            required
+            value={formData.date}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      <Button type="submit" disabled={loading} className="w-full bg-[#002b4d] hover:bg-teal text-white font-bold h-12 shadow-lg shadow-blue-900/10">
+        {loading ? "Requesting..." : "Request Tour"}
+      </Button>
+    </form>
+  );
+};
+
 // --- HELPER: AMENITY ICONS ---
 const getAmenityIcon = (name: string) => {
   const lower = name.toLowerCase();
@@ -392,34 +505,20 @@ const SpaceDetail = () => {
                   <h2 className="text-xl font-bold text-navy mb-1">Schedule a Tour</h2>
                   <p className="text-xs text-gray-500 mb-6">Connect with our space concierge and secure your team's new home.</p>
 
-                  <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); toast.success("Request Sent! Call started."); }}>
-                    <div>
-                      <label className="text-xs font-bold text-navy uppercase tracking-wide">Full Name</label>
-                      <input type="text" className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors" placeholder="John Doe" required />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-xs font-bold text-navy uppercase tracking-wide">Team Size</label>
-                        <select className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors">
-                          <option>1-5</option>
-                          <option>6-10</option>
-                          <option>11-20</option>
-                          <option>20+</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold text-navy uppercase tracking-wide">Tour Date</label>
-                        <input type="date" className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors" />
-                      </div>
-                    </div>
-
-                    <Button type="submit" className="w-full bg-[#002b4d] hover:bg-teal text-white font-bold h-12 shadow-lg shadow-blue-900/10">
-                      Request Tour
-                    </Button>
+                  <form className="space-y-4" onSubmit={async (e) => {
+                    e.preventDefault();
+                    // Basic client-side validation logic handled by browser 'required'
+                    // We need to capture the values. Ideally, we should refactor this into a controlled form or proper component.
+                    // For now, let's grab values from the form elements using FormData for simplicity in this inline refactor,
+                    // or better, turn this small section into a controlled state to ensure accuracy as requested.
+                  }}>
+                    {/* We will replace this entire form content with controlled inputs below */}
                   </form>
+                  {/* REPLACING ABOVE BLOCK WITH ACTUAL IMPLEMENTATION BELOW in the same tool */}
+                  <ScheduleForm space={space} />
 
                   <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
-                    <Button variant="outline" className="flex-1 text-xs h-9"><FileText className="w-3 h-3 mr-1" /> Brochure</Button>
+                    <Button variant="outline" className="flex-1 text-xs h-9" onClick={() => navigate(`/quote/${space.id}`)}><FileText className="w-3 h-3 mr-1" /> Get Quote</Button>
                     <Button className="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs h-9"><Phone className="w-3 h-3 mr-1" /> WhatsApp</Button>
                   </div>
 

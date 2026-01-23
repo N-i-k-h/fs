@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { BrochureTemplate } from "@/components/BrochureTemplate";
+import axios from "axios";
 
 const GetQuotePage = () => {
     const { id } = useParams();
@@ -91,15 +92,33 @@ const GetQuotePage = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simulate API call
-        setTimeout(async () => {
+        try {
+            // Send data to backend
+            await axios.post('/api/requests/quote', {
+                fullName: formData.fullName,
+                email: formData.email,
+                phone: formData.phone,
+                seats: formData.seats,
+                budget: formData.budget,
+                timeline: formData.timeline,
+                micromarket: formData.micromarket,
+                spaceName: space.name,
+                spaceId: space.id
+            });
+
+            // Generate PDF
             await generatePDF();
-            setIsSubmitting(false);
+
             toast.success("Quote Requested Successfully!");
 
             // Redirect back to detail after a delay
             setTimeout(() => navigate(`/space/${id}`), 3000);
-        }, 1500);
+        } catch (error) {
+            console.error("Quote Submission Error", error);
+            toast.error("Failed to submit quote request. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (!space) return null;

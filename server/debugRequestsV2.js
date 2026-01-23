@@ -1,25 +1,14 @@
 const mongoose = require('mongoose');
-const Request = require('./models/Request');
 require('dotenv').config();
 
-const debugRequests = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
+console.log('Attempting to connect to:', process.env.MONGO_URI);
 
-        // Find the most recent request
-        const request = await Request.findOne().sort({ createdAt: -1 });
-        console.log('--- MOST RECENT REQUEST ---');
-        console.log('User:', request.user);
-        console.log('Space (Field):', request.space);
-        console.log('SpaceName (Field):', request.spaceName);
-        console.log('Full Object:', JSON.stringify(request.toJSON(), null, 2));
-        console.log('---------------------------');
-
-        process.exit();
-    } catch (err) {
-        console.error('❌ Error:', err);
+mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 })
+    .then(() => {
+        console.log('✅ CONNECTED TO MONGO');
+        process.exit(0);
+    })
+    .catch(err => {
+        console.error('❌ FAILED TO CONNECT:', err.message);
         process.exit(1);
-    }
-};
-
-debugRequests();
+    });

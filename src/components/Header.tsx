@@ -122,13 +122,7 @@ const Header = () => {
               </Link>
             )}
 
-            <Link to="/list-space">
-              <Button
-                className="bg-teal hover:bg-teal/90 text-white font-bold rounded-md px-6 shadow-md transition-all"
-              >
-                List Space
-              </Button>
-            </Link>
+            {/* Removed List Space Button */}
           </div>
 
           {/* --- MOBILE TOGGLE --- */}

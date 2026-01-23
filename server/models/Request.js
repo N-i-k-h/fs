@@ -12,6 +12,13 @@ const requestSchema = new mongoose.Schema({
     status: { type: String, default: 'pending' }, // pending, approved, rejected
     type: { type: String, default: 'Tour Request' }, // Tour Request, Contact
     totalAmount: { type: Number, default: 0 }, // For revenue calculation
+
+    // Quote / Brochure specific fields
+    budget: { type: String },
+    timeline: { type: String },
+    micromarket: { type: String },
+    isBrochureDownloaded: { type: Boolean, default: false },
+    details: { type: Object }, // For flexible additional data
 }, { timestamps: true });
 
 module.exports = mongoose.model('Request', requestSchema);

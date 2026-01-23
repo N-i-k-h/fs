@@ -164,4 +164,36 @@ router.post('/tour', async (req, res) => {
     }
 });
 
+// Create New Quote / Brochure Download Request
+router.post('/quote', async (req, res) => {
+    try {
+        const { fullName, email, phone, seats, budget, timeline, micromarket, spaceName, spaceId } = req.body;
+
+        const newRequest = new Request({
+            user: fullName,
+            email,
+            phone,
+            space: spaceName, // or spaceId if you prefer
+            spaceName, // keeping consistency
+            seats: seats ? Number(seats) : undefined,
+            budget,
+            timeline,
+            micromarket,
+            type: 'Quote Request',
+            status: 'pending',
+            isBrochureDownloaded: true, // Since this comes from GetQuotePage which downloads brochure
+        });
+
+        await newRequest.save();
+        console.log('📝 Quote Request Saved:', spaceName, 'by', fullName);
+
+        // Optionally send email here (not implemented yet)
+
+        res.status(201).json({ message: 'Quote requested successfully', request: newRequest });
+    } catch (err) {
+        console.error('❌ Quote Request Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
