@@ -67,9 +67,9 @@ const HeroSection = () => {
             />
             <Button
               onClick={handleSearch}
-              className="bg-teal hover:bg-teal/90 text-white rounded-full w-10 h-10 md:w-auto md:h-12 md:px-8 p-0 flex items-center justify-center text-base font-bold shadow-md transform hover:scale-105 transition-all shrink-0 mr-1 md:mr-0"
+              className="bg-teal hover:bg-teal/90 text-white rounded-full w-12 h-12 md:w-auto md:h-12 md:px-8 p-0 flex items-center justify-center text-base font-bold shadow-md transform hover:scale-105 transition-all shrink-0 mr-2 md:mr-0 z-20"
             >
-              <span className="md:hidden"><MoveRight className="w-5 h-5" /></span>
+              <span className="md:hidden flex items-center justify-center"><MoveRight className="w-6 h-6" /></span>
               <span className="hidden md:inline">Search</span>
             </Button>
           </div>

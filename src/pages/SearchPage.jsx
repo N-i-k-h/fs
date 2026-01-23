@@ -91,35 +91,98 @@ const SearchPage = () => {
     const data = workspaces || [];
     const lowerQ = qParam.toLowerCase();
 
-    const matches = data.filter((space) => {
-      let match = true;
-      if (lowerQ) {
-        const quickMatch =
-          space.name.toLowerCase().includes(lowerQ) ||
-          space.city.toLowerCase().includes(lowerQ) ||
-          space.location.toLowerCase().includes(lowerQ);
-        if (!quickMatch && !cityParam) match = false;
-      }
-      if (cityParam && space.city.toLowerCase() !== cityParam.toLowerCase()) match = false;
-      if (priceParam === "below-10k" && space.price >= 10000) match = false;
-      if (priceParam === "10k-20k" && (space.price < 10000 || space.price > 20000)) match = false;
-      if (priceParam === "20k-50k" && (space.price < 20000 || space.price > 50000)) match = false;
-      if (priceParam === "50k-plus" && space.price <= 50000) match = false;
-      if (seatsParam === "1-5" && space.seats > 5) match = false;
-      if (seatsParam === "6-10" && (space.seats < 6 || space.seats > 10)) match = false;
-      if (seatsParam === "11-20" && (space.seats < 11 || space.seats > 20)) match = false;
-      if (seatsParam === "20-plus" && space.seats < 20) match = false;
+    // TYPO CORRECTION / NORMALIZATION
+    let normalizedQ = lowerQ;
+    const typoMap = {
+      "kormangala": "koramangala",
+      "kormangla": "koramangala",
+      "bengaluru": "bangalore",
+      "bombay": "mumbai",
+      "gurugram": "gurgaon",
+      "hyd": "hyderabad"
+    };
 
-      return match;
+    Object.keys(typoMap).forEach(typo => {
+      if (normalizedQ.includes(typo)) {
+        normalizedQ = normalizedQ.replace(new RegExp(typo, 'g'), typoMap[typo]);
+      }
     });
 
-    const matchesWithVideo = matches.map((space, index) => ({
+    const stopWords = ["in", "at", "for", "the", "a", "an", "of", "and", "or", "to", "with", "office", "space"];
+
+    // SCORING LOGIC
+    let scoredSpaces = data.map((space) => {
+      // 1. Static Filters (Strict)
+      if (cityParam && space.city.toLowerCase() !== cityParam.toLowerCase()) return null;
+      if (priceParam === "below-10k" && space.price >= 10000) return null;
+      if (priceParam === "10k-20k" && (space.price < 10000 || space.price > 20000)) return null;
+      if (priceParam === "20k-50k" && (space.price < 20000 || space.price > 50000)) return null;
+      if (priceParam === "50k-plus" && space.price <= 50000) return null;
+      if (seatsParam === "1-5" && space.seats > 5) return null;
+      if (seatsParam === "6-10" && (space.seats < 6 || space.seats > 10)) return null;
+      if (seatsParam === "11-20" && (space.seats < 11 || space.seats > 20)) return null;
+      if (seatsParam === "20-plus" && space.seats < 20) return null;
+
+      // 2. Search Text Scoring (Fuzzy-ish)
+      let score = 0;
+      if (lowerQ) {
+        let searchableText = [
+          space.name,
+          space.city,
+          space.location,
+          space.type,
+          space.description,
+          ...(space.amenities || []),
+          ...(space.highlights?.map((h) => h.title + " " + h.desc) || []),
+          space.price.toString(),
+        ].join(" ").toLowerCase();
+
+        // Enrich text
+        if (space.price < 15000) searchableText += " budget cheap affordable economy low cost";
+        if (space.type === "coworking" || space.description.includes("startup")) searchableText += " startup start-up start up";
+        if (space.type === "private") searchableText += " cabin private office suite";
+        if (space.type === "managed") searchableText += " enterprise managed floor";
+        // Manual common typo fixes for demonstration
+        if (space.location.toLowerCase().includes("koramangala")) searchableText += " kormangala kormangla";
+        if (space.city === "Bangalore") searchableText += " bengaluru";
+        if (space.city === "Hyderabad") searchableText += " hyd";
+        if (space.city === "Mumbai") searchableText += " bombay";
+
+        const tokens = normalizedQ.split(/[\s,]+/).filter((t) => t && !stopWords.includes(t));
+
+        // Scoring: Count how many tokens match partially or fully
+        tokens.forEach((token) => {
+          if (searchableText.includes(token)) {
+            score += 10; // Base match score
+            // Bonus points for specific field matches (simulated via regex or strict includes check on fields if needed, but text blob is fine for now)
+            if (space.location.toLowerCase().includes(token)) score += 15; // High boost for location
+            if (space.city.toLowerCase().includes(token)) score += 5;
+            if (space.name.toLowerCase().includes(token)) score += 5;
+          }
+        });
+
+        // Ensure at least ONE token triggered a match if query exists
+        if (score === 0) return null;
+      } else {
+        score = 1; // Default score to show all if no query
+      }
+
+      return { ...space, score };
+    });
+
+    // Filter nulls and Sort
+    const finalResults = scoredSpaces
+      .filter((item) => item !== null)
+      .sort((a, b) => b.score - a.score);
+
+    const matchesWithVideo = finalResults.map((space, index) => ({
       ...space,
       image: space.images?.[0] || "",
-      video: videos[index % videos.length]
+      video: videos[index % videos.length],
     }));
 
     setFilteredSpaces(matchesWithVideo);
+    setCurrentPage(1);
   }, [searchParams]);
 
   useEffect(() => {
@@ -160,17 +223,18 @@ const SearchPage = () => {
                 <Search className="h-5 w-5 text-gray-400 group-focus-within:text-teal transition-colors" />
               </div>
               <input
-                className="block w-full pl-11 pr-32 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-teal/20 focus:border-teal transition-all shadow-sm hover:shadow-md"
+                className="block w-full pl-11 pr-14 md:pr-32 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-teal/20 focus:border-teal transition-all shadow-sm hover:shadow-md"
                 placeholder="Search for locations, amenities, or workspace types..."
                 value={query || ""}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
               />
               <Button
-                className="absolute right-1.5 top-1.5 bottom-1.5 rounded-full bg-teal hover:bg-teal/90 px-6 h-auto shadow-sm"
+                className="absolute right-1.5 top-1.5 bottom-1.5 rounded-full bg-teal hover:bg-teal/90 w-10 h-10 md:w-auto md:h-auto md:px-6 p-0 md:py-2 shadow-sm flex items-center justify-center transition-all"
                 onClick={handleSearchSubmit}
               >
-                Search
+                <span className="md:hidden"><Search className="w-5 h-5" /></span>
+                <span className="hidden md:inline">Search</span>
               </Button>
             </div>
           </div>
