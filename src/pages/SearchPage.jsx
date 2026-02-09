@@ -258,17 +258,17 @@ const SearchPage = () => {
                 <Search className="h-5 w-5 text-gray-400 group-focus-within:text-teal transition-colors" />
               </div>
               <input
-                className="block w-full pl-11 pr-14 md:pr-32 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-teal/20 focus:border-teal transition-all shadow-sm hover:shadow-md"
+                className="block w-full pl-11 pr-16 md:pr-32 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-teal/20 focus:border-teal transition-all shadow-sm hover:shadow-md"
                 placeholder="Search for locations, amenities, or workspace types..."
                 value={query || ""}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
               />
               <Button
-                className="absolute right-1.5 top-1.5 bottom-1.5 rounded-full bg-teal hover:bg-teal/90 w-10 h-10 md:w-auto md:h-auto md:px-6 p-0 md:py-2 shadow-sm flex items-center justify-center transition-all"
+                className="absolute right-1 top-1 bottom-1 h-auto aspect-square rounded-full bg-teal hover:bg-teal/90 md:w-auto md:aspect-auto md:px-6 shadow-sm flex items-center justify-center transition-all"
                 onClick={handleSearchSubmit}
               >
-                <span className="md:hidden"><Search className="w-5 h-5" /></span>
+                <span className="md:hidden"><Search className="w-4 h-4" /></span>
                 <span className="hidden md:inline">Search</span>
               </Button>
             </div>

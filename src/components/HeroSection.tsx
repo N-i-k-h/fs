@@ -60,16 +60,16 @@ const HeroSection = () => {
               autoComplete="off"
               spellCheck="false"
               placeholder="Try 'Private cabin in Koramangala for 10 people with wifi'"
-              className="flex-1 border-0 focus:ring-0 text-base md:text-lg font-medium text-navy placeholder:text-gray-400 h-12 px-4 bg-transparent focus:outline-none placeholder:text-sm md:placeholder:text-lg overflow-ellipsis"
+              className="flex-1 min-w-0 border-0 focus:ring-0 text-base md:text-lg font-medium text-navy placeholder:text-gray-400 h-10 md:h-12 px-2 bg-transparent focus:outline-none placeholder:text-xs md:placeholder:text-lg overflow-ellipsis"
               value={location} // Reusing location state for the query text
               onChange={(e) => setLocation(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
             <Button
               onClick={handleSearch}
-              className="bg-teal hover:bg-teal/90 text-white rounded-full w-12 h-12 md:w-auto md:h-12 md:px-8 p-0 flex items-center justify-center text-base font-bold shadow-md transform hover:scale-105 transition-all shrink-0 mr-2 md:mr-0 z-20"
+              className="bg-teal hover:bg-teal/90 text-white rounded-full w-10 h-10 md:w-auto md:h-12 md:px-8 p-0 flex items-center justify-center text-base font-bold shadow-md transform hover:scale-105 transition-all shrink-0 z-20 aspect-square md:aspect-auto"
             >
-              <span className="md:hidden flex items-center justify-center"><MoveRight className="w-6 h-6" /></span>
+              <span className="md:hidden flex items-center justify-center"><MoveRight className="w-5 h-5" /></span>
               <span className="hidden md:inline">Search</span>
             </Button>
           </div>

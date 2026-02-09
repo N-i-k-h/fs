@@ -14,12 +14,26 @@ import vid4 from "@/assets/manyathy2.mp4";
 import vid5 from "@/assets/Realistic_Coworking_Space_Video_Generation.mp4";
 import vid6 from "@/assets/Hero_Section_Video_Prompt_Generation.mp4";
 
-const offices = [];
-
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const FeaturedSpaces = () => {
   const navigate = useNavigate();
+  const [offices, setOffices] = useState([]);
+
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        const res = await axios.get("/api/spaces");
+        // Limit to 6 for featured section, or filter by 'isFeatured' if property exists
+        setOffices(res.data.slice(0, 6));
+      } catch (error) {
+        console.error("Error fetching featured spaces:", error);
+      }
+    };
+    fetchSpaces();
+  }, []);
 
   return (
     <section id="featured" className="py-20 bg-background">
@@ -38,14 +52,14 @@ const FeaturedSpaces = () => {
 
         {/* Mobile Horizontal Scroll */}
         <div className="md:hidden flex overflow-x-auto pb-8 gap-4 snap-x no-scrollbar px-2 -mx-4 scroll-smooth">
-          {offices.map((office) => (
+          {offices.map((office: any) => (
             <div
               key={office.id}
               className="min-w-[280px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden snap-center"
               onClick={() => navigate(`/space/${office.id}`)}
             >
               <div className="h-40 relative">
-                <img src={office.image} alt={office.name} className="w-full h-full object-cover" />
+                <img src={office.images?.[0] || office.image} alt={office.name} className="w-full h-full object-cover" />
                 <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-bold text-teal shadow-sm">
                   ₹{office.price.toLocaleString()}/mo
                 </div>
@@ -64,19 +78,9 @@ const FeaturedSpaces = () => {
 
         {/* Desktop Grid */}
         <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {offices.map((office) => (
-            <OfficeCard key={office.id} {...office} />
+          {offices.map((office: any) => (
+            <OfficeCard key={office.id} {...office} image={office.images?.[0] || office.image} />
           ))}
-        </div>
-
-        {/* View All Button */}
-        <div className="text-center mt-10">
-          <button
-            onClick={() => navigate('/search')}
-            className="h-12 px-8 rounded-lg border-2 border-teal text-teal bg-transparent hover:bg-teal hover:text-accent-foreground font-semibold transition-all duration-300"
-          >
-            View All Spaces
-          </button>
         </div>
       </div>
     </section>
