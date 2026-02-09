@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,8 +64,10 @@ const ListEditor = ({ title, items, onChange, fields }: { title: string, items: 
     );
 };
 
-const AdminAddSpace = () => {
+const AdminEditSpace = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -93,6 +95,39 @@ const AdminAddSpace = () => {
     const [newImage, setNewImage] = useState("");
     const [newAmenity, setNewAmenity] = useState("");
     const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        const fetchSpace = async () => {
+            try {
+                const res = await axios.get(`/api/spaces/${id}`);
+                const data = res.data;
+
+                setFormData({
+                    name: data.name || "",
+                    type: data.type || "coworking",
+                    description: data.description || "",
+                    address: data.address || "", // Currently not in schema explicitly but might come from location
+                    city: data.city || "Bangalore",
+                    location: data.location || "",
+                    price: data.price || 0,
+                    seats: data.seats || 0,
+                    availableSeats: data.availableSeats || 0,
+                    amenities: data.amenities || [],
+                    images: data.images || [],
+                    snapshot: data.snapshot || { capacity: "", area: "", lock_in: "" },
+                    highlights: data.highlights || [],
+                    commercials: data.commercials || [],
+                    compliance: data.compliance || []
+                });
+                setLoading(false);
+            } catch (err) {
+                console.error(err);
+                toast.error("Failed to load workspace details. Ensure backend is running.");
+                setLoading(false);
+            }
+        };
+        if (id) fetchSpace();
+    }, [id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { id, value } = e.target;
@@ -170,27 +205,20 @@ const AdminAddSpace = () => {
     };
 
     const handleSubmit = async () => {
-        if (!formData.name || !formData.price) {
-            toast.error("Name and Price are required!");
-            return;
-        }
-
         setSaving(true);
         try {
-            // Generate a random numeric ID for compatibility with existing schema/frontend
-            // Using timestamp + discrete random to ensure Uniqueness
-            const numericId = Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000);
-
-            await axios.post(`/api/spaces`, { ...formData, id: numericId });
-            toast.success("Workspace created successfully");
+            await axios.put(`/api/spaces/${id}`, formData);
+            toast.success("Workspace updated successfully");
             navigate("/admin/spaces");
         } catch (err) {
             console.error(err);
-            toast.error("Failed to create workspace");
+            toast.error("Failed to update workspace");
         } finally {
             setSaving(false);
         }
     };
+
+    if (loading) return <div className="p-8 text-center">Loading...</div>;
 
     const commonAmenities = ['WiFi', 'Coffee', 'Meeting Rooms', 'Reception', 'Power Backup', 'AC', 'Parking', 'Printers', 'Cleaning', 'Security'];
 
@@ -201,12 +229,12 @@ const AdminAddSpace = () => {
                     <Button variant="ghost" onClick={() => navigate("/admin/spaces")} className="pl-0 hover:pl-2 transition-all mb-1 h-auto py-1">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Spaces
                     </Button>
-                    <h1 className="text-2xl font-bold text-navy">Add New Workspace</h1>
+                    <h1 className="text-2xl font-bold text-navy">Edit Workspace</h1>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" onClick={() => navigate("/admin/spaces")}>Cancel</Button>
                     <Button onClick={handleSubmit} disabled={saving} className="bg-teal hover:bg-teal/90 text-white shadow-lg shadow-teal/20">
-                        {saving ? "Publishing..." : <><Save className="w-4 h-4 mr-2" /> Publish Space</>}
+                        {saving ? "Saving..." : <><Save className="w-4 h-4 mr-2" /> Save Changes</>}
                     </Button>
                 </div>
             </div>
@@ -372,10 +400,10 @@ const AdminAddSpace = () => {
                             />
                         </CardContent>
                     </Card>
-                </div >
+                </div>
 
                 {/* Right Column - Media & Amenities */}
-                < div className="space-y-6" >
+                <div className="space-y-6">
                     <Card>
                         <CardHeader><CardTitle>Amenities</CardTitle></CardHeader>
                         <CardContent>
@@ -412,7 +440,6 @@ const AdminAddSpace = () => {
                                 />
                                 {uploading && <p className="text-xs text-teal animate-pulse font-medium">Uploading image...</p>}
                             </div>
-
                             <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
                                 {formData.images.map((img, index) => (
                                     <div key={index} className="group relative flex items-center gap-3 p-2 bg-gray-50 rounded border hover:border-teal transition-colors">
@@ -438,10 +465,10 @@ const AdminAddSpace = () => {
                             </div>
                         </CardContent>
                     </Card>
-                </div >
-            </div >
-        </div >
+                </div>
+            </div>
+        </div>
     );
 };
 
-export default AdminAddSpace;
+export default AdminEditSpace;

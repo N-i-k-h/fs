@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import workspaces from "../data/workspaces";
 import { Button } from "@/components/ui/button";
 import { MapPin, Filter, ChevronDown, Check, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
+import axios from "axios";
 import {
   Select,
   SelectContent,
@@ -50,11 +50,25 @@ const SearchPage = () => {
   const [selectedAvailability, setSelectedAvailability] = useState(initialSeats);
   const [selectedAmenities, setSelectedAmenities] = useState(initialAmenities);
 
+  const [workspaces, setWorkspaces] = useState([]);
   const [filteredSpaces, setFilteredSpaces] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const [amenitiesOpen, setAmenitiesOpen] = useState(false);
   const amenitiesRef = useRef(null);
+
+  // Fetch Data from API
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        const res = await axios.get("/api/spaces");
+        setWorkspaces(res.data);
+      } catch (error) {
+        console.error("Error fetching spaces:", error);
+      }
+    };
+    fetchSpaces();
+  }, []);
 
   // --- FILTER & SYNC LOGIC ---
   const updateFilters = (updates) => {
@@ -126,27 +140,45 @@ const SearchPage = () => {
       // 2. Search Text Scoring (Fuzzy-ish)
       let score = 0;
       if (lowerQ) {
+        // Construct a highly descriptive search blob
         let searchableText = [
           space.name,
           space.city,
-          space.location,
+          space.location, // This maps to micro-market or specific location
           space.type,
           space.description,
           ...(space.amenities || []),
           ...(space.highlights?.map((h) => h.title + " " + h.desc) || []),
           space.price.toString(),
+          space.seats.toString(),
+          space.snapshot?.area || "", // Include area in search
         ].join(" ").toLowerCase();
 
-        // Enrich text
-        if (space.price < 15000) searchableText += " budget cheap affordable economy low cost";
+        // Enrich text for broader matching
+        if (space.price < 10000) searchableText += " budget cheap affordable economy low cost 10k";
+        if (space.price >= 10000 && space.price <= 20000) searchableText += " mid-range 10k 20k";
+        if (space.price > 20000) searchableText += " premium luxury expensive high-end 20k";
+
         if (space.type === "coworking" || space.description.includes("startup")) searchableText += " startup start-up start up";
         if (space.type === "private") searchableText += " cabin private office suite";
         if (space.type === "managed") searchableText += " enterprise managed floor";
-        // Manual common typo fixes for demonstration
+
+        // Manual common typo fixes & synonyms
         if (space.location.toLowerCase().includes("koramangala")) searchableText += " kormangala kormangla";
+        if (space.location.toLowerCase().includes("indiranagar")) searchableText += " indira nagar";
         if (space.city === "Bangalore") searchableText += " bengaluru";
         if (space.city === "Hyderabad") searchableText += " hyd";
         if (space.city === "Mumbai") searchableText += " bombay";
+
+        // Logic for "under X" queries
+        if (normalizedQ.includes("under") || normalizedQ.includes("below")) {
+          const priceMatch = normalizedQ.match(/(\d+)k?/);
+          if (priceMatch) {
+            let limit = parseInt(priceMatch[1]);
+            if (normalizedQ.includes("k")) limit *= 1000;
+            if (space.price <= limit) score += 50;
+          }
+        }
 
         const tokens = normalizedQ.split(/[\s,]+/).filter((t) => t && !stopWords.includes(t));
 
@@ -154,10 +186,13 @@ const SearchPage = () => {
         tokens.forEach((token) => {
           if (searchableText.includes(token)) {
             score += 10; // Base match score
-            // Bonus points for specific field matches (simulated via regex or strict includes check on fields if needed, but text blob is fine for now)
-            if (space.location.toLowerCase().includes(token)) score += 15; // High boost for location
-            if (space.city.toLowerCase().includes(token)) score += 5;
-            if (space.name.toLowerCase().includes(token)) score += 5;
+
+            // SIGNIFICANT BOOSTS for User Priorities:
+            if (space.location.toLowerCase().includes(token)) score += 30; // Micro-market / Location priority
+            if (space.city.toLowerCase().includes(token)) score += 20;     // City priority
+            if (space.name.toLowerCase().includes(token)) score += 25;     // Name priority
+            if (space.price.toString().includes(token)) score += 15;       // Exact price match
+            if (searchableText.includes(token + " sq ft") || searchableText.includes(token + " sq. ft")) score += 10; // Area match
           }
         });
 
@@ -183,7 +218,7 @@ const SearchPage = () => {
 
     setFilteredSpaces(matchesWithVideo);
     setCurrentPage(1);
-  }, [searchParams]);
+  }, [searchParams, workspaces]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -244,10 +279,19 @@ const SearchPage = () => {
             <Select value={selectedCity || ""} onValueChange={handleCityChange}>
               <SelectTrigger className={`h-10 px-5 w-auto min-w-[140px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedCity ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="City" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="bangalore">Bengaluru</SelectItem>
-                <SelectItem value="mumbai">Mumbai</SelectItem>
-                <SelectItem value="delhi">Delhi</SelectItem>
-                <SelectItem value="hyderabad">Hyderabad</SelectItem>
+                {/* Dynamic Cities */}
+                {Array.from(new Set(workspaces.map(w => w.city))).sort().map(city => (
+                  <SelectItem key={city} value={city.toLowerCase()}>{city}</SelectItem>
+                ))}
+                {/* Fallback if no data or just to ensure major cities are always an option if desired, though Set covers it if data exists */}
+                {workspaces.length === 0 && (
+                  <>
+                    <SelectItem value="bangalore">Bengaluru</SelectItem>
+                    <SelectItem value="mumbai">Mumbai</SelectItem>
+                    <SelectItem value="delhi">Delhi</SelectItem>
+                    <SelectItem value="hyderabad">Hyderabad</SelectItem>
+                  </>
+                )}
               </SelectContent>
             </Select>
 

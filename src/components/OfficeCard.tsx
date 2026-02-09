@@ -17,6 +17,15 @@ interface OfficeCardProps {
   rating?: number;
 }
 
+const getImageUrl = (url: string) => {
+  if (!url) return "";
+  if (url.startsWith("http") || url.startsWith("data:")) return url;
+
+  // Normalize slashes for Windows paths
+  const cleanUrl = url.replace(/\\/g, '/');
+  return `http://localhost:5000${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
+};
+
 const OfficeCard = ({ id, image, name, location, price, seats, isFeatured, video, type, rating }: OfficeCardProps) => {
   const navigate = useNavigate();
   const [isSaved, setIsSaved] = useState(false);
@@ -57,7 +66,7 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured, video
       {/* Image Container */}
       <div className="relative h-48 w-full overflow-hidden">
         <img
-          src={image}
+          src={getImageUrl(image) || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />

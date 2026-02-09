@@ -12,10 +12,7 @@ import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ContactModal";
 import { toast } from "sonner";
-import { workspaces } from "@/data/workspaces";
 import mapPlaceholder from "@/assets/map-placeholder.png";
-
-// --- HELPER: SCHEDULE FORM COMPONENT ---
 import axios from "axios";
 
 const ScheduleForm = ({ space }: { space: any }) => {
@@ -211,11 +208,22 @@ const MagnifierContent = ({ src }: { src: string }) => {
   );
 };
 
+// Helper to construct image URL
+const getImageUrl = (url: string) => {
+  if (!url) return "";
+  if (url.startsWith("http") || url.startsWith("data:")) return url;
+
+  // Normalize slashes for Windows paths
+  const cleanUrl = url.replace(/\\/g, '/');
+  return `http://localhost:5000${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
+};
+
 const SpaceDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [space, setSpace] = useState<any>(null);
+  const [relatedSpaces, setRelatedSpaces] = useState<any[]>([]);
 
   // --- LIGHTBOX STATE ---
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -223,19 +231,31 @@ const SpaceDetail = () => {
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-    const foundSpace = workspaces.find(s => String(s.id) === id);
-    if (foundSpace) {
-      setSpace(foundSpace);
-    } else {
-      toast.error("Space not found");
-      navigate("/search");
-    }
+    const fetchData = async () => {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      try {
+        const res = await axios.get(`/api/spaces/${id}`);
+        const currentSpace = res.data;
+        setSpace(currentSpace);
+
+        // Fetch related spaces (same city)
+        try {
+          const allRes = await axios.get('/api/spaces');
+          setRelatedSpaces(allRes.data.filter((s: any) => s.city === currentSpace.city && s._id !== currentSpace._id && s.id !== currentSpace.id));
+        } catch (e) {
+          console.error("Failed to fetch related spaces");
+        }
+
+      } catch (err) {
+        toast.error("Space not found");
+        navigate("/search");
+      }
+    };
+    if (id) fetchData();
 
     if (searchParams.get("action") === "tour" || searchParams.get("action") === "quote") {
       setTimeout(() => {
         formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-        // Optionally focus first input
       }, 500);
     }
   }, [id, navigate, searchParams]);
@@ -348,21 +368,21 @@ const SpaceDetail = () => {
           <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[400px] md:h-[500px] mb-8 rounded-2xl overflow-hidden">
             {/* Main Large Image (2x2) */}
             <div className="col-span-2 row-span-2 relative cursor-pointer group" onClick={() => openLightbox(0)}>
-              <img src={space.images[0]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Main" />
+              <img src={getImageUrl(space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Main" />
               <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
             </div>
             {/* Secondary Images */}
             <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(1)}>
-              <img src={space.images[1] || space.images[0]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 2" />
+              <img src={getImageUrl(space.images[1] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 2" />
             </div>
             <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(2 % space.images.length)}>
-              <img src={space.images[2] || space.images[0]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 3" />
+              <img src={getImageUrl(space.images[2] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 3" />
             </div>
             <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(3 % space.images.length)}>
-              <img src={space.images[3] || space.images[0]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 4" />
+              <img src={getImageUrl(space.images[3] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 4" />
             </div>
             <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(4 % space.images.length)}>
-              <img src={space.images[4] || space.images[0]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 5" />
+              <img src={getImageUrl(space.images[4] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 5" />
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-lg hover:bg-black/40 transition-colors">
                 +{space.images.length} Photos
               </div>
@@ -551,10 +571,10 @@ const SpaceDetail = () => {
             <h2 className="text-2xl font-bold text-navy mb-6">People also viewed</h2>
             {/* Just a grid of similar items from workspaces, filter by same city */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {workspaces.filter(w => w.city === space.city && w.id !== space.id).slice(0, 3).map(w => (
-                <div key={w.id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-gray-100 cursor-pointer" onClick={() => navigate(`/space/${w.id}`)}>
+              {relatedSpaces.slice(0, 3).map(w => (
+                <div key={w.id || w._id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-gray-100 cursor-pointer" onClick={() => navigate(`/space/${w.id || w._id}`)}>
                   <div className="h-48 overflow-hidden">
-                    <img src={w.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={w.name} />
+                    <img src={getImageUrl(w.images[0])} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={w.name} />
                   </div>
                   <div className="p-4">
                     <p className="text-xs font-bold text-teal uppercase tracking-wide mb-1">{w.location}</p>
@@ -573,7 +593,7 @@ const SpaceDetail = () => {
       {lightboxOpen && (
         <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-200" onClick={closeLightbox}>
           <div className="relative w-full flex-1 flex items-center justify-center overflow-hidden p-4 pb-24" onClick={(e) => e.stopPropagation()}>
-            <MagnifierContent src={space.images[currentImageIndex]} />
+            <MagnifierContent src={getImageUrl(space.images[currentImageIndex])} />
           </div>
           <button onClick={(e) => { e.stopPropagation(); closeLightbox(); }} className="absolute top-4 right-4 bg-black/50 p-3 rounded-full text-white z-[110] border border-white/20"><X className="w-6 h-6" /></button>
           <button onClick={prevImage} className="absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-black/40 hover:bg-teal rounded-full text-white z-[110]"><ChevronLeft className="w-8 h-8" /></button>

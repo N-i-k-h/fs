@@ -1,8 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 
 export const AIFloatingButton = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Hide on admin routes
+    if (location.pathname.startsWith("/admin")) return null;
 
     return (
         <button

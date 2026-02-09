@@ -15,12 +15,18 @@ router.get('/', async (req, res) => {
 // Get Single Space
 router.get('/:id', async (req, res) => {
     try {
-        let space = await Space.findOne({ id: req.params.id });
-        if (!space) {
-            if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-                space = await Space.findById(req.params.id);
-            }
+        let space;
+
+        // Check if the ID provided is numeric (our custom ID)
+        if (!isNaN(req.params.id)) {
+            space = await Space.findOne({ id: req.params.id });
         }
+
+        // If not found by numeric ID, check if it's a valid MongoDB ObjectId
+        if (!space && req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+            space = await Space.findById(req.params.id);
+        }
+
         if (!space) return res.status(404).json({ message: 'Space not found' });
         res.json(space);
     } catch (err) {
@@ -44,13 +50,15 @@ router.post('/', async (req, res) => {
 // Update Space (Admin)
 router.put('/:id', async (req, res) => {
     try {
-        // Handle update by custom numeric ID or Mongo ID
-        let query = { id: req.params.id };
-        if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        let query;
+
+        if (!isNaN(req.params.id)) {
+            query = { id: req.params.id };
+        } else if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
             query = { _id: req.params.id };
-        } else if (isNaN(req.params.id)) {
-            // If it's not a number and not an ObjectID, try _id again just in case or fail
-            query = { _id: req.params.id };
+        } else {
+            // Invalid ID format
+            return res.status(400).json({ message: 'Invalid ID format' });
         }
 
         const updatedSpace = await Space.findOneAndUpdate(query, req.body, { new: true });
@@ -64,9 +72,15 @@ router.put('/:id', async (req, res) => {
 // Delete Space (Admin)
 router.delete('/:id', async (req, res) => {
     try {
-        let query = { id: req.params.id };
-        if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        let query;
+
+        if (!isNaN(req.params.id)) {
+            query = { id: req.params.id };
+        } else if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
             query = { _id: req.params.id };
+        } else {
+            // Invalid ID format
+            return res.status(400).json({ message: 'Invalid ID format' });
         }
 
         const deletedSpace = await Space.findOneAndDelete(query);

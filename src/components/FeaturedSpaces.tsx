@@ -14,14 +14,7 @@ import vid4 from "@/assets/manyathy2.mp4";
 import vid5 from "@/assets/Realistic_Coworking_Space_Video_Generation.mp4";
 import vid6 from "@/assets/Hero_Section_Video_Prompt_Generation.mp4";
 
-const offices = [
-  { id: "1", image: office1, name: "CoWrks RMZ Ecoworld", location: "Bellandur, Bangalore", price: 13500, seats: 55, isFeatured: true, video: vid1 },
-  { id: "2", image: office2, name: "WeWork Embassy Golf Links", location: "Koramangala, Bangalore", price: 18000, seats: 30, isFeatured: false, video: vid2 },
-  { id: "3", image: office3, name: "Smartworks Outer Ring Road", location: "HSR Layout, Bangalore", price: 12000, seats: 45, isFeatured: true, video: vid3 },
-  { id: "4", image: office4, name: "Awfis Whitefield", location: "Whitefield, Bangalore", price: 9500, seats: 20, isFeatured: false, video: vid4 },
-  { id: "5", image: office5, name: "91Springboard Indiranagar", location: "Indiranagar, Bangalore", price: 15000, seats: 35, isFeatured: false, video: vid5 },
-  { id: "6", image: office6, name: "Innov8 Brigade Road", location: "MG Road, Bangalore", price: 16500, seats: 25, isFeatured: true, video: vid6 },
-];
+const offices = [];
 
 import { useNavigate } from "react-router-dom";
 

@@ -134,6 +134,11 @@ const AdminSpaces = () => {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
+                                                    <Link to={`/admin/edit-space/${space._id}`}>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50">
+                                                            <Edit className="w-4 h-4" />
+                                                        </Button>
+                                                    </Link>
                                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => deleteSpace(space._id)}>
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>

@@ -8,15 +8,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-const MICRO_MARKETS = {
-    bangalore: ["Koramangala", "Indiranagar", "HSR Layout", "Whitefield", "MG Road"],
-    mumbai: ["Bandra", "Andheri", "Powai", "Lower Parel", "BKC"],
-    delhi: ["Connaught Place", "Saket", "Nehru Place", "Hauz Khas", "Dwarka"],
-    hyderabad: ["Hitech City", "Gachibowli", "Jubilee Hills", "Banjara Hills", "Madhapur"],
-};
+import axios from "axios";
 
 const SearchDirectly = () => {
     const navigate = useNavigate();
@@ -24,7 +18,54 @@ const SearchDirectly = () => {
     const [area, setArea] = useState("");
     const [seats, setSeats] = useState("");
     const [budget, setBudget] = useState("");
-    const [building, setBuilding] = useState("");
+
+    // State for dynamic data
+    const [locations, setLocations] = useState<Record<string, string[]>>({});
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const res = await axios.get('/api/spaces');
+                const spaces = res.data;
+
+                // Process spaces to extract cities and their areas
+                const locMap: Record<string, Set<string>> = {};
+
+                spaces.forEach((space: any) => {
+                    const c = space.city || "Bangalore"; // Default if missing
+                    const a = space.location || "";
+
+                    if (!locMap[c]) {
+                        locMap[c] = new Set();
+                    }
+                    if (a) {
+                        locMap[c].add(a);
+                    }
+                });
+
+                // Convert Sets to Arrays
+                const finalLocs: Record<string, string[]> = {};
+                Object.keys(locMap).forEach(key => {
+                    finalLocs[key] = Array.from(locMap[key]);
+                });
+
+                setLocations(finalLocs);
+
+                // If only one city exists, auto-select it
+                const cities = Object.keys(finalLocs);
+                if (cities.length === 1) {
+                    setCity(cities[0]);
+                }
+            } catch (err) {
+                console.error("Failed to fetch locations", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchLocations();
+    }, []);
 
     const handleSearch = () => {
         const params = new URLSearchParams();
@@ -34,6 +75,9 @@ const SearchDirectly = () => {
         if (budget) params.append("price", budget);
         navigate(`/search?${params.toString()}`);
     };
+
+    const availableCities = Object.keys(locations);
+    const availableAreas = city ? locations[city] : [];
 
     return (
         <section className="relative py-8 px-4 bg-gray-50">
@@ -54,13 +98,12 @@ const SearchDirectly = () => {
                             </label>
                             <Select onValueChange={(val) => { setCity(val); setArea(""); }} value={city}>
                                 <SelectTrigger className="h-12 bg-gray-50 border-transparent hover:bg-gray-100 focus:bg-white transition-all font-semibold text-navy">
-                                    <SelectValue placeholder="Select City" />
+                                    <SelectValue placeholder={loading ? "Loading..." : "Select City"} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="bangalore">Bangalore</SelectItem>
-                                    <SelectItem value="mumbai">Mumbai</SelectItem>
-                                    <SelectItem value="delhi">Delhi</SelectItem>
-                                    <SelectItem value="hyderabad">Hyderabad</SelectItem>
+                                    {availableCities.map((c) => (
+                                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -76,8 +119,8 @@ const SearchDirectly = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all-areas">All Areas</SelectItem>
-                                    {city && MICRO_MARKETS[city]?.map((m) => (
-                                        <SelectItem key={m} value={m.toLowerCase().replace(/\s+/g, '-')}>{m}</SelectItem>
+                                    {availableAreas.map((a) => (
+                                        <SelectItem key={a} value={a}>{a}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>

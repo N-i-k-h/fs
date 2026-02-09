@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { workspaces } from "@/data/workspaces";
+
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import jsPDF from "jspdf";
@@ -34,12 +34,15 @@ const GetQuotePage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        const found = workspaces.find((s) => String(s.id) === id);
-        if (found) {
-            setSpace(found);
-        } else {
-            navigate("/search");
-        }
+        const fetchData = async () => {
+            try {
+                const res = await axios.get(`/api/spaces/${id}`);
+                setSpace(res.data);
+            } catch (err) {
+                navigate("/search");
+            }
+        };
+        if (id) fetchData();
     }, [id, navigate]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

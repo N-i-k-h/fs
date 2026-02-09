@@ -18,6 +18,7 @@ import AdminRequests from "./pages/admin/AdminRequests";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSpaces from "./pages/admin/AdminSpaces";
 import AdminAddSpace from "./pages/admin/AdminAddSpace";
+import AdminEditSpace from "./pages/admin/AdminEditSpace";
 import AdminQuotes from "./pages/admin/AdminQuotes";
 import AdminBrochures from "./pages/admin/AdminBrochures";
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -66,6 +67,7 @@ const App = () => (
                 <Route path="spaces" element={<AdminSpaces />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="add-space" element={<AdminAddSpace />} />
+                <Route path="edit-space/:id" element={<AdminEditSpace />} />
               </Route>
 
               {/* 404 Page */}
