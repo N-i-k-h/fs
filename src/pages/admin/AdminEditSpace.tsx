@@ -72,7 +72,7 @@ const AdminEditSpace = () => {
 
     const [formData, setFormData] = useState({
         name: "",
-        type: "coworking",
+        type: ["coworking"] as string[], // Changed to array for multiple categories
         description: "",
         address: "",
         city: "bangalore",
@@ -104,7 +104,7 @@ const AdminEditSpace = () => {
 
                 setFormData({
                     name: data.name || "",
-                    type: data.type || "coworking",
+                    type: Array.isArray(data.type) ? data.type : [data.type || "coworking"], // Handle both array and string
                     description: data.description || "",
                     address: data.address || "", // Currently not in schema explicitly but might come from location
                     city: data.city || "Bangalore",
@@ -141,6 +141,22 @@ const AdminEditSpace = () => {
 
     const handleSelectChange = (key: string, value: string) => {
         setFormData(prev => ({ ...prev, [key]: value }));
+    };
+
+    const handleCategoryToggle = (category: string) => {
+        setFormData(prev => {
+            const current = prev.type;
+            if (current.includes(category)) {
+                // Don't allow removing the last category
+                if (current.length === 1) {
+                    toast.error("At least one category must be selected");
+                    return prev;
+                }
+                return { ...prev, type: current.filter(t => t !== category) };
+            } else {
+                return { ...prev, type: [...current, category] };
+            }
+        });
     };
 
     const handleAmenityToggle = (amenity: string) => {
@@ -250,18 +266,31 @@ const AdminEditSpace = () => {
                                     <Label htmlFor="name">Space Name</Label>
                                     <Input id="name" value={formData.name} onChange={handleChange} placeholder="e.g. WeWork Galaxy" />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="type">Space Type</Label>
-                                    <Select value={formData.type} onValueChange={(val) => handleSelectChange("type", val)}>
-                                        <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="private-office">Private Office</SelectItem>
-                                            <SelectItem value="hot-desk">Hot Desk</SelectItem>
-                                            <SelectItem value="coworking">Coworking</SelectItem>
-                                            <SelectItem value="managed">Managed Office</SelectItem>
-                                            <SelectItem value="enterprise">Enterprise</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                <div className="space-y-2 md:col-span-2">
+                                    <Label>Workspace Categories (Select one or more)</Label>
+                                    <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border">
+                                        {[
+                                            { value: "private-office", label: "Private Office" },
+                                            { value: "hot-desk", label: "Hot Desk" },
+                                            { value: "coworking", label: "Coworking" },
+                                            { value: "managed", label: "Managed Office" },
+                                            { value: "enterprise", label: "Enterprise" }
+                                        ].map((category) => (
+                                            <div
+                                                key={category.value}
+                                                onClick={() => handleCategoryToggle(category.value)}
+                                                className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium border transition-all ${formData.type.includes(category.value)
+                                                        ? "bg-teal text-white border-teal shadow-md"
+                                                        : "bg-white text-gray-600 border-gray-200 hover:border-teal/50 hover:bg-teal/5"
+                                                    }`}
+                                            >
+                                                {category.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-xs text-gray-500 italic">
+                                        Selected: {formData.type.map(t => t.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())).join(', ')}
+                                    </p>
                                 </div>
                             </div>
                             <div className="space-y-2">

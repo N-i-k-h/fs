@@ -46,7 +46,7 @@ const FeaturedSpaces = () => {
             Featured Spaces
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our handpicked selection of premium coworking spaces across Bangalore
+            Explore handpicked workspaces across Bengaluru's prime business districts.
           </p>
         </div>
 

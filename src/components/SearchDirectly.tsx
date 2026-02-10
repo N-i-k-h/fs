@@ -1,4 +1,4 @@
-import { Search, MapPin, Users, Building, Coins } from "lucide-react";
+import { Search, MapPin, Users, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,7 +17,6 @@ const SearchDirectly = () => {
     const [city, setCity] = useState("");
     const [area, setArea] = useState("");
     const [seats, setSeats] = useState("");
-    const [budget, setBudget] = useState("");
 
     // State for dynamic data
     const [locations, setLocations] = useState<Record<string, string[]>>({});
@@ -72,7 +71,6 @@ const SearchDirectly = () => {
         if (city) params.append("location", city);
         if (area && area !== "all-areas") params.append("market", area);
         if (seats) params.append("seats", seats);
-        if (budget) params.append("price", budget);
         navigate(`/search?${params.toString()}`);
     };
 
@@ -89,7 +87,7 @@ const SearchDirectly = () => {
                         <h3 className="text-2xl font-bold">Search Directly</h3>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-[1.5fr_1.5fr_1fr_1fr_auto] gap-4 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-[1.5fr_1.5fr_1fr_auto] gap-4 items-end">
 
                         {/* City Dropdown */}
                         <div className="space-y-2">
@@ -126,10 +124,10 @@ const SearchDirectly = () => {
                             </Select>
                         </div>
 
-                        {/* Seats */}
+                        {/* Number of Employees */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                                <Users className="w-3 h-3" /> Seats
+                                <Users className="w-3 h-3" /> Number of Employees
                             </label>
                             <Input
                                 placeholder="e.g. 10"
@@ -140,23 +138,7 @@ const SearchDirectly = () => {
                             />
                         </div>
 
-                        {/* Budget */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                                <Coins className="w-3 h-3" /> Budget
-                            </label>
-                            <Select onValueChange={setBudget} value={budget}>
-                                <SelectTrigger className="h-12 bg-gray-50 border-transparent hover:bg-gray-100 focus:bg-white transition-all font-semibold text-navy">
-                                    <SelectValue placeholder="Range" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="below-10k">&lt; ₹10k</SelectItem>
-                                    <SelectItem value="10k-20k">₹10k - ₹20k</SelectItem>
-                                    <SelectItem value="20k-50k">₹20k - ₹50k</SelectItem>
-                                    <SelectItem value="50k-plus">₹50k+</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+
 
                         {/* Search Button */}
                         <div className="">

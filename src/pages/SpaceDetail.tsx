@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import {
   ArrowLeft, MapPin, Users, IndianRupee, CheckCircle, Car, Wifi, Coffee,
   Phone, Calendar, User, Printer, Zap, Shield, Tv,
-  X, ChevronLeft, ChevronRight, Heart, FileText, Info, Building, Lock
+  X, ChevronLeft, ChevronRight, Heart, FileText, Info, Building, Lock, Star
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -268,6 +268,11 @@ const SpaceDetail = () => {
     setIsSaved(savedIds.includes(String(id)) || savedIds.includes(Number(id)));
   }, [id]);
 
+  // --- RENT CALCULATOR STATE ---
+  const [numEmployees, setNumEmployees] = useState(10);
+  const [numMeetingRooms, setNumMeetingRooms] = useState(1);
+  const [userOfficeLocation, setUserOfficeLocation] = useState("");
+
   const toggleSave = () => {
     const savedIds = JSON.parse(localStorage.getItem("savedSpaces") || "[]");
     const strId = String(id);
@@ -358,11 +363,36 @@ const SpaceDetail = () => {
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-[1400px]">
 
-          {/* Breadcrumb / Back */}
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6 text-sm">
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Search</span>
           </button>
+
+          {/* Top Information Ribbon - Quick Scan Details */}
+          <div className="bg-gradient-to-r from-navy to-navy/95 rounded-xl p-4 mb-6 shadow-lg border border-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center md:text-left">
+                <p className="text-[10px] uppercase font-bold text-teal tracking-widest mb-1">Micro Market</p>
+                <p className="text-white font-bold text-lg">{space.location || 'Central Bangalore'}</p>
+                <p className="text-white/60 text-xs">{space.city || 'Bangalore'}</p>
+              </div>
+              <div className="text-center md:text-left">
+                <p className="text-[10px] uppercase font-bold text-teal tracking-widest mb-1">Total Seats</p>
+                <p className="text-white font-bold text-lg">{space.seats || 0}</p>
+                <p className="text-white/60 text-xs">Building Capacity</p>
+              </div>
+              <div className="text-center md:text-left">
+                <p className="text-[10px] uppercase font-bold text-teal tracking-widest mb-1">Available Now</p>
+                <p className="text-white font-bold text-lg">{space.availableSeats || space.seats || 0}</p>
+                <p className="text-white/60 text-xs">Ready to Move</p>
+              </div>
+              <div className="text-center md:text-left">
+                <p className="text-[10px] uppercase font-bold text-teal tracking-widest mb-1">Price Range</p>
+                <p className="text-white font-bold text-lg">₹{space.price?.toLocaleString() || '0'}</p>
+                <p className="text-white/60 text-xs">Per Seat/Month</p>
+              </div>
+            </div>
+          </div>
 
           {/* GALLERY GRID - Top Layout */}
           <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[400px] md:h-[500px] mb-8 rounded-2xl overflow-hidden">
@@ -404,6 +434,38 @@ const SpaceDetail = () => {
                 <div className="flex items-center gap-2 text-gray-500">
                   <MapPin className="w-4 h-4" />
                   <span>{displayAddress}</span>
+                </div>
+              </div>
+
+              {/* Brand & Pricing Ribbon */}
+              <div className="bg-gradient-to-r from-teal/10 to-blue-50 rounded-xl p-5 border border-teal/20 shadow-sm">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    {/* Operator Logo Placeholder */}
+                    <div className="w-16 h-16 bg-white rounded-lg border-2 border-teal/30 flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Building className="w-8 h-8 text-teal" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-1">Operated By</p>
+                      <p className="font-bold text-navy text-lg">{space.operator || space.name}</p>
+                      <p className="text-xs text-gray-500">Direct Landlord Connection</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="text-center md:text-right">
+                      <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-1">Quoted Price</p>
+                      <p className="text-3xl font-bold text-teal">₹{space.price?.toLocaleString() || '0'}</p>
+                      <p className="text-xs text-gray-500">Per Seat / Month</p>
+                    </div>
+                    <button
+                      onClick={() => setContactModalOpen(true)}
+                      className="bg-navy hover:bg-teal text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <Phone className="w-4 h-4" />
+                      Get in Touch Directly
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -481,6 +543,62 @@ const SpaceDetail = () => {
                 </div>
               </div>
 
+              {/* Building Information - Detailed */}
+              <div>
+                <h3 className="text-lg font-bold text-navy mb-4 flex items-center gap-2"><Building className="w-5 h-5 text-teal" /> Building Information</h3>
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                  <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                    {/* Left Column */}
+                    <div className="divide-y divide-gray-100">
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Building Name</p>
+                        <p className="font-bold text-navy">{space.buildingName || space.name}</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Location</p>
+                        <p className="font-bold text-navy">{space.location}, {space.city}</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Year of Construction</p>
+                        <p className="font-bold text-navy">{space.yearBuilt || '2018'}</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Centre Operational Since</p>
+                        <p className="font-bold text-navy">{space.operationalSince || '2019'}</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Number of Floors</p>
+                        <p className="font-bold text-navy">{space.floors || '8 Floors'}</p>
+                      </div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="divide-y divide-gray-100">
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Area Per Floor</p>
+                        <p className="font-bold text-navy">{space.areaPerFloor || '12,000 Sq. Ft.'}</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Seats Per Floor</p>
+                        <p className="font-bold text-navy">{space.seatsPerFloor || Math.floor((space.seats || 100) / 8)}</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Price Per Seat</p>
+                        <p className="font-bold text-teal text-lg">₹{space.price?.toLocaleString() || '0'}/month</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Car Parking Charges</p>
+                        <p className="font-bold text-navy">{space.parkingCharges || '₹3,000/month per bay'}</p>
+                      </div>
+                      <div className="p-4 hover:bg-gray-50/50 transition-colors">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Parking Availability</p>
+                        <p className="font-bold text-navy">{space.parkingRatio || '1:1000 Sq.Ft.'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Amenities */}
               <div>
                 <h3 className="text-lg font-bold text-navy mb-4 flex items-center gap-2"><Coffee className="w-5 h-5 text-teal" /> Included Amenities</h3>
@@ -497,9 +615,46 @@ const SpaceDetail = () => {
                 </div>
               </div>
 
-              {/* Map */}
+              {/* Map & Distance Calculator */}
               <div>
-                <h3 className="text-lg font-bold text-navy mb-4 flex items-center gap-2"><MapPin className="w-5 h-5 text-teal" /> Location</h3>
+                <h3 className="text-lg font-bold text-navy mb-4 flex items-center gap-2"><MapPin className="w-5 h-5 text-teal" /> Location & Commute</h3>
+
+                {/* Distance Calculator Input */}
+                <div className="bg-white rounded-xl p-4 border border-gray-200 mb-4 shadow-sm">
+                  <label className="text-xs font-bold text-gray-600 mb-2 block">Your Office Location (Optional)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={userOfficeLocation}
+                      onChange={(e) => setUserOfficeLocation(e.target.value)}
+                      placeholder="Enter your office address..."
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                    />
+                    <Button
+                      size="sm"
+                      className="bg-teal hover:bg-teal/90"
+                      disabled={!userOfficeLocation.trim()}
+                    >
+                      Calculate
+                    </Button>
+                  </div>
+                  {userOfficeLocation.trim() && (
+                    <div className="mt-3 p-3 bg-teal/5 rounded-lg border border-teal/20">
+                      <div className="grid grid-cols-2 gap-2 text-center">
+                        <div>
+                          <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">Distance</p>
+                          <p className="text-lg font-bold text-navy">~8.5 km</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">Travel Time</p>
+                          <p className="text-lg font-bold text-navy">~25 min</p>
+                        </div>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-2 text-center italic">Estimated via road</p>
+                    </div>
+                  )}
+                </div>
+
                 <div className="h-64 bg-gray-100 rounded-xl overflow-hidden relative border border-gray-200 group">
                   <img src={mapPlaceholder} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Map" />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -521,6 +676,78 @@ const SpaceDetail = () => {
             {/* RIGHT COLUMN: Sticky Form */}
             <div className="lg:col-span-1 relative">
               <div className="sticky top-24 space-y-6" ref={formRef}>
+
+                {/* Rent Calculator */}
+                <div className="bg-gradient-to-br from-teal/10 to-blue-50 rounded-2xl p-6 shadow-lg border border-teal/20">
+                  <h3 className="text-lg font-bold text-navy mb-1 flex items-center gap-2">
+                    <IndianRupee className="w-5 h-5 text-teal" />
+                    Rent Calculator
+                  </h3>
+                  <p className="text-xs text-gray-500 mb-4">Estimate your monthly workspace cost</p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold text-gray-600 mb-2 block">Number of Employees</label>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setNumEmployees(Math.max(1, numEmployees - 1))}
+                          className="w-8 h-8 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-bold text-navy"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          value={numEmployees}
+                          onChange={(e) => setNumEmployees(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="flex-1 text-center border border-gray-300 rounded-lg px-3 py-2 font-bold text-navy"
+                          min="1"
+                        />
+                        <button
+                          onClick={() => setNumEmployees(numEmployees + 1)}
+                          className="w-8 h-8 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-bold text-navy"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-gray-600 mb-2 block">Meeting Rooms</label>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setNumMeetingRooms(Math.max(0, numMeetingRooms - 1))}
+                          className="w-8 h-8 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-bold text-navy"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          value={numMeetingRooms}
+                          onChange={(e) => setNumMeetingRooms(Math.max(0, parseInt(e.target.value) || 0))}
+                          className="flex-1 text-center border border-gray-300 rounded-lg px-3 py-2 font-bold text-navy"
+                          min="0"
+                        />
+                        <button
+                          onClick={() => setNumMeetingRooms(numMeetingRooms + 1)}
+                          className="w-8 h-8 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-bold text-navy"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-teal/20">
+                      <p className="text-xs text-gray-500 mb-1">Estimated Monthly Rent</p>
+                      <p className="text-3xl font-bold text-teal">
+                        ₹{((numEmployees * (space?.price || 0)) + (numMeetingRooms * 15000)).toLocaleString()}
+                      </p>
+                      <p className="text-[10px] text-gray-500 mt-1">
+                        {numEmployees} seats × ₹{space?.price?.toLocaleString() || 0} + {numMeetingRooms} rooms × ₹15,000
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100">
                   <h2 className="text-xl font-bold text-navy mb-1">Schedule a Tour</h2>
                   <p className="text-xs text-gray-500 mb-6">Connect with our space concierge and secure your team's new home.</p>
@@ -565,6 +792,107 @@ const SpaceDetail = () => {
               </div>
             </div>
 
+          </div>
+
+          {/* Online Feedback & Reviews */}
+          <div className="mt-16">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-navy">Reviews & Ratings</h2>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star key={star} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-2xl font-bold text-navy">4.8</span>
+                <span className="text-sm text-gray-500">(24 reviews)</span>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Review 1 */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 className="font-bold text-navy">Rajesh Kumar</h4>
+                    <p className="text-xs text-gray-500">Tech Startup Founder</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  "Excellent workspace with great amenities. The location is perfect for our team, and the landlord was very professional throughout the process. Highly recommended for growing startups!"
+                </p>
+                <p className="text-xs text-gray-400 mt-3">Reviewed 2 weeks ago</p>
+              </div>
+
+              {/* Review 2 */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 className="font-bold text-navy">Priya Sharma</h4>
+                    <p className="text-xs text-gray-500">Operations Manager</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4].map((star) => (
+                      <Star key={star} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                    <Star className="w-4 h-4 text-gray-300" />
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  "Great infrastructure and connectivity. The meeting rooms are well-equipped. Only minor issue was parking during peak hours, but overall a solid choice for our operations team."
+                </p>
+                <p className="text-xs text-gray-400 mt-3">Reviewed 1 month ago</p>
+              </div>
+
+              {/* Review 3 */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 className="font-bold text-navy">Amit Patel</h4>
+                    <p className="text-xs text-gray-500">Finance Director</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  "Transparent pricing and excellent value for money. The compliance documentation was all in order, which made our decision much easier. Professional management team."
+                </p>
+                <p className="text-xs text-gray-400 mt-3">Reviewed 3 weeks ago</p>
+              </div>
+
+              {/* Review 4 */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 className="font-bold text-navy">Sneha Reddy</h4>
+                    <p className="text-xs text-gray-500">HR Head</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  "Our team loves the workspace! Modern design, excellent natural lighting, and great community vibe. The amenities are top-notch and maintenance is prompt. Worth every rupee!"
+                </p>
+                <p className="text-xs text-gray-400 mt-3">Reviewed 1 week ago</p>
+              </div>
+            </div>
+
+            <div className="mt-6 text-center">
+              <Button variant="outline" className="px-8">
+                View All Reviews
+              </Button>
+            </div>
           </div>
 
           <div className="mt-16">

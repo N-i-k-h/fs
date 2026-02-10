@@ -10,6 +10,7 @@ import Testimonials from "@/components/Testimonials";
 // import CTABand from "@/components/CTABand";
 import Footer from "@/components/Footer";
 import SearchDirectly from "@/components/SearchDirectly";
+import OurRegions from "@/components/OurRegions";
 
 const Index = () => {
   return (
@@ -21,6 +22,9 @@ const Index = () => {
 
         {/* 2. Structured Search Directly (Overlapping Hero) */}
         <SearchDirectly />
+
+        {/* 2.5. Our Regions */}
+        <OurRegions />
 
         {/* 3. Workspace Categories (Solutions) */}
         <div className="relative z-10">

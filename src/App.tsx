@@ -22,6 +22,8 @@ import AdminEditSpace from "./pages/admin/AdminEditSpace";
 import AdminQuotes from "./pages/admin/AdminQuotes";
 import AdminBrochures from "./pages/admin/AdminBrochures";
 import AdminLogin from "./pages/admin/AdminLogin";
+import ImageUploadExample from "./pages/ImageUploadExample";
+import SimpleUploadExample from "./pages/SimpleUploadExample";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./context/AuthContext";
 import { AIFloatingButton } from "./components/AIFloatingButton";
@@ -45,6 +47,10 @@ const App = () => (
 
               {/* Search Results Page */}
               <Route path="/search" element={<SearchPage />} />
+
+              {/* Image Upload Test Pages */}
+              <Route path="/test-upload" element={<ImageUploadExample />} />
+              <Route path="/test-upload-simple" element={<SimpleUploadExample />} />
 
               {/* Auth Pages */}
               <Route path="/login" element={<Login />} />

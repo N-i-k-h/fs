@@ -47,7 +47,7 @@ const HeroSection = () => {
         </h1>
 
         <p className="text-lg text-black max-w-2xl mb-12 animate-in slide-in-from-bottom-6 duration-700 delay-200 fade-in font-medium">
-          Explore our curated list of premium coworking spaces, private offices, and meeting rooms tailored for your team.
+          An exclusive collection of coworking spaces, private offices, and meeting rooms, tailored for modern teams.
         </p>
 
         {/* Natural Language Search Input - Clean Design */}

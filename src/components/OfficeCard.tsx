@@ -11,6 +11,7 @@ interface OfficeCardProps {
   location: string;
   price: number;
   seats: number;
+  availableSeats?: number;
   isFeatured?: boolean;
   video?: string;
   type?: string;
@@ -26,7 +27,7 @@ const getImageUrl = (url: string) => {
   return `http://localhost:5000${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
 };
 
-const OfficeCard = ({ id, image, name, location, price, seats, isFeatured, video, type, rating }: OfficeCardProps) => {
+const OfficeCard = ({ id, image, name, location, price, seats, availableSeats, isFeatured, video, type, rating }: OfficeCardProps) => {
   const navigate = useNavigate();
   const [isSaved, setIsSaved] = useState(false);
 
@@ -55,6 +56,11 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured, video
   };
 
   const [isHovered, setIsHovered] = useState(false);
+
+  // Calculate vacancy percentage
+  const vacancyPercentage = availableSeats && seats
+    ? Math.round((availableSeats / seats) * 100)
+    : 0;
 
   return (
     <div
@@ -91,6 +97,51 @@ const OfficeCard = ({ id, image, name, location, price, seats, isFeatured, video
         >
           <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
         </button>
+
+        {/* Hover Overlay with Micro-Market Details */}
+        <div className={`absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/90 to-navy/70 backdrop-blur-sm transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'} z-10 flex flex-col justify-end p-4`}>
+          <div className="space-y-2 text-white">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-white/20" />
+              <span className="text-[10px] uppercase tracking-widest font-bold text-teal">Market Insights</span>
+              <div className="h-px flex-1 bg-white/20" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
+                <p className="text-[9px] text-white/60 uppercase tracking-wide font-semibold mb-0.5">Micro Market</p>
+                <p className="font-bold text-white truncate">{location || 'Central Bangalore'}</p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
+                <p className="text-[9px] text-white/60 uppercase tracking-wide font-semibold mb-0.5">Center Name</p>
+                <p className="font-bold text-white truncate">{name}</p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
+                <p className="text-[9px] text-white/60 uppercase tracking-wide font-semibold mb-0.5">Available Seats</p>
+                <p className="font-bold text-teal">{availableSeats || seats} / {seats}</p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
+                <p className="text-[9px] text-white/60 uppercase tracking-wide font-semibold mb-0.5">Price Range</p>
+                <p className="font-bold text-white">₹{price.toLocaleString()}<span className="text-[9px] text-white/60">/seat</span></p>
+              </div>
+            </div>
+
+            {vacancyPercentage > 0 && (
+              <div className="bg-teal/20 backdrop-blur-sm rounded-lg p-2 border border-teal/30 mt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] text-white/80 uppercase tracking-wide font-semibold">Vacancy</span>
+                  <span className="font-bold text-teal text-sm">{vacancyPercentage}%</span>
+                </div>
+                <div className="mt-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-teal rounded-full transition-all duration-500" style={{ width: `${vacancyPercentage}%` }} />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Content */}

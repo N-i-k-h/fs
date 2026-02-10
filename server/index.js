@@ -5,27 +5,18 @@ const cors = require('cors');
 
 const app = express();
 const path = require('path');
-const multer = require('multer');
 const fs = require('fs');
 
-// Ensure uploads directory exists
+// Import Cloudinary configuration
+const { upload } = require('./utils/cloudinary');
+const multer = require('multer');
+
+// Ensure uploads directory exists (for backward compatibility if needed)
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
 
-// Multer Storage Configuration (Local Disk Storage)
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
-const upload = multer({ storage: storage });
 
 // Middleware
 app.use(cors());
@@ -42,19 +33,51 @@ app.use('/api/spaces', require('./routes/spaceRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/requests', require('./routes/requestRoutes'));
 
-// Upload Route (Re-added)
+// Upload Route (Cloudinary)
 app.post('/api/upload', upload.single('image'), (req, res) => {
     try {
+        console.log('Upload request received');
+        console.log('File:', req.file);
+
         if (!req.file) {
+            console.error('No file in request');
             return res.status(400).json({ message: 'No file uploaded' });
         }
-        // Return relative URL path - relying on frontend proxy or same-origin in production
-        const fileUrl = `/uploads/${req.file.filename}`;
-        res.status(200).json({ url: fileUrl });
+
+        // Return Cloudinary URL
+        const fileUrl = req.file.path; // Cloudinary URL is stored in req.file.path
+        console.log('Upload successful:', fileUrl);
+
+        res.status(200).json({
+            url: fileUrl,
+            public_id: req.file.filename // Cloudinary public_id for future reference
+        });
     } catch (err) {
         console.error("Upload Error:", err);
-        res.status(500).json({ message: 'Server upload error' });
+        console.error("Error stack:", err.stack);
+        res.status(500).json({
+            message: 'Server upload error',
+            error: err.message
+        });
     }
+});
+
+// Error handling middleware for multer
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        console.error('Multer Error:', err);
+        return res.status(400).json({
+            message: 'File upload error',
+            error: err.message
+        });
+    } else if (err) {
+        console.error('Server Error:', err);
+        return res.status(500).json({
+            message: 'Server error',
+            error: err.message
+        });
+    }
+    next();
 });
 
 // Database Connection
