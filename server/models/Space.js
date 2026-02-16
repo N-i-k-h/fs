@@ -6,7 +6,7 @@ const spaceSchema = new mongoose.Schema({
     description: { type: String, required: true },
     city: { type: String, required: true },
     location: { type: String, required: true },
-    type: { type: String, required: true }, // 'private-office', 'dedicated-desk', etc.
+    type: { type: [String], required: true }, // Changed to array to support multiple categories
     price: { type: Number, required: true },
     seats: { type: Number, required: true },
     availableSeats: { type: Number, default: 0 }, // New field for currently available seats

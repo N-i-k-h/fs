@@ -37,13 +37,26 @@ router.get('/:id', async (req, res) => {
 // Create New Space (Admin)
 router.post('/', async (req, res) => {
     try {
+        console.log('Received POST request to create space');
+        console.log('Request body:', JSON.stringify(req.body, null, 2));
+
         // Generate a random numeric ID if not provided (for legacy compatibility)
         const id = req.body.id || Math.floor(1000 + Math.random() * 9000);
         const newSpace = new Space({ ...req.body, id });
+
+        console.log('Attempting to save space with ID:', id);
         const savedSpace = await newSpace.save();
+        console.log('Space saved successfully:', savedSpace._id);
+
         res.status(201).json(savedSpace);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        console.error('Error creating space:', err);
+        console.error('Error name:', err.name);
+        console.error('Error message:', err.message);
+        if (err.errors) {
+            console.error('Validation errors:', err.errors);
+        }
+        res.status(400).json({ message: err.message, errors: err.errors });
     }
 });
 

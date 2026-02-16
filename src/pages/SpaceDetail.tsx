@@ -215,7 +215,8 @@ const getImageUrl = (url: string) => {
 
   // Normalize slashes for Windows paths
   const cleanUrl = url.replace(/\\/g, '/');
-  return `http://localhost:5000${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  return `${baseUrl}${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
 };
 
 const SpaceDetail = () => {

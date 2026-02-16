@@ -14,7 +14,7 @@ interface OfficeCardProps {
   availableSeats?: number;
   isFeatured?: boolean;
   video?: string;
-  type?: string;
+  type?: string | string[];
   rating?: number;
 }
 
@@ -24,7 +24,8 @@ const getImageUrl = (url: string) => {
 
   // Normalize slashes for Windows paths
   const cleanUrl = url.replace(/\\/g, '/');
-  return `http://localhost:5000${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  return `${baseUrl}${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
 };
 
 const OfficeCard = ({ id, image, name, location, price, seats, availableSeats, isFeatured, video, type, rating }: OfficeCardProps) => {
@@ -81,7 +82,7 @@ const OfficeCard = ({ id, image, name, location, price, seats, availableSeats, i
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {type && (
             <Badge className="bg-[#002b4d] text-white hover:bg-[#002b4d] text-[10px] uppercase font-bold tracking-wider rounded-sm px-2 py-0.5 shadow-sm">
-              {type.replace("-", " ")}
+              {Array.isArray(type) ? type.map(t => t.replace(/-/g, ' ')).join(', ') : type.replace(/-/g, ' ')}
             </Badge>
           )}
           <Badge className="bg-teal text-white hover:bg-teal text-[10px] uppercase font-bold tracking-wider rounded-sm px-2 py-0.5 shadow-sm flex items-center gap-1 w-fit">

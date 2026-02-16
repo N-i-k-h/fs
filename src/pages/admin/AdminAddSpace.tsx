@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Save, Plus, X, ArrowLeft, Trash2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
+import MultiImageUpload from "@/components/MultiImageUpload";
 
 // --- HELPER COMPONENT: List Editor for Key-Value Pairs ---
 const ListEditor = ({ title, items, onChange, fields }: { title: string, items: any[], onChange: (items: any[]) => void, fields: { key: string, label: string }[] }) => {
@@ -90,9 +91,7 @@ const AdminAddSpace = () => {
         compliance: [] as any[]
     });
 
-    const [newImage, setNewImage] = useState("");
     const [newAmenity, setNewAmenity] = useState("");
-    const [uploading, setUploading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { id, value } = e.target;
@@ -143,47 +142,7 @@ const AdminAddSpace = () => {
         setNewAmenity("");
     };
 
-    const addImage = () => {
-        if (!newImage.trim()) return;
-        setFormData(prev => ({ ...prev, images: [...prev.images, newImage] }));
-        setNewImage("");
-    };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(true);
-        const data = new FormData();
-        data.append("image", file);
-
-        try {
-            const res = await axios.post("/api/upload", data, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            setFormData(prev => ({ ...prev, images: [...prev.images, res.data.url] }));
-            toast.success("Image uploaded successfully");
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to upload image");
-        } finally {
-            setUploading(false);
-        }
-    };
-
-    const removeImage = (index: number) => {
-        setFormData(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
-    };
-
-    const moveImageToFront = (index: number) => {
-        if (index === 0) return;
-        setFormData(prev => {
-            const images = [...prev.images];
-            const [item] = images.splice(index, 1);
-            images.unshift(item);
-            return { ...prev, images };
-        });
-    };
 
     const handleSubmit = async () => {
         if (!formData.name || !formData.price) {
@@ -197,12 +156,17 @@ const AdminAddSpace = () => {
             // Using timestamp + discrete random to ensure Uniqueness
             const numericId = Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000);
 
-            await axios.post(`/api/spaces`, { ...formData, id: numericId });
+            console.log("Submitting workspace data:", { ...formData, id: numericId });
+            const response = await axios.post(`/api/spaces`, { ...formData, id: numericId });
+            console.log("Workspace created successfully:", response.data);
             toast.success("Workspace created successfully");
             navigate("/admin/spaces");
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to create workspace");
+        } catch (err: any) {
+            console.error("Full error:", err);
+            console.error("Error response:", err.response?.data);
+            console.error("Error message:", err.message);
+            const errorMsg = err.response?.data?.message || err.message || "Failed to create workspace";
+            toast.error(errorMsg);
         } finally {
             setSaving(false);
         }
@@ -252,8 +216,8 @@ const AdminAddSpace = () => {
                                                 key={category.value}
                                                 onClick={() => handleCategoryToggle(category.value)}
                                                 className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium border transition-all ${formData.type.includes(category.value)
-                                                        ? "bg-teal text-white border-teal shadow-md"
-                                                        : "bg-white text-gray-600 border-gray-200 hover:border-teal/50 hover:bg-teal/5"
+                                                    ? "bg-teal text-white border-teal shadow-md"
+                                                    : "bg-white text-gray-600 border-gray-200 hover:border-teal/50 hover:bg-teal/5"
                                                     }`}
                                             >
                                                 {category.label}
@@ -430,41 +394,13 @@ const AdminAddSpace = () => {
                     <Card>
                         <CardHeader><CardTitle>Images</CardTitle></CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="flex flex-col gap-2">
-                                <Label className="text-xs font-semibold">Upload Image</Label>
-                                <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileUpload}
-                                    disabled={uploading}
-                                    className="cursor-pointer file:cursor-pointer file:bg-teal file:text-white file:border-0 file:rounded-md file:px-2 file:text-xs file:mr-2 hover:file:bg-teal/90"
-                                />
-                                {uploading && <p className="text-xs text-teal animate-pulse font-medium">Uploading image...</p>}
-                            </div>
-
-                            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
-                                {formData.images.map((img, index) => (
-                                    <div key={index} className="group relative flex items-center gap-3 p-2 bg-gray-50 rounded border hover:border-teal transition-colors">
-                                        <div className="w-12 h-12 shrink-0 bg-gray-200 rounded overflow-hidden">
-                                            <img src={img} alt="Preview" className="w-full h-full object-cover" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-xs text-gray-500 truncate">{img}</p>
-                                            {index === 0 && <span className="text-[10px] font-bold text-teal bg-teal/10 px-2 py-0.5 rounded-full">THUMBNAIL</span>}
-                                        </div>
-                                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {index !== 0 && (
-                                                <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveImageToFront(index)} title="Set as Thumbnail">
-                                                    <ArrowLeft className="w-3 h-3 rotate-90" />
-                                                </Button>
-                                            )}
-                                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-red-500 hover:text-red-700" onClick={() => removeImage(index)}>
-                                                <X className="w-3 h-3" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                            <MultiImageUpload
+                                currentImages={formData.images}
+                                onUploadComplete={(urls) => setFormData((prev) => ({ ...prev, images: urls }))}
+                                maxImages={10}
+                                maxSizeMB={5}
+                                label="Upload Workspace Images (First one is the thumbnail)"
+                            />
                         </CardContent>
                     </Card>
                 </div >

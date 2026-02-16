@@ -16,7 +16,7 @@ interface Space {
     location: string;
     price: number;
     isFeatured: boolean;
-    type: string;
+    type: string | string[];
 }
 
 const AdminSpaces = () => {
@@ -121,7 +121,7 @@ const AdminSpaces = () => {
                                                     {space.location}, {space.city}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 capitalize">{space.type.replace('-', ' ')}</td>
+                                            <td className="px-6 py-4 capitalize">{Array.isArray(space.type) ? space.type.map(t => t.replace(/-/g, ' ')).join(', ') : (space.type || '').replace(/-/g, ' ')}</td>
                                             <td className="px-6 py-4 font-semibold">₹{space.price.toLocaleString()}</td>
                                             <td className="px-6 py-4 text-center">
                                                 <button

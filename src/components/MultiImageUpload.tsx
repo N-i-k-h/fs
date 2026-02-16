@@ -117,11 +117,24 @@ const MultiImageUpload = ({
                             alt={`Upload ${index + 1}`}
                             className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                            {index !== 0 && (
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    size="sm"
+                                    className="h-8 text-xs"
+                                    onClick={() => handleReorder(index, 0)}
+                                    disabled={uploading}
+                                >
+                                    Make Primary
+                                </Button>
+                            )}
                             <Button
                                 type="button"
                                 variant="destructive"
-                                size="sm"
+                                size="icon"
+                                className="h-8 w-8"
                                 onClick={() => handleRemoveImage(index)}
                                 disabled={uploading}
                             >
@@ -129,7 +142,7 @@ const MultiImageUpload = ({
                             </Button>
                         </div>
                         {index === 0 && (
-                            <div className="absolute top-2 left-2 bg-teal text-white text-xs px-2 py-1 rounded">
+                            <div className="absolute top-2 left-2 bg-teal text-white text-xs px-2 py-1 rounded shadow-sm">
                                 Primary
                             </div>
                         )}
