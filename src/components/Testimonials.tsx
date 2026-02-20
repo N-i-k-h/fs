@@ -2,29 +2,29 @@
 
 const testimonials = [
     {
-        text: "Finding a 10 person workspace in North Jakarta was hassle-free. With FlickSpace, we booked in 2 days.",
-        author: "Sarah Jenkins",
-        role: "Product Manager"
+        text: "Finding a 10-person workspace in Koramangala was seamless. With FlickSpace, we were moved in within 3 days!",
+        author: "Arjun Mehta",
+        role: "Product Manager, TechEdge"
     },
     {
-        text: "FlickSpace saved us huge! We managed to get an office for half the price we were paying previously.",
-        author: "Marcus Yallow",
-        role: "CEO, TechFlow"
+        text: "FlickSpace helped us save 40% on overheads. We found a managed office in Whitefield that fit our budget perfectly.",
+        author: "Priya Sharma",
+        role: "Founder, GreenScale"
     },
     {
-        text: "Creating a 20 person workspace in South Jakarta was fast. FlickSpace works!",
-        author: "David Chen",
-        role: "Founder, D-Studio"
+        text: "Setting up our 25-seater team in Indiranagar was incredibly fast. The regional filtering works like a charm.",
+        author: "Rohan Das",
+        role: "Operations Lead, D-Studio"
     },
     {
-        text: "The flexibility offered by FlickSpace is unmatched. We expanded our team effortlessly.",
-        author: "Elena Rodriguez",
-        role: "COO, CreativeMinds"
+        text: "The flexibility offered by FlickSpace is unmatched. We expanded our team in HSR Layout without any long-term lease stress.",
+        author: "Ananya Iyer",
+        role: "COO, CreativeMinds India"
     },
     {
-        text: "Best platform for finding short-term office rentals. The support team is also fantastic.",
-        author: "James Wilson",
-        role: "Freelance Designer"
+        text: "Best platform for finding short-term office rentals in Bangalore. The support team actually understands business needs.",
+        author: "Vikram Malhotra",
+        role: "Independent Consultant"
     }
 ];
 
@@ -41,23 +41,23 @@ const Testimonials = () => {
             </div>
 
             <div className="relative w-full overflow-hidden">
-                <div className="flex gap-8 animate-marquee pl-4">
+                <div className="flex gap-4 md:gap-8 animate-marquee pl-4">
                     {loopTestimonials.map((item, index) => (
                         <div
                             key={index}
-                            className="bg-teal p-8 rounded-3xl text-white relative flex flex-col justify-between shadow-xl flex-shrink-0 w-[350px] md:w-[400px]"
+                            className="bg-teal p-6 md:p-8 rounded-2xl md:rounded-3xl text-white relative flex flex-col justify-between shadow-xl flex-shrink-0 w-[280px] sm:w-[350px] md:w-[400px]"
                         >
                             {/* Quote Icon (Optional Decor) */}
-                            <div className="text-6xl text-white/20 font-serif absolute top-4 left-6">"</div>
+                            <div className="text-4xl md:text-6xl text-white/20 font-serif absolute top-2 left-4 md:top-4 md:left-6">"</div>
 
-                            <p className="text-lg font-medium leading-relaxed mb-8 relative z-10 pt-4">
+                            <p className="text-base md:text-lg font-medium leading-relaxed mb-6 md:mb-8 relative z-10 pt-2 md:pt-4">
                                 {item.text}
                             </p>
 
                             <div className="flex items-center gap-4 mt-auto">
                                 <div>
-                                    <h4 className="font-bold text-lg">{item.author}</h4>
-                                    <p className="text-teal-100 text-sm">{item.role}</p>
+                                    <h4 className="font-bold text-base md:text-lg">{item.author}</h4>
+                                    <p className="text-teal-100 text-xs md:text-sm">{item.role}</p>
                                 </div>
                             </div>
                         </div>

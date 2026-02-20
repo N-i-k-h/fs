@@ -33,6 +33,8 @@ const AMENITIES_OPTIONS = [
   { id: "printer", label: "Printer & Scanner" },
 ];
 
+import { getRegionByLocation, BANGALORE_REGIONS } from "@/data/regions";
+
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -40,12 +42,14 @@ const SearchPage = () => {
   // --- STATE INITIALIZATION ---
   const initialQuery = searchParams.get("query") || "";
   const initialCity = searchParams.get("location") || "";
+  const initialRegion = searchParams.get("region") || "";
   const initialBudget = searchParams.get("price") || "";
   const initialSeats = searchParams.get("seats") || "";
   const initialAmenities = searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [];
 
   const [query, setQuery] = useState(initialQuery);
   const [selectedCity, setSelectedCity] = useState(initialCity);
+  const [selectedRegion, setSelectedRegion] = useState(initialRegion);
   const [selectedBudget, setSelectedBudget] = useState(initialBudget);
   const [selectedAvailability, setSelectedAvailability] = useState(initialSeats);
   const [selectedAmenities, setSelectedAmenities] = useState(initialAmenities);
@@ -92,12 +96,15 @@ const SearchPage = () => {
   useEffect(() => {
     const qParam = searchParams.get("query") || "";
     const cityParam = searchParams.get("location") || "";
+    const regionParam = searchParams.get("region") || "";
+    const marketParam = searchParams.get("market") || "";
     const priceParam = searchParams.get("price") || "";
     const seatsParam = searchParams.get("seats") || "";
     const amParam = searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [];
 
     setQuery(qParam);
     setSelectedCity(cityParam);
+    setSelectedRegion(regionParam);
     setSelectedBudget(priceParam);
     setSelectedAvailability(seatsParam);
     setSelectedAmenities(amParam);
@@ -128,6 +135,18 @@ const SearchPage = () => {
     let scoredSpaces = data.map((space) => {
       // 1. Static Filters (Strict)
       if (cityParam && space.city.toLowerCase() !== cityParam.toLowerCase()) return null;
+
+      // Region Filter
+      if (regionParam && regionParam !== "none") {
+        const spaceRegion = getRegionByLocation(space.location);
+        if (spaceRegion !== regionParam) return null;
+      }
+
+      // Market (Micro-location) Filter
+      if (marketParam) {
+        if (space.location.toLowerCase().trim() !== marketParam.toLowerCase().trim()) return null;
+      }
+
       if (priceParam === "below-10k" && space.price >= 10000) return null;
       if (priceParam === "10k-20k" && (space.price < 10000 || space.price > 20000)) return null;
       if (priceParam === "20k-50k" && (space.price < 20000 || space.price > 50000)) return null;
@@ -136,6 +155,7 @@ const SearchPage = () => {
       if (seatsParam === "6-10" && (space.seats < 6 || space.seats > 10)) return null;
       if (seatsParam === "11-20" && (space.seats < 11 || space.seats > 20)) return null;
       if (seatsParam === "20-plus" && space.seats < 20) return null;
+
 
       // 2. Search Text Scoring (Fuzzy-ish)
       let score = 0;
@@ -228,7 +248,8 @@ const SearchPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleCityChange = (val) => updateFilters({ location: val });
+  const handleCityChange = (val) => updateFilters({ location: val, region: "" });
+  const handleRegionChange = (val) => updateFilters({ region: val });
   const handleBudgetChange = (val) => updateFilters({ price: val });
   const handleSeatsChange = (val) => updateFilters({ seats: val });
   const handleAmenityToggle = (id) => setSelectedAmenities(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -283,17 +304,21 @@ const SearchPage = () => {
                 {Array.from(new Set(workspaces.map(w => w.city))).sort().map(city => (
                   <SelectItem key={city} value={city.toLowerCase()}>{city}</SelectItem>
                 ))}
-                {/* Fallback if no data or just to ensure major cities are always an option if desired, though Set covers it if data exists */}
-                {workspaces.length === 0 && (
-                  <>
-                    <SelectItem value="bangalore">Bengaluru</SelectItem>
-                    <SelectItem value="mumbai">Mumbai</SelectItem>
-                    <SelectItem value="delhi">Delhi</SelectItem>
-                    <SelectItem value="hyderabad">Hyderabad</SelectItem>
-                  </>
-                )}
               </SelectContent>
             </Select>
+
+            {/* Region Dropdown */}
+            {(selectedCity === "bangalore" || !selectedCity) && (
+              <Select value={selectedRegion || ""} onValueChange={handleRegionChange}>
+                <SelectTrigger className={`h-10 px-5 w-auto min-w-[140px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedRegion ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="Region" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">All Regions</SelectItem>
+                  {BANGALORE_REGIONS.map(r => (
+                    <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
 
             <Select value={selectedBudget || ""} onValueChange={handleBudgetChange}>
               <SelectTrigger className={`h-10 px-5 w-auto min-w-[140px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedBudget ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="Budget" /></SelectTrigger>
@@ -361,7 +386,7 @@ const SearchPage = () => {
                   {filteredSpaces.length > 0 ? `${filteredSpaces.length} Workspaces Found` : "No Workspaces Found"}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
-                  {selectedCity ? `Showing results in ${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}` : "Showing all available spaces"}
+                  {selectedRegion ? `Showing results in ${selectedRegion}` : selectedCity ? `Showing results in ${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}` : "Showing all available spaces"}
                 </p>
               </div>
             </div>
