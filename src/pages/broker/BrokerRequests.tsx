@@ -45,7 +45,7 @@ const BrokerRequests = () => {
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(24);
             doc.setFont("helvetica", "bold");
-            doc.text("FlickSpace RFP Brief", 20, 25);
+            doc.text("SFT RFP Brief", 20, 25);
 
             doc.setFontSize(10);
             const refId = rfp._id ? rfp._id.toUpperCase() : "REQ-OFFLINE";
@@ -104,9 +104,9 @@ const BrokerRequests = () => {
             // Footer
             doc.setFontSize(8);
             doc.setTextColor(150, 150, 150);
-            doc.text("Proprietary & Confidential - FlickSpace India", 105, 285, { align: "center" });
+            doc.text("Proprietary & Confidential - SFT India", 105, 285, { align: "center" });
 
-            doc.save(`RFP_Brief_${refId.slice(-6)}.pdf`);
+            doc.save(`SFT_Brief_${refId.slice(-6)}.pdf`);
             toast.success("RFP Brief Downloaded!");
         } catch (error) {
             console.error("PDF Export Error:", error);

@@ -196,7 +196,7 @@ const ChatBot = () => {
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-white text-sm tracking-wide">FlickSpace AI</h3>
+                <h3 className="font-bold text-white text-sm tracking-wide">SFT AI</h3>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="text-[10px] text-gray-300 font-medium uppercase tracking-wider">Online</span>

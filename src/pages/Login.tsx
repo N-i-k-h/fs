@@ -87,7 +87,7 @@ const Login = () => {
                         style={{ backgroundImage: `url(${heroBg})` }}
                     />
                     <div className="relative z-10 text-white p-12 max-w-lg">
-                        <h1 className="text-5xl font-bold mb-6 leading-tight">Hello<br />FlickSpace! 👋</h1>
+                        <h1 className="text-5xl font-bold mb-6 leading-tight">Hello<br />SFT! 👋</h1>
                         <p className="text-lg opacity-90 leading-relaxed">
                             Skip repetitive and manual searching. Get highly productive through our AI-powered platform and save tons of time!
                         </p>

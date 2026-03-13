@@ -89,7 +89,7 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
           <Link to="/" className="flex items-center gap-2 group relative z-50">
             <div className="flex flex-col">
               <span className={cn("text-2xl font-bold tracking-tight", isBrokerMode ? "text-white" : "text-navy")}>
-                Flick<span className="text-teal">Space</span>
+                SFT
               </span>
               {isBrokerMode && (
                 <span className="text-[10px] font-black text-teal tracking-[0.2em] leading-none text-center">PARTNER</span>
@@ -239,7 +239,7 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
                 <div className="flex flex-col">
                   <span className={cn("text-xl font-extrabold tracking-tight", isBrokerMode ? "text-white" : "text-navy")}>
-                    Flick<span className="text-teal">Space</span>
+                    SFT
                   </span>
                   {isBrokerMode && <span className="text-[8px] font-black text-teal tracking-[0.2em] leading-none text-center">PARTNER</span>}
                 </div>

@@ -28,7 +28,7 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
                     </div>
                     <h3 className="text-2xl font-bold text-navy">Ready to find your space?</h3>
                     <p className="text-muted-foreground mt-2 px-4">
-                        Join hundreds of businesses that found their perfect workspace through FlickSpace.
+                        Join hundreds of businesses that found their perfect workspace through SFT.
                     </p>
                 </div>
 

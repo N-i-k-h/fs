@@ -106,7 +106,7 @@ const BrokerDashboard = () => {
 
             {/* Dashboard Footer */}
             <div className="pt-8 text-center text-gray-400 text-xs">
-                &copy; 2026 FlickSpace Partner Portal. All workspace listings are verified.
+                &copy; 2026 SFT Partner Portal. All workspace listings are verified.
             </div>
         </div>
     );

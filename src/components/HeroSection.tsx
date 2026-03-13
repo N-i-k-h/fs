@@ -50,10 +50,10 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col items-center text-center mt-[-4rem]">
+      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col items-center text-center mt-4">
 
         {/* Mode Toggle */}
-        <div className="mb-10 flex p-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl animate-in fade-in zoom-in duration-700">
+        <div className="mb-12 mt-4 flex p-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl animate-in fade-in zoom-in duration-700">
           <button
             onClick={() => setMode("client")}
             className={cn(

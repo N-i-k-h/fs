@@ -22,7 +22,7 @@ const AdminLogin = () => {
         e.preventDefault();
 
         // Hardcoded credentials as requested
-        if (credentials.email === "flickspaceadmin@gmail.com" && credentials.password === "Flickspace@777") {
+        if (credentials.email === "sftadmin@gmail.com" && credentials.password === "Sft@777") {
             localStorage.setItem("adminAuth", "true");
             toast.success("Welcome back, Admin!");
             navigate("/admin");
@@ -49,7 +49,7 @@ const AdminLogin = () => {
                                 id="email"
                                 name="email"
                                 type="email"
-                                placeholder="admin@flickspace.com"
+                                placeholder="admin@sft.com"
                                 value={credentials.email}
                                 onChange={handleChange}
                                 required

@@ -1,10 +1,10 @@
-# FlickSpace 🚀
+# SFT 🚀
 
 **The Modern Workspace Booking Platform**
 
-FlickSpace is a premium, full-stack web application designed to simplify the process of finding and booking flexible office spaces. Whether you're a freelancer looking for a hot desk or a startup needing a private office, FlickSpace connects you with the perfect environment.
+SFT is a premium, full-stack web application designed to simplify the process of finding and booking flexible office spaces. Whether you're a freelancer looking for a hot desk or a startup needing a private office, SFT connects you with the perfect environment.
 
-Built with a focus on aesthetics, user experience, and robust administration, FlickSpace features a responsive React frontend and a scalable Node.js/Express backend.
+Built with a focus on aesthetics, user experience, and robust administration, SFT features a responsive React frontend and a scalable Node.js/Express backend.
 
 ---
 
@@ -60,8 +60,8 @@ Built with a focus on aesthetics, user experience, and robust administration, Fl
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/flickspace.git
-   cd flickspace
+   git clone https://github.com/yourusername/sft.git
+   cd sft
    ```
 
 2. **Install Frontend Dependencies**

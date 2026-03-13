@@ -184,7 +184,7 @@ const ClientRFPForm = () => {
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(24);
             doc.setFont("helvetica", "bold");
-            doc.text("FlickSpace RFP Summary", 20, 25);
+            doc.text("SFT RFP Summary", 20, 25);
 
             doc.setFontSize(10);
             doc.text(`Reference: ${submittedData._id?.toUpperCase() || "NEW"}`, 140, 20);
@@ -204,7 +204,7 @@ const ClientRFPForm = () => {
             doc.text(`Preferred Location: ${formData.preferredLocation || "N/A"}`, 25, 96);
             doc.text(`Move-in: ${formData.expectedMoveIn}`, 25, 103);
 
-            doc.save("FlickSpace_RFP.pdf");
+            doc.save("SFT_RFP.pdf");
             toast.success("PDF Downloaded!");
         } catch (err) {
             console.error(err);

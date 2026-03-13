@@ -39,8 +39,8 @@ const BrokerLayout = () => {
         <>
             <div className="p-6 border-b border-white/10 flex justify-between items-center">
                 <Link to="/" className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-teal flex items-center justify-center font-bold text-xl text-white">F</div>
-                    <span className="font-bold text-xl tracking-tight text-white">FlickSpace<span className="text-teal">.</span></span>
+                    <div className="w-8 h-8 rounded-lg bg-teal flex items-center justify-center font-bold text-xl text-white">S</div>
+                    <span className="font-bold text-xl tracking-tight text-white">SFT<span className="text-teal">.</span></span>
                 </Link>
                 <button className="md:hidden text-gray-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
                     <X className="w-6 h-6" />

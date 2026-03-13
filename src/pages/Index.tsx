@@ -22,7 +22,7 @@ import { useAuth } from "@/context/AuthContext";
 const Index = () => {
   const { user } = useAuth();
   const [mode, setMode] = useState<"client" | "broker">(() => {
-    const saved = localStorage.getItem("flickspace_mode") as "client" | "broker";
+    const saved = localStorage.getItem("sft_mode") as "client" | "broker";
     return saved || "client";
   });
   const navigate = useNavigate();
@@ -31,14 +31,14 @@ const Index = () => {
   useEffect(() => {
     if (user?.role === 'broker' || user?.role === 'admin') {
       setMode('broker');
-      localStorage.setItem("flickspace_mode", "broker");
+      localStorage.setItem("sft_mode", "broker");
     }
   }, [user]);
 
   // Persist mode choice
   const handleSetMode = (newMode: "client" | "broker") => {
     setMode(newMode);
-    localStorage.setItem("flickspace_mode", newMode);
+    localStorage.setItem("sft_mode", newMode);
 
     // If toggling to broker and not logged in as broker, go to login
     if (newMode === 'broker' && (!user || (user.role !== 'broker' && user.role !== 'admin'))) {
