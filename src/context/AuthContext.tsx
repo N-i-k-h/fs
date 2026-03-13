@@ -8,6 +8,8 @@ interface User {
     email: string;
     role: string;
     avatar?: string;
+    phone?: string;
+    company?: string;
 }
 
 interface AuthContextType {
@@ -36,17 +38,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const fetchUser = async () => {
             const storedToken = localStorage.getItem('token');
-            if (storedToken) {
+            // Prevent nonsense strings from triggering a fetch
+            if (storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
                 try {
-                    // Verify token and get user from backend
-                    // Note: In development, you might need to hardcode the URL if proxy isn't set up yet
-                    // For now, assuming standard localhost:5000 or proxy
                     const res = await axios.get('/api/auth/me');
-                    setUser({ ...res.data, id: res.data._id }); // Map _id to id
+                    if (res.data) {
+                        setUser({ ...res.data, id: res.data._id });
+                    }
                 } catch (err) {
                     console.error("Auth check failed:", err);
                     logout();
                 }
+            } else {
+                // If no token, ensure user is null
+                setUser(null);
             }
             setLoading(false);
         };
@@ -54,10 +59,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchUser();
     }, [token]);
 
-    const login = (newToken: string, newUser: User) => {
+    const login = (newToken: string, newUser: any) => {
+        if (!newToken || !newUser) {
+            console.error("Login called with missing data:", { newToken, newUser });
+            return;
+        }
         localStorage.setItem('token', newToken);
         setToken(newToken);
-        setUser(newUser);
+        setUser({ ...newUser, id: newUser.id || newUser._id });
     };
 
     const logout = () => {
@@ -65,6 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(null);
         setUser(null);
         googleLogout();
+        // Force refresh to clear any stale states if necessary? No, state update should suffice.
     };
 
     const updateUser = (updatedUser: User) => {

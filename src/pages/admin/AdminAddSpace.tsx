@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Save, Plus, X, ArrowLeft, Trash2 } from "lucide-react";
+import { Save, Plus, X, ArrowLeft, Trash2, HardHat, Banknote } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
 import MultiImageUpload from "@/components/MultiImageUpload";
@@ -71,7 +71,7 @@ const AdminAddSpace = () => {
 
     const [formData, setFormData] = useState({
         name: "",
-        type: ["coworking"] as string[], // Changed to array for multiple categories
+        type: ["coworking"] as string[],
         description: "",
         address: "",
         city: "bangalore",
@@ -81,11 +81,35 @@ const AdminAddSpace = () => {
         availableSeats: 0,
         amenities: [] as string[],
         images: [] as string[],
+
+        // --- Technical Specifications (Connect Platform) ---
+        technicalSpecs: {
+            floorToCeiling: "",
+            passengerLifts: "",
+            serviceLifts: "",
+            hvacType: "Centralized",
+            powerBackup: "100%",
+            fireCompliance: "Active",
+            itSezStatus: "Non-SEZ"
+        },
+
+        // --- Snapshot / Quick View ---
         snapshot: {
             capacity: "",
             area: "",
             lock_in: ""
         },
+
+        // --- Detailed Commercials (Connect Platform) ---
+        commercialDetails: {
+            rentPSFT: "",
+            camCharges: "",
+            securityDeposit: "",
+            lockInPeriod: "",
+            leaseTenure: "",
+            escalation: ""
+        },
+
         highlights: [] as any[],
         commercials: [] as any[],
         compliance: [] as any[]
@@ -98,6 +122,12 @@ const AdminAddSpace = () => {
         if (id.startsWith("snapshot.")) {
             const field = id.split(".")[1];
             setFormData(prev => ({ ...prev, snapshot: { ...prev.snapshot, [field]: value } }));
+        } else if (id.startsWith("tech.")) {
+            const field = id.split(".")[1];
+            setFormData(prev => ({ ...prev, technicalSpecs: { ...prev.technicalSpecs, [field]: value } }));
+        } else if (id.startsWith("comm.")) {
+            const field = id.split(".")[1];
+            setFormData(prev => ({ ...prev, commercialDetails: { ...prev.commercialDetails, [field]: value } }));
         } else {
             setFormData(prev => ({ ...prev, [id]: value }));
         }
@@ -324,6 +354,80 @@ const AdminAddSpace = () => {
                                 <div className="space-y-2">
                                     <Label className="text-xs uppercase text-gray-500 font-bold">Snapshot: Lock In</Label>
                                     <Input id="snapshot.lock_in" value={formData.snapshot.lock_in} onChange={handleChange} placeholder="e.g. 12 Months" />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader><CardTitle className="flex items-center gap-2"><HardHat className="w-5 h-5 text-teal" /> Technical Specifications</CardTitle></CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">Floor to Ceiling</Label>
+                                    <Input id="tech.floorToCeiling" value={formData.technicalSpecs.floorToCeiling} onChange={handleChange} placeholder="e.g. 3.2 Meters" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">Passenger Lifts</Label>
+                                    <Input id="tech.passengerLifts" type="number" value={formData.technicalSpecs.passengerLifts} onChange={handleChange} placeholder="0" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">Service Lifts</Label>
+                                    <Input id="tech.serviceLifts" type="number" value={formData.technicalSpecs.serviceLifts} onChange={handleChange} placeholder="0" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">HVAC Type</Label>
+                                    <Select
+                                        onValueChange={(v) => setFormData(p => ({ ...p, technicalSpecs: { ...p.technicalSpecs, hvacType: v } }))}
+                                        defaultValue={formData.technicalSpecs.hvacType}
+                                    >
+                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Centralized">Centralized</SelectItem>
+                                            <SelectItem value="VRV">VRV</SelectItem>
+                                            <SelectItem value="Chiller">Chiller</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">IT / SEZ Status</Label>
+                                    <Select
+                                        onValueChange={(v) => setFormData(p => ({ ...p, technicalSpecs: { ...p.technicalSpecs, itSezStatus: v } }))}
+                                        defaultValue={formData.technicalSpecs.itSezStatus}
+                                    >
+                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="SEZ">SEZ</SelectItem>
+                                            <SelectItem value="Non-SEZ">Non-SEZ</SelectItem>
+                                            <SelectItem value="STPI">STPI</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader><CardTitle className="flex items-center gap-2"><Banknote className="w-5 h-5 text-teal" /> Detailed Commercials</CardTitle></CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">Base Rent (₹ PSFT)</Label>
+                                    <Input id="comm.rentPSFT" value={formData.commercialDetails.rentPSFT} onChange={handleChange} placeholder="95" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">CAM Charges (₹ PSFT)</Label>
+                                    <Input id="comm.camCharges" value={formData.commercialDetails.camCharges} onChange={handleChange} placeholder="12" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">Lock-in Period</Label>
+                                    <Input id="comm.lockInPeriod" value={formData.commercialDetails.lockInPeriod} onChange={handleChange} placeholder="36 Months" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs uppercase text-gray-500 font-bold">Rent Escalation (%)</Label>
+                                    <Input id="comm.escalation" value={formData.commercialDetails.escalation} onChange={handleChange} placeholder="5% Bi-Annual" />
                                 </div>
                             </div>
                         </CardContent>

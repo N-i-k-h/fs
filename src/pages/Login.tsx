@@ -30,7 +30,9 @@ const Login = () => {
             const res = await axios.post('/api/auth/login', formData);
             login(res.data.token, res.data.user);
             toast.success("Welcome back!");
-            navigate(res.data.user.role === 'admin' ? '/admin' : '/');
+            if (res.data.user.role === 'admin') navigate('/admin');
+            else if (res.data.user.role === 'broker') navigate('/broker');
+            else navigate('/');
         } catch (err: any) {
             console.error(err);
             toast.error(err.response?.data?.msg || "Login failed");
@@ -63,7 +65,11 @@ const Login = () => {
             });
             login(res.data.token, res.data.user);
             toast.success("Welcome back!");
-            navigate('/');
+
+            const userRole = res.data.user.role;
+            if (userRole === 'admin') navigate('/admin');
+            else if (userRole === 'broker') navigate('/broker');
+            else navigate('/');
         } catch (err) {
             console.error(err);
             toast.error("Google Auth Error");

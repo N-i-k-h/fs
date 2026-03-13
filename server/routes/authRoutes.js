@@ -8,10 +8,16 @@ const sendWelcomeEmail = require('../utils/sendWelcomeEmail');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// Consistent Secret Management
+const JWT_SECRET = process.env.JWT_SECRET || 'flickspace_secret_key_123_abc';
+
 // Register
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, password, role } = req.body;
+        const email = req.body.email.toLowerCase();
+        console.log('📝 New Registration Request:', { email, role });
+
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ msg: 'User already exists' });
 
@@ -22,27 +28,22 @@ router.post('/register', async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            role: 'user'
+            role: role || 'user'
         });
 
         await user.save();
+        console.log('✅ User Saved Successfully:', user.email);
 
-        // Send Welcome Email
-        console.log('📝 Registering new user:', user.email);
-        try {
-            await sendWelcomeEmail(user.email, user.name);
-            console.log('📧 Email trigger sent for:', user.email);
-        } catch (emailErr) {
-            console.error('⚠️ Email trigger failed:', emailErr);
-        }
+        // Send Welcome Email (Non-blocking)
+        sendWelcomeEmail(user.email, user.name).catch(e => console.error('📧 Email Error:', e));
 
         const payload = { user: { id: user.id, role: user.role, name: user.name } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
+        jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
             res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
         });
     } catch (err) {
-        console.error(err.message);
+        console.error('❌ Registration Error:', err.message);
         res.status(500).send('Server error');
     }
 });
@@ -50,23 +51,64 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = req.body.email.toLowerCase();
+        const password = req.body.password;
+        console.log('🔑 Login Attempt:', email);
+
+        let user = await User.findOne({ email });
+        if (!user) {
+            console.log('👤 User Not Found:', email);
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        if (!user.password) {
+            console.log('🚫 Google User attempted password login:', email);
+            return res.status(400).json({ msg: 'Please login with Google' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            console.log('🚫 Password Mismatch for:', email);
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        const payload = { user: { id: user.id, role: user.role, name: user.name } };
+        jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
+            if (err) throw err;
+            res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+        });
+    } catch (err) {
+        console.error('❌ Login Error:', err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// Broker Login
+router.post('/broker-login', async (req, res) => {
+    try {
+        const email = req.body.email.toLowerCase();
+        const password = req.body.password;
+        console.log('🏢 Broker Login Attempt:', email);
+
         let user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: 'Invalid Credentials' });
 
-        // If user was created via Google, they might not have a password
+        if (user.role !== 'broker' && user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Access denied. You are not registered as a partner.' });
+        }
+
         if (!user.password) return res.status(400).json({ msg: 'Please login with Google' });
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ msg: 'Invalid Credentials' });
 
         const payload = { user: { id: user.id, role: user.role, name: user.name } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
+        jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
             res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
         });
     } catch (err) {
-        console.error(err.message);
+        console.error('❌ Broker Login Error:', err.message);
         res.status(500).send('Server error');
     }
 });
@@ -84,48 +126,32 @@ router.post('/google', async (req, res) => {
         let user = await User.findOne({ email });
 
         if (user) {
-            // Update googleId if not present (merging account)
             if (!user.googleId) {
                 user.googleId = sub;
                 if (!user.avatar) user.avatar = picture;
                 await user.save();
-                console.log('📝 Google Sync (Merged Account):', user.email);
-            } else {
-                console.log('📝 Google Sync (Existing User - No Email):', user.email);
             }
         } else {
-            // Create new user
-            user = new User({
-                name,
-                email,
-                googleId: sub,
-                avatar: picture,
-                role: 'user'
-            });
+            user = new User({ name, email, googleId: sub, avatar: picture, role: 'user' });
             await user.save();
-            console.log('📝 Google Sync (New User):', user.email);
-            try {
-                await sendWelcomeEmail(user.email, user.name);
-                console.log('📧 Email trigger sent for:', user.email);
-            } catch (e) { console.error('⚠️ Email trigger failed:', e); }
+            sendWelcomeEmail(user.email, user.name).catch(e => console.error(e));
         }
 
         const payload = { user: { id: user.id, role: user.role, name: user.name } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
+        jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
             res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, avatar: user.avatar } });
         });
-
     } catch (err) {
-        console.error('Google Auth Error:', err);
+        console.error('❌ Google Auth Error:', err);
         res.status(401).send('Google authentication failed');
     }
 });
 
-// Google Auth (Raw Data from Frontend)
+// Google Auth (Raw)
 router.post('/google-data', async (req, res) => {
     try {
-        const { element } = req.body; // Expecting profile object
+        const { element } = req.body;
         const { name, email, picture, sub, id } = element;
         const googleId = sub || id;
 
@@ -138,42 +164,36 @@ router.post('/google-data', async (req, res) => {
                 await user.save();
             }
         } else {
-            user = new User({
-                name,
-                email,
-                googleId: googleId,
-                avatar: picture,
-                role: 'user'
-            });
+            user = new User({ name, email, googleId, avatar: picture, role: 'user' });
             await user.save();
-            console.log('📝 Google Data Sync (New User):', user.email);
-            try {
-                await sendWelcomeEmail(user.email, user.name);
-                console.log('📧 Email trigger sent for:', user.email);
-            } catch (e) { console.error('⚠️ Email trigger failed:', e); }
+            sendWelcomeEmail(user.email, user.name).catch(e => console.error(e));
         }
 
         const payload = { user: { id: user.id, role: user.role, name: user.name } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
+        jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
             res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, avatar: user.avatar } });
         });
     } catch (err) {
-        console.error('Google Data Auth Error:', err);
+        console.error('❌ Google Data Error:', err);
         res.status(500).send('Server Error');
     }
 });
 
-// Get Current User (for persistence)
+// Get Current User
 router.get('/me', async (req, res) => {
     try {
         const token = req.header('x-auth-token');
-        if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+        if (!token || token === 'undefined' || token === 'null') {
+            return res.status(401).json({ msg: 'No token' });
+        }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
         const user = await User.findById(decoded.user.id).select('-password');
+        if (!user) return res.status(404).json({ msg: 'User not found' });
         res.json(user);
     } catch (err) {
+        console.error('🔍 Token Verification Failed:', err.message);
         res.status(401).json({ msg: 'Token is not valid' });
     }
 });

@@ -83,7 +83,7 @@ const WorkspaceCategories = () => {
                         Explore Workspace <span className="text-teal">Solutions</span>
                     </h2>
                     <p className="text-gray-500 mt-4">
-                        Premium workspaces designed for the way you work.
+                        Curated workspaces designed for the way you work.
                     </p>
                 </div>
 

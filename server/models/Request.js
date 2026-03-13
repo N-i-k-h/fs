@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const requestSchema = new mongoose.Schema({
     user: { type: String, required: true }, // User Name
     email: { type: String, required: true },
-    phone: { type: String, required: true },
+    phone: { type: String }, // Made optional to prevent submission errors
     spaceName: { type: String }, // Assuming space name is sent, or space ID ref if you prefer
     space: { type: String },     // Frontend sends "space", keeping both for safety or unifying
     date: { type: String },
@@ -11,6 +11,8 @@ const requestSchema = new mongoose.Schema({
     seats: { type: Number },
     status: { type: String, default: 'pending' }, // pending, approved, rejected
     type: { type: String, default: 'Tour Request' }, // Tour Request, Contact
+    companyName: { type: String },
+    clientName: { type: String },
     totalAmount: { type: Number, default: 0 }, // For revenue calculation
 
     // Quote / Brochure specific fields

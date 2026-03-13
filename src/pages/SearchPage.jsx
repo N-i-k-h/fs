@@ -177,7 +177,7 @@ const SearchPage = () => {
         // Enrich text for broader matching
         if (space.price < 10000) searchableText += " budget cheap affordable economy low cost 10k";
         if (space.price >= 10000 && space.price <= 20000) searchableText += " mid-range 10k 20k";
-        if (space.price > 20000) searchableText += " premium luxury expensive high-end 20k";
+        if (space.price > 20000) searchableText += " high-end luxury expensive high-tier 20k";
 
         if (space.type === "coworking" || space.description.includes("startup")) searchableText += " startup start-up start up";
         if (space.type === "private") searchableText += " cabin private office suite";

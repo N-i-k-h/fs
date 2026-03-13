@@ -22,4 +22,25 @@ router.get('/count', async (req, res) => {
     }
 });
 
+const auth = require('../middleware/auth');
+
+// Update User Profile
+router.put('/profile', auth, async (req, res) => {
+    try {
+        const { name, phone, company } = req.body;
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        if (name) user.name = name;
+        if (phone) user.phone = phone;
+        if (company) user.company = company;
+
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        console.error('Profile Update Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

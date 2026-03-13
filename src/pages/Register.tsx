@@ -75,7 +75,8 @@ const Register = () => {
             const res = await axios.post('/api/auth/register', {
                 name: formData.name,
                 email: formData.email,
-                password: formData.password
+                password: formData.password,
+                role: formData.role || 'user'
             });
             login(res.data.token, res.data.user);
             toast.success("Account created successfully!");

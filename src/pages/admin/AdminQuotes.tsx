@@ -20,6 +20,7 @@ interface RequestItem {
     budget?: string;
     timeline?: string;
     micromarket?: string;
+    details?: any;
 }
 
 const AdminQuotes = () => {
@@ -29,8 +30,12 @@ const AdminQuotes = () => {
     const fetchRequests = async () => {
         try {
             const res = await axios.get('/api/requests');
-            // Filter for Quote Requests
-            const quotes = res.data.filter((req: any) => req.type === 'Quote Request' || req.isBrochureDownloaded);
+            // Filter for Quote Requests and RFPs
+            const quotes = res.data.filter((req: any) =>
+                req.type === 'Quote Request' ||
+                req.type === 'RFP' ||
+                req.isBrochureDownloaded
+            );
             setRequests(quotes);
         } catch (err) {
             console.error(err);
@@ -146,13 +151,28 @@ const AdminQuotes = () => {
                                                         <MapPin className="w-3 h-3 mr-1 text-blue-500" />
                                                         {req.micromarket || 'N/A'}
                                                     </div>
-                                                    <div className="flex items-center text-xs text-gray-500">
+                                                    <div className="flex items-center text-xs text-navy font-bold mt-1 bg-navy/5 px-2 py-0.5 rounded w-fit">
                                                         <Users className="w-3 h-3 mr-1" />
                                                         {req.seats} Seats
+                                                        {req.type === 'RFP' && ` • ${req.details?.managerCabins || 0} Cabins`}
                                                     </div>
+                                                    {req.type === 'RFP' && (
+                                                        <div className="text-[10px] text-teal font-bold uppercase mt-1">
+                                                            Meetings: {Object.entries(req.details?.meetingRooms || {}).filter(([_, v]) => Number(v) > 0).length} Types
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-gray-600 font-medium">{req.spaceName || req.space || "N/A"}</td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex flex-col">
+                                                    <span className="text-gray-600 font-medium">{req.spaceName || req.space || "N/A"}</span>
+                                                    {req.type === 'RFP' && (
+                                                        <Badge variant="outline" className="text-[10px] h-4 mt-1 bg-gray-50 uppercase text-gray-500 border-gray-200">
+                                                            {req.details?.fundingStatus || 'Bootstrapped'}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            </td>
                                             <td className="px-6 py-4 text-gray-600">
                                                 {req.timeline || 'Immediate'}
                                             </td>

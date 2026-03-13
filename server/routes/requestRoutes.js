@@ -196,4 +196,141 @@ router.post('/quote', async (req, res) => {
     }
 });
 
+// Create New Handshake Request
+router.post('/handshake', async (req, res) => {
+    try {
+        const { user, email, phone, space, seats, budget, timeline, details } = req.body;
+
+        const newRequest = new Request({
+            user,
+            email,
+            phone,
+            space,
+            seats,
+            budget,
+            timeline,
+            details,
+            status: 'pending',
+            type: 'Handshake'
+        });
+
+        await newRequest.save();
+        console.log('🤝 Handshake Initiated:', space, 'by', user);
+
+        res.status(201).json({ message: 'Handshake initiated successfully', request: newRequest });
+    } catch (err) {
+        console.error('❌ Handshake Request Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Get All Handshakes for Admin (with Broker Details)
+router.get('/admin-handshakes', async (req, res) => {
+    try {
+        const handshakes = await Request.aggregate([
+            { $match: { type: 'Handshake' } },
+            {
+                $lookup: {
+                    from: 'spaces',
+                    localField: 'space',
+                    foreignField: 'name',
+                    as: 'spaceInfo'
+                }
+            },
+            { $unwind: { path: '$spaceInfo', preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'users',
+                    let: { ownerId: '$spaceInfo.owner' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                { $ne: ['$$ownerId', null] },
+                                                { $eq: [{ $type: '$$ownerId' }, 'string'] },
+                                                { $eq: [{ $strLenCP: { $ifNull: ['$$ownerId', ''] } }, 24] },
+                                                { $eq: ['$_id', { $toObjectId: '$$ownerId' }] }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                { $ne: ['$$ownerId', null] },
+                                                { $eq: ['$email', '$$ownerId'] }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'brokerInfo'
+                }
+            },
+            { $unwind: { path: '$brokerInfo', preserveNullAndEmptyArrays: true } },
+            { $sort: { createdAt: -1 } }
+        ]);
+
+        res.json(handshakes);
+    } catch (err) {
+        console.error('❌ Admin Handshake Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Create New Detailed RFP
+router.post('/rfp', async (req, res) => {
+    const traceId = Math.random().toString(36).substring(7);
+    console.log(`[RFP-TRACE-${traceId}] 📬 Request Received`);
+    try {
+        const { formData, email, user } = req.body;
+
+        if (!formData) {
+            console.error(`[RFP-TRACE-${traceId}] ❌ No formData found in body`);
+            return res.status(400).json({ message: 'Missing form data' });
+        }
+
+        const requestPayload = {
+            user: user || formData.clientName || 'Anonymous User',
+            email: email || formData.decisionMakerEmail || 'anonymous@flickspace.com',
+            phone: formData.phone || formData.adminSpocEmail || 'N/A',
+            companyName: formData.companyName || 'Confidential Company',
+            clientName: formData.clientName || 'Anonymous',
+            space: 'Detailed Requirement',
+            seats: Number(formData.totalSeats) || 0,
+            budget: `${formData.budgetRange || 'TBD'} ${formData.budgetType ? '(' + formData.budgetType + ')' : ''}`,
+            timeline: formData.expectedMoveIn || 'Flexible',
+            micromarket: formData.preferredLocation || 'Not Specified',
+            type: 'Detailed RFP',
+            status: 'pending',
+            details: formData
+        };
+
+        console.log(`[RFP-TRACE-${traceId}] 💾 Attempting to save to DB...`);
+        const newRequest = new Request(requestPayload);
+        const saved = await newRequest.save();
+
+        console.log(`[RFP-TRACE-${traceId}] ✅ Saved Successfully: ${saved._id}`);
+
+        res.status(201).json({
+            message: 'RFP created successfully',
+            request: saved,
+            traceId
+        });
+    } catch (err) {
+        console.error(`[RFP-TRACE-${traceId}] ❌ ERROR:`, err.message);
+        console.error(err.stack);
+
+        // Return a very explicit error object
+        res.status(500).json({
+            message: 'Server-side failure during RFP creation',
+            error: err.message,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+            traceId
+        });
+    }
+});
+
 module.exports = router;

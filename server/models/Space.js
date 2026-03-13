@@ -13,8 +13,32 @@ const spaceSchema = new mongoose.Schema({
     rating: { type: Number, default: 0 },
     images: [{ type: String }],
     amenities: [{ type: String }],
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Linked to Broker/Admin
+    googleMapUrl: { type: String },
     isFeatured: { type: Boolean, default: false },
     snapshot: { type: mongoose.Schema.Types.Mixed }, // flexible object
+
+    // --- Connect Platform Technical Specs ---
+    technicalSpecs: {
+        floorToCeiling: String,
+        passengerLifts: Number,
+        serviceLifts: Number,
+        hvacType: String,
+        powerBackup: String,
+        fireCompliance: String,
+        itSezStatus: String
+    },
+
+    // --- Detailed Commercials ---
+    commercialDetails: {
+        rentPSFT: String,
+        camCharges: String,
+        securityDeposit: String,
+        lockInPeriod: String,
+        leaseTenure: String,
+        escalation: String
+    },
+
     highlights: [{ title: String, desc: String }],
     commercials: [{ component: String, cost: String, remarks: String }],
     compliance: [{ title: String, status: String, desc: String }]

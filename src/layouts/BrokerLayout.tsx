@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, FileText, PlusCircle, LogOut, Building2, Menu, X, DollarSign, Download, Handshake, CheckCircle, MessageSquare } from "lucide-react";
+import { LayoutDashboard, FileText, PlusCircle, LogOut, Building2, Menu, X, Users, MessageSquare, Handshake, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
-const AdminLayout = () => {
+import { toast } from "sonner";
+
+const BrokerLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const { user, logout } = useAuth();
-
     useEffect(() => {
-        if (!user || user.role !== 'admin') {
-            navigate("/admin/login");
+        if (!user || (user.role !== 'broker' && user.role !== 'admin')) {
+            toast.error("Please login to access the partner portal.");
+            navigate("/broker/login");
         }
     }, [user, navigate]);
+
+    // ...
 
     // Close mobile menu on route change
     useEffect(() => {
@@ -23,14 +27,12 @@ const AdminLayout = () => {
     }, [location.pathname]);
 
     const menuItems = [
-        { icon: LayoutDashboard, label: "Analysis", path: "/admin" },
-        { icon: FileText, label: "Tour Requests", path: "/admin/requests" },
-        { icon: CheckCircle, label: "Successful Handshakes", path: "/admin/handshakes" },
-        { icon: DollarSign, label: "User Quotes", path: "/admin/quotes" },
-        { icon: Download, label: "Downloaded Brochures", path: "/admin/brochures" },
-        { icon: Building2, label: "Spaces", path: "/admin/spaces" },
-        { icon: Users, label: "Users", path: "/admin/users" },
-        { icon: PlusCircle, label: "Add Space", path: "/admin/add-space" },
+        { icon: LayoutDashboard, label: "Dashboard", path: "/broker" },
+        { icon: Building2, label: "My Spaces", path: "/broker/spaces" },
+        { icon: MessageSquare, label: "Handshake Responses", path: "/broker/handshakes" },
+        { icon: FileText, label: "Client RFPs", path: "/broker/requests" },
+        { icon: PlusCircle, label: "Add New Office", path: "/broker/submit-property" },
+        { icon: User, label: "My Profile", path: "/broker/profile" },
     ];
 
     const SidebarContent = () => (
@@ -40,13 +42,21 @@ const AdminLayout = () => {
                     <div className="w-8 h-8 rounded-lg bg-teal flex items-center justify-center font-bold text-xl text-white">F</div>
                     <span className="font-bold text-xl tracking-tight text-white">FlickSpace<span className="text-teal">.</span></span>
                 </Link>
-                {/* Mobile Close Button */}
                 <button className="md:hidden text-gray-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
                     <X className="w-6 h-6" />
                 </button>
             </div>
-            <div className="px-6 py-2">
-                <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Admin Portal</div>
+
+            <div className="px-6 py-6 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center text-teal font-bold border border-teal/20">
+                        {user?.name?.[0] || 'B'}
+                    </div>
+                    <div>
+                        <div className="text-sm font-bold text-white leading-tight">{user?.name}</div>
+                        <div className="text-[10px] text-teal font-bold uppercase tracking-widest mt-0.5">Verified Broker</div>
+                    </div>
+                </div>
             </div>
 
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -76,39 +86,34 @@ const AdminLayout = () => {
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all cursor-pointer"
                 >
                     <LogOut className="w-5 h-5" />
-                    <span className="font-medium">Logout Admin</span>
+                    <span className="font-medium">Logout Broker</span>
                 </div>
             </div>
         </>
     );
 
     return (
-        <div className="flex h-screen bg-gray-100 font-sans">
-            {/* --- MOBILE TOP BAR --- */}
+        <div className="flex h-screen bg-gray-50 font-sans">
+            {/* MOBILE TOP BAR */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-navy z-40 flex items-center justify-between px-4 border-b border-white/10 shadow-md">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-teal flex items-center justify-center font-bold text-lg text-white">F</div>
-                    <span className="font-bold text-lg text-white">Admin</span>
+                    <span className="font-bold text-lg text-white">Partner Portal</span>
                 </div>
                 <button onClick={() => setIsSidebarOpen(true)} className="text-white p-2">
                     <Menu className="w-6 h-6" />
                 </button>
             </div>
 
-            {/* --- DESKTOP SIDEBAR --- */}
+            {/* DESKTOP SIDEBAR */}
             <aside className="hidden md:flex w-64 bg-navy text-white flex-col fixed h-full z-50 shadow-xl border-r border-white/5">
                 <SidebarContent />
             </aside>
 
-            {/* --- MOBILE SIDEBAR DRAWER --- */}
+            {/* MOBILE SIDEBAR DRAWER */}
             {isSidebarOpen && (
                 <div className="fixed inset-0 z-50 md:hidden">
-                    {/* Backdrop */}
-                    <div
-                        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
-                        onClick={() => setIsSidebarOpen(false)}
-                    />
-                    {/* Drawer Panel */}
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
                     <aside className="absolute top-0 bottom-0 left-0 w-3/4 max-w-xs bg-navy text-white flex flex-col shadow-2xl animate-in slide-in-from-left duration-300">
                         <SidebarContent />
                     </aside>
@@ -117,7 +122,7 @@ const AdminLayout = () => {
 
             {/* Main Content */}
             <main className="flex-1 ml-0 md:ml-64 h-full overflow-y-auto pt-16 md:pt-0">
-                <div className="p-4 md:p-8 max-w-7xl mx-auto">
+                <div className="p-4 md:p-10 max-w-7xl mx-auto">
                     <Outlet />
                 </div>
             </main>
@@ -125,4 +130,4 @@ const AdminLayout = () => {
     );
 };
 
-export default AdminLayout;
+export default BrokerLayout;

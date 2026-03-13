@@ -1,11 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const Space = require('../models/Space');
+const auth = require('../middleware/auth');
 
 // Get All Spaces
 router.get('/', async (req, res) => {
     try {
-        const spaces = await Space.find();
+        const { city, type, ownerId } = req.query;
+        let query = {};
+        if (city) query.city = city;
+        if (type) query.type = type;
+        if (ownerId) query.owner = ownerId;
+
+        const spaces = await Space.find(query).populate('owner', 'name email');
+        res.json(spaces);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Get My Spaces (Broker/Owner)
+router.get('/my-spaces', auth, async (req, res) => {
+    try {
+        const spaces = await Space.find({ owner: req.user.id });
         res.json(spaces);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -16,17 +33,12 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         let space;
-
-        // Check if the ID provided is numeric (our custom ID)
         if (!isNaN(req.params.id)) {
-            space = await Space.findOne({ id: req.params.id });
+            space = await Space.findOne({ id: req.params.id }).populate('owner', 'name email');
         }
-
-        // If not found by numeric ID, check if it's a valid MongoDB ObjectId
         if (!space && req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-            space = await Space.findById(req.params.id);
+            space = await Space.findById(req.params.id).populate('owner', 'name email');
         }
-
         if (!space) return res.status(404).json({ message: 'Space not found' });
         res.json(space);
     } catch (err) {
@@ -34,29 +46,19 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Create New Space (Admin)
-router.post('/', async (req, res) => {
+// Create New Space
+router.post('/', auth, async (req, res) => {
     try {
-        console.log('Received POST request to create space');
-        console.log('Request body:', JSON.stringify(req.body, null, 2));
-
-        // Generate a random numeric ID if not provided (for legacy compatibility)
         const id = req.body.id || Math.floor(1000 + Math.random() * 9000);
-        const newSpace = new Space({ ...req.body, id });
-
-        console.log('Attempting to save space with ID:', id);
+        const newSpace = new Space({
+            ...req.body,
+            id,
+            owner: req.user.id // Set owner automatically from token
+        });
         const savedSpace = await newSpace.save();
-        console.log('Space saved successfully:', savedSpace._id);
-
         res.status(201).json(savedSpace);
     } catch (err) {
-        console.error('Error creating space:', err);
-        console.error('Error name:', err.name);
-        console.error('Error message:', err.message);
-        if (err.errors) {
-            console.error('Validation errors:', err.errors);
-        }
-        res.status(400).json({ message: err.message, errors: err.errors });
+        res.status(400).json({ message: err.message });
     }
 });
 

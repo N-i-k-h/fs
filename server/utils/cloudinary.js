@@ -22,7 +22,7 @@ const storage = new CloudinaryStorage({
     params: async (req, file) => {
         return {
             folder: 'flickspace',
-            allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+            allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic'],
             transformation: [{ width: 1920, height: 1080, crop: 'limit' }]
         };
     }
@@ -31,7 +31,11 @@ const storage = new CloudinaryStorage({
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
+        fileSize: 10 * 1024 * 1024 // Increased to 10MB
+    },
+    fileFilter: (req, file, cb) => {
+        console.log('Multer receiving file:', file.originalname);
+        cb(null, true);
     }
 });
 

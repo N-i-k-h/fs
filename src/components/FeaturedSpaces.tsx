@@ -40,7 +40,7 @@ const FeaturedSpaces = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <span className="inline-block px-4 py-1.5 bg-teal/10 text-teal text-sm font-semibold rounded-full mb-4">
-            Premium Workspaces
+            Handpicked Workspaces
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Featured Spaces

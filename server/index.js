@@ -9,6 +9,12 @@ const fs = require('fs');
 
 // Import Cloudinary configuration
 const { upload } = require('./utils/cloudinary');
+const cloudinary = require('cloudinary').v2;
+console.log('Cloudinary Config Check:', {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY ? 'Present' : 'Missing',
+    api_secret: process.env.CLOUDINARY_API_SECRET ? 'Present' : 'Missing'
+});
 const multer = require('multer');
 
 // Ensure uploads directory exists (for backward compatibility if needed)
@@ -32,6 +38,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/spaces', require('./routes/spaceRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/requests', require('./routes/requestRoutes'));
+app.use('/api/broker', require('./routes/brokerRoutes'));
 
 // Upload Route (Cloudinary)
 app.post('/api/upload', upload.single('image'), (req, res) => {

@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import {
   ArrowLeft, MapPin, Users, IndianRupee, CheckCircle, Car, Wifi, Coffee,
   Phone, Calendar, User, Printer, Zap, Shield, Tv,
-  X, ChevronLeft, ChevronRight, Heart, FileText, Info, Building, Lock, Star
+  X, ChevronLeft, ChevronRight, Heart, FileText, Info, Building, Lock, Star, Handshake
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,14 +15,28 @@ import { toast } from "sonner";
 import mapPlaceholder from "@/assets/map-placeholder.png";
 import axios from "axios";
 
+import { useAuth } from "@/context/AuthContext";
+
 const ScheduleForm = ({ space }: { space: any }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
     teamSize: "1-5",
     date: ""
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone
+      }));
+    }
+  }, [user]);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -120,6 +134,149 @@ const ScheduleForm = ({ space }: { space: any }) => {
 
       <Button type="submit" disabled={loading} className="w-full bg-[#002b4d] hover:bg-teal text-white font-bold h-12 shadow-lg shadow-blue-900/10">
         {loading ? "Requesting..." : "Request Tour"}
+      </Button>
+    </form>
+  );
+};
+
+const HandshakeForm = ({ space }: { space: any }) => {
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    teamSize: "1-5",
+    budget: "",
+    timeline: ""
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone
+      }));
+    }
+  }, [user]);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await axios.post('/api/requests/handshake', {
+        user: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        space: space.name,
+        seats: parseInt(formData.teamSize.split('-')[0]) || 1,
+        budget: formData.budget,
+        timeline: formData.timeline,
+        details: { mode: 'Handshake' }
+      });
+      toast.success("Handshake Initiated Successfully!");
+      setFormData({ name: "", email: "", phone: "", teamSize: "1-5", budget: "", timeline: "" });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to initiate handshake");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="bg-teal/5 p-4 rounded-xl border border-teal/10 mb-4 text-center">
+        <p className="text-xs font-bold text-teal uppercase tracking-widest">Connect Directly with Partner</p>
+      </div>
+      <div>
+        <label className="text-xs font-bold text-navy uppercase tracking-wide">Contact Person</label>
+        <input
+          name="name"
+          type="text"
+          className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+          placeholder="Name"
+          required
+          value={formData.name}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Email</label>
+          <input
+            name="email"
+            type="email"
+            className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+            placeholder="Email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Phone</label>
+          <input
+            name="phone"
+            type="tel"
+            className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+            placeholder="Phone"
+            required
+            value={formData.phone}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Team Size</label>
+          <select
+            name="teamSize"
+            className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+            value={formData.teamSize}
+            onChange={handleChange}
+          >
+            <option>1-5</option>
+            <option>6-10</option>
+            <option>11-20</option>
+            <option>20-50</option>
+            <option>50+</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Budget (Per Seat)</label>
+          <input
+            name="budget"
+            type="text"
+            className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+            placeholder="e.g. ₹15,000"
+            required
+            value={formData.budget}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      <div>
+        <label className="text-xs font-bold text-navy uppercase tracking-wide">Expected Timeline</label>
+        <input
+          name="timeline"
+          type="text"
+          className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+          placeholder="e.g. In 2 Months"
+          required
+          value={formData.timeline}
+          onChange={handleChange}
+        />
+      </div>
+
+      <Button type="submit" disabled={loading} className="w-full bg-teal hover:bg-navy text-white font-bold h-12 shadow-lg shadow-teal/10 flex items-center justify-center gap-2">
+        <Handshake className="w-5 h-5" /> {loading ? "Initiating..." : "Initiate Handshake"}
       </Button>
     </form>
   );
@@ -229,7 +386,9 @@ const SpaceDetail = () => {
   // --- LIGHTBOX STATE ---
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<"tour" | "handshake">("handshake");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -334,28 +493,13 @@ const SpaceDetail = () => {
   if (!space) return <div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>;
 
   const displayAddress = space.address || `${space.location}, ${space.city}`;
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayAddress + " " + space.name)}`;
+  const googleMapsUrl = space.googleMapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayAddress + " " + space.name)}`;
 
   // Defaults if missing in data
-  const snapshot = space.snapshot || { capacity: `${space.seats}-${space.seats * 10}`, area: "2,500 Sq. Ft.", lock_in: "12 Months" };
-  const highlights = space.highlights || [
-    { title: "Ready to Move", desc: "Fully fitted with premium furniture and IT infrastructure." },
-    { title: "Prime Connectivity", desc: `Located in ${space.location}, accessible by major roads.` },
-    { title: "Sustainability", desc: "Efficient energy management and HVAC systems." },
-    { title: "Professional Management", desc: "24/7 facility management on-site." }
-  ];
-  const commercials = space.commercials || [
-    { component: "Monthly Rent (Per Seat)", cost: `₹${space.price}`, remarks: "Includes utilities and maintenance" },
-    { component: "Security Deposit", cost: "3 Months", remarks: "Refundable at end of tenure" },
-    { component: "Annual Escalation", cost: "5%", remarks: "Applicable after 12 months" },
-    { component: "Utility Charges", cost: "Inclusive", remarks: "Electricity & HVAC capped at normal usage" }
-  ];
-  const compliance = space.compliance || [
-    { title: "Fire NOC Status", status: "CERTIFIED & ACTIVE", desc: "Latest audit verified for safety standards." },
-    { title: "Land Use Conversion", status: "COMMERCIAL (Full)", desc: "Compliant for office usage under local laws." },
-    { title: "Parking Ratio", status: "1:1000 SQ.FT.", desc: "Reserved bays with visitor parking available." },
-    { title: "Occupancy Certificate", status: "AVAILABLE", desc: "Full building OC obtained by developer." }
-  ];
+  const snapshot = space.snapshot || { capacity: "", area: "", lock_in: "" };
+  const highlights = space.highlights || [];
+  const commercials = space.commercials || [];
+  const compliance = space.compliance || [];
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -763,11 +907,36 @@ const SpaceDetail = () => {
                     {/* We will replace this entire form content with controlled inputs below */}
                   </form>
                   {/* REPLACING ABOVE BLOCK WITH ACTUAL IMPLEMENTATION BELOW in the same tool */}
-                  <ScheduleForm space={space} />
+                  <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
+                    <button
+                      onClick={() => setActiveTab("handshake")}
+                      className={cn(
+                        "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
+                        activeTab === "handshake" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
+                      )}
+                    >
+                      <Handshake className="w-4 h-4" /> Handshake
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("tour")}
+                      className={cn(
+                        "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
+                        activeTab === "tour" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
+                      )}
+                    >
+                      <Calendar className="w-4 h-4" /> Request Tour
+                    </button>
+                  </div>
+
+                  {activeTab === "tour" ? (
+                    <ScheduleForm space={space} />
+                  ) : (
+                    <HandshakeForm space={space} />
+                  )}
 
                   <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
                     <Button variant="outline" className="flex-1 text-xs h-9" onClick={() => navigate(`/quote/${space.id}`)}><FileText className="w-3 h-3 mr-1" /> Get Quote</Button>
-                    <Button className="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs h-9"><Phone className="w-3 h-3 mr-1" /> WhatsApp</Button>
+                    <Button className="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs h-9" onClick={() => window.open(`https://wa.me/919999999999?text=Hi, I am interested in ${space.name}`, '_blank')}><Phone className="w-3 h-3 mr-1" /> WhatsApp</Button>
                   </div>
 
                   <div className="mt-6 flex justify-between text-center px-2">
@@ -776,7 +945,7 @@ const SpaceDetail = () => {
                       <span className="text-[10px] font-bold text-gray-500">CALL</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 cursor-pointer hover:text-teal transition-colors group">
-                      <div className="p-2 bg-gray-50 rounded-full group-hover:bg-teal/10"><UserInfo className="w-4 h-4 text-gray-400 group-hover:text-teal" /></div>
+                      <div className="p-2 bg-gray-50 rounded-full group-hover:bg-teal/10"><User className="w-4 h-4 text-gray-400 group-hover:text-teal" /></div>
                       <span className="text-[10px] font-bold text-gray-500">EMAIL</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 cursor-pointer hover:text-teal transition-colors group">

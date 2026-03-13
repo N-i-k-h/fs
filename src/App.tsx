@@ -12,9 +12,23 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import ClientRFPForm from "./pages/ClientRFPForm";
+import BrokerPropertyForm from "./pages/BrokerPropertyForm";
+import BrokerLogin from "./pages/BrokerLogin";
+import BrokerRegister from "./pages/BrokerRegister";
+
 import AdminLayout from "./layouts/AdminLayout";
+import BrokerLayout from "./layouts/BrokerLayout";
+
+import BrokerDashboard from "./pages/broker/BrokerDashboard";
+import BrokerSpaces from "./pages/broker/BrokerSpaces";
+import BrokerRequests from "./pages/broker/BrokerRequests";
+import BrokerHandshakes from "./pages/broker/BrokerHandshakes";
+import BrokerProfile from "./pages/broker/BrokerProfile";
+import BrokerEditSpace from "./pages/broker/BrokerEditSpace";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminRequests from "./pages/admin/AdminRequests";
+import AdminHandshakes from "./pages/admin/AdminHandshakes";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSpaces from "./pages/admin/AdminSpaces";
 import AdminAddSpace from "./pages/admin/AdminAddSpace";
@@ -64,10 +78,26 @@ const App = () => (
               <Route path="/space/:id" element={<SpaceDetail />} />
               <Route path="/quote/:id" element={<GetQuotePage />} />
 
+              {/* Broker Auth */}
+              <Route path="/broker/login" element={<BrokerLogin />} />
+              <Route path="/broker/register" element={<BrokerRegister />} />
+
+              {/* Broker Portal Routes */}
+              <Route path="/broker" element={<BrokerLayout />}>
+                <Route index element={<BrokerDashboard />} />
+                <Route path="spaces" element={<BrokerSpaces />} />
+                <Route path="requests" element={<BrokerRequests />} />
+                <Route path="handshakes" element={<BrokerHandshakes />} />
+                <Route path="profile" element={<BrokerProfile />} />
+                <Route path="submit-property" element={<BrokerPropertyForm />} />
+                <Route path="edit-space/:id" element={<BrokerEditSpace />} />
+              </Route>
+
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="requests" element={<AdminRequests />} />
+                <Route path="handshakes" element={<AdminHandshakes />} />
                 <Route path="quotes" element={<AdminQuotes />} />
                 <Route path="brochures" element={<AdminBrochures />} />
                 <Route path="spaces" element={<AdminSpaces />} />
@@ -75,6 +105,10 @@ const App = () => (
                 <Route path="add-space" element={<AdminAddSpace />} />
                 <Route path="edit-space/:id" element={<AdminEditSpace />} />
               </Route>
+
+              {/* Connect Platform RFP Routes */}
+              <Route path="/rfp-form" element={<ClientRFPForm />} />
+              <Route path="/broker/submit-property" element={<BrokerPropertyForm />} />
 
               {/* 404 Page */}
               <Route path="*" element={<NotFound />} />

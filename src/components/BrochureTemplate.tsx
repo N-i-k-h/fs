@@ -43,7 +43,7 @@ export const BrochureTemplate = forwardRef<HTMLDivElement, BrochureTemplateProps
                 <img src={space.images[0]} className="w-full h-full object-cover" alt="Hero" crossOrigin="anonymous" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 text-white">
-                    <span className="bg-cyan-500 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block uppercase tracking-wider">Premium Office Space</span>
+                    <span className="bg-cyan-500 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block uppercase tracking-wider">Verified Office Space</span>
                     <h1 className="text-4xl font-bold mb-1">{space.name}</h1>
                     <p className="text-lg opacity-90">{space.location}, {space.city}</p>
                 </div>
@@ -140,7 +140,7 @@ export const BrochureTemplate = forwardRef<HTMLDivElement, BrochureTemplateProps
                             <div key={i} className="flex flex-col items-start">
                                 {getAmenityIcon(am)}
                                 <span className="text-xs font-bold text-slate-900">{am}</span>
-                                <span className="text-[10px] text-slate-500">Premium Standard</span>
+                                <span className="text-[10px] text-slate-500">Industry Standard</span>
                             </div>
                         ))}
                     </div>

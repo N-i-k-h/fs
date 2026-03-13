@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String }, // Optional for Google Auth users
-    role: { type: String, enum: ['user', 'admin', 'manager', 'founder', 'employee'], default: 'user' },
+    role: { type: String, enum: ['user', 'admin', 'manager', 'founder', 'employee', 'broker'], default: 'user' },
     googleId: { type: String }, // For Google Auth
     avatar: { type: String },
 }, { timestamps: true });
