@@ -74,11 +74,11 @@ const AdminSpaces = () => {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-navy">Manage Workspaces</h1>
+                    <h1 className="text-3xl font-bold text-teal">Manage Workspaces</h1>
                     <p className="text-muted-foreground mt-1">View, edit, or delete existing workspaces.</p>
                 </div>
                 <Link to="/admin/add-space">
-                    <Button className="bg-teal hover:bg-teal/90"><Plus className="w-4 h-4 mr-2" /> Add New Space</Button>
+                    <Button className="bg-navy hover:bg-navy/90"><Plus className="w-4 h-4 mr-2" /> Add New Space</Button>
                 </Link>
             </div>
 
@@ -117,7 +117,7 @@ const AdminSpaces = () => {
                                             <td className="px-6 py-4 font-medium text-gray-900">{space.name}</td>
                                             <td className="px-6 py-4 text-gray-600">
                                                 <div className="flex items-center gap-1">
-                                                    <MapPin className="w-3 h-3 text-teal" />
+                                                    <MapPin className="w-3 h-3 text-navy" />
                                                     {space.location}, {space.city}
                                                 </div>
                                             </td>

@@ -15,21 +15,21 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     try {
         // User email
         const userMailOptions = {
-            from: '"FlickSpace" <nikhilkashyapkn@gmail.com>',
+            from: '"SFT" <nikhilkashyapkn@gmail.com>',
             to: userEmail,
-            subject: 'Welcome to FlickSpace 🎉',
+            subject: 'Welcome to SFT 🎉',
             html: `
         <h2>Welcome, ${userName}!</h2>
-        <p>Thanks for joining FlickSpace.</p>
+        <p>Thanks for joining SFT.</p>
         <p>Explore premium workspaces with ease 🚀</p>
       `,
         };
 
         // Admin email
         const adminMailOptions = {
-            from: '"FlickSpace Admin" <nikhilkashyapkn@gmail.com>',
+            from: '"SFT Admin" <nikhilkashyapkn@gmail.com>',
             to: process.env.ADMIN_EMAIL,
-            subject: 'New User Login',
+            subject: 'New SFT User Login',
             html: `
         <p><b>Name:</b> ${userName}</p>
         <p><b>Email:</b> ${userEmail}</p>

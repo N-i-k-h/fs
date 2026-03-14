@@ -49,14 +49,14 @@ const sendBookingConfirmationEmail = async ({ user, email, space, seats, price, 
 
             <div style="background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb;">
                 <p>If you have any questions, reply to this email.</p>
-                <p>© ${new Date().getFullYear()} FlickSpace. All rights reserved.</p>
+                <p>© ${new Date().getFullYear()} SFT. All rights reserved.</p>
             </div>
         </div>
         `;
 
         await apiInstance.sendTransacEmail({
             sender: {
-                name: 'FlickSpace Bookings',
+                name: 'SFT Bookings',
                 email: 'nikhilkashyapkn@gmail.com',
             },
             to: [{ email: email, name: user }],

@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     port: Number(process.env.BREVO_SMTP_PORT),
     secure: false, // MUST be false for port 587
     auth: {
-        user: 'nikhilkashyapkn@gmail.com', // Trying explicit email
+        user: process.env.BREVO_SMTP_USER,
         pass: process.env.BREVO_SMTP_PASS,
     },
 });

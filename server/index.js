@@ -40,28 +40,34 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/requests', require('./routes/requestRoutes'));
 app.use('/api/broker', require('./routes/brokerRoutes'));
 
-// Upload Route (Cloudinary)
+// Upload Route (Cloudinary with Local Fallback)
+const { isCloudinaryConfigured } = require('./utils/cloudinary');
+
 app.post('/api/upload', upload.single('image'), (req, res) => {
     try {
         console.log('Upload request received');
-        console.log('File:', req.file);
-
         if (!req.file) {
             console.error('No file in request');
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        // Return Cloudinary URL
-        const fileUrl = req.file.path; // Cloudinary URL is stored in req.file.path
+        let fileUrl;
+        if (isCloudinaryConfigured) {
+            // Cloudinary URL is stored in req.file.path
+            fileUrl = req.file.path;
+        } else {
+            // Local file URL
+            fileUrl = `/uploads/${req.file.filename}`;
+        }
+
         console.log('Upload successful:', fileUrl);
 
         res.status(200).json({
             url: fileUrl,
-            public_id: req.file.filename // Cloudinary public_id for future reference
+            public_id: req.file.filename
         });
     } catch (err) {
         console.error("Upload Error:", err);
-        console.error("Error stack:", err.stack);
         res.status(500).json({
             message: 'Server upload error',
             error: err.message

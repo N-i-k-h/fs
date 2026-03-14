@@ -31,7 +31,6 @@ const Login = () => {
             login(res.data.token, res.data.user);
             toast.success("Welcome back!");
             if (res.data.user.role === 'admin') navigate('/admin');
-            else if (res.data.user.role === 'broker') navigate('/broker');
             else navigate('/');
         } catch (err: any) {
             console.error(err);
@@ -68,7 +67,6 @@ const Login = () => {
 
             const userRole = res.data.user.role;
             if (userRole === 'admin') navigate('/admin');
-            else if (userRole === 'broker') navigate('/broker');
             else navigate('/');
         } catch (err) {
             console.error(err);
@@ -98,14 +96,22 @@ const Login = () => {
                 {/* Right Side - Form */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
                     <div className="w-full max-w-md space-y-8 pt-8 lg:pt-0">
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                             <h2 className="text-3xl font-bold text-foreground">Welcome Back!</h2>
-                            <p className="text-muted-foreground">
-                                Don't have an account?{" "}
-                                <Link to="/register" className="text-teal font-medium hover:underline">
-                                    Create a new account now
-                                </Link>
-                            </p>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-muted-foreground text-sm">
+                                    Don't have an account?{" "}
+                                    <Link to="/register" className="text-teal font-medium hover:underline">
+                                        Create a new account now
+                                    </Link>
+                                </p>
+                                <p className="text-muted-foreground text-sm">
+                                    Are you a property partner?{" "}
+                                    <Link to="/broker/login" className="text-navy font-bold hover:underline decoration-teal decoration-2 underline-offset-4">
+                                        Login to Partner Portal
+                                    </Link>
+                                </p>
+                            </div>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">

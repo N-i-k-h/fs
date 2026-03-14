@@ -209,7 +209,7 @@ const HandshakeForm = ({ space }: { space: any }) => {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-bold text-navy uppercase tracking-wide">Email</label>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Email <span className="text-red-500">*</span></label>
           <input
             name="email"
             type="email"

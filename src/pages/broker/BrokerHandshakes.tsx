@@ -30,7 +30,7 @@ const BrokerHandshakes = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <div>
-                <h1 className="text-3xl font-bold text-navy">Direct <span className="text-teal">Handshakes</span></h1>
+                <h1 className="text-3xl font-bold text-teal">Direct <span className="text-navy">Handshakes</span></h1>
                 <p className="text-gray-500">Corporate clients who want to connect with you directly.</p>
             </div>
 
@@ -47,25 +47,25 @@ const BrokerHandshakes = () => {
                             <CardContent className="p-8">
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-teal/10 flex items-center justify-center text-teal">
+                                        <div className="w-12 h-12 rounded-2xl bg-navy/10 flex items-center justify-center text-navy">
                                             <Handshake className="w-6 h-6" />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold text-navy">{h.user}</h3>
-                                            <Badge variant="outline" className="text-[10px] uppercase font-bold border-teal/20 text-teal">
+                                            <h3 className="text-xl font-bold text-teal">{h.user}</h3>
+                                            <Badge variant="outline" className="text-[10px] uppercase font-bold border-navy/20 text-navy">
                                                 Direct Inquiry
                                             </Badge>
                                         </div>
                                     </div>
                                     <div className="text-right">
                                         <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest block">Budget</span>
-                                        <span className="text-sm font-bold text-navy">₹{h.budget || 'TBD'}</span>
+                                        <span className="text-sm font-bold text-teal">₹{h.budget || 'TBD'}</span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4 mb-6">
                                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                                        <Building2 className="w-4 h-4 text-teal" />
+                                        <Building2 className="w-4 h-4 text-navy" />
                                         <div>
                                             <p className="text-[10px] text-gray-400 uppercase font-bold leading-none mb-1">Office Space</p>
                                             <p className="text-sm font-bold text-navy">{h.space}</p>
@@ -85,10 +85,10 @@ const BrokerHandshakes = () => {
                                 </div>
 
                                 <div className="pt-6 border-t border-gray-100 grid grid-cols-2 gap-4">
-                                    <a href={`mailto:${h.email}`} className="flex items-center justify-center gap-2 py-3 bg-navy text-white rounded-xl text-sm font-bold hover:bg-navy/90 transition-colors">
+                                    <a href={`mailto:${h.email}`} className="flex items-center justify-center gap-2 py-3 bg-teal text-white rounded-xl text-sm font-bold hover:bg-teal/90 transition-colors">
                                         <Mail className="w-4 h-4" /> Email Client
                                     </a>
-                                    <a href={`tel:${h.phone}`} className="flex items-center justify-center gap-2 py-3 border border-gray-200 text-navy rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">
+                                    <a href={`tel:${h.phone}`} className="flex items-center justify-center gap-2 py-3 border border-teal text-teal rounded-xl text-sm font-bold hover:bg-teal/5 transition-colors">
                                         <Phone className="w-4 h-4" /> Call Now
                                     </a>
                                 </div>

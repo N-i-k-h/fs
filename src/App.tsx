@@ -28,6 +28,7 @@ import BrokerProfile from "./pages/broker/BrokerProfile";
 import BrokerEditSpace from "./pages/broker/BrokerEditSpace";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminRequests from "./pages/admin/AdminRequests";
+import AdminRFPs from "./pages/admin/AdminRFPs";
 import AdminHandshakes from "./pages/admin/AdminHandshakes";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSpaces from "./pages/admin/AdminSpaces";
@@ -97,6 +98,7 @@ const App = () => (
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="requests" element={<AdminRequests />} />
+                <Route path="rfps" element={<AdminRFPs />} />
                 <Route path="handshakes" element={<AdminHandshakes />} />
                 <Route path="quotes" element={<AdminQuotes />} />
                 <Route path="brochures" element={<AdminBrochures />} />

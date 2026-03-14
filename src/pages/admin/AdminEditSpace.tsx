@@ -204,11 +204,11 @@ const AdminEditSpace = () => {
                     <Button variant="ghost" onClick={() => navigate("/admin/spaces")} className="pl-0 hover:pl-2 transition-all mb-1 h-auto py-1">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Spaces
                     </Button>
-                    <h1 className="text-2xl font-bold text-navy">Edit Workspace</h1>
+                    <h1 className="text-2xl font-bold text-teal">Edit Workspace</h1>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" onClick={() => navigate("/admin/spaces")}>Cancel</Button>
-                    <Button onClick={handleSubmit} disabled={saving} className="bg-teal hover:bg-teal/90 text-white shadow-lg shadow-teal/20">
+                    <Button onClick={handleSubmit} disabled={saving} className="bg-navy hover:bg-navy/90 text-white shadow-lg shadow-navy/20">
                         {saving ? "Saving..." : <><Save className="w-4 h-4 mr-2" /> Save Changes</>}
                     </Button>
                 </div>
@@ -239,8 +239,8 @@ const AdminEditSpace = () => {
                                                 key={category.value}
                                                 onClick={() => handleCategoryToggle(category.value)}
                                                 className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium border transition-all ${formData.type.includes(category.value)
-                                                    ? "bg-teal text-white border-teal shadow-md"
-                                                    : "bg-white text-gray-600 border-gray-200 hover:border-teal/50 hover:bg-teal/5"
+                                                    ? "bg-navy text-white border-navy shadow-md"
+                                                    : "bg-white text-gray-600 border-gray-200 hover:border-navy/50 hover:bg-navy/5"
                                                     }`}
                                             >
                                                 {category.label}
@@ -397,12 +397,12 @@ const AdminEditSpace = () => {
                         <CardContent>
                             <div className="flex flex-wrap gap-2 mb-4">
                                 {commonAmenities.map((amenity) => (
-                                    <div key={amenity} onClick={() => handleAmenityToggle(amenity)} className={`cursor-pointer px-3 py-1 rounded-full text-xs font-medium border transition-colors ${formData.amenities.includes(amenity) ? "bg-teal text-white border-teal" : "bg-white text-gray-600 border-gray-200 hover:border-teal/50"}`}>
+                                    <div key={amenity} onClick={() => handleAmenityToggle(amenity)} className={`cursor-pointer px-3 py-1 rounded-full text-xs font-medium border transition-colors ${formData.amenities.includes(amenity) ? "bg-navy text-white border-navy" : "bg-white text-gray-600 border-gray-200 hover:border-navy/50"}`}>
                                         {amenity}
                                     </div>
                                 ))}
                                 {formData.amenities.filter(a => !commonAmenities.includes(a)).map(a => (
-                                    <div key={a} onClick={() => handleAmenityToggle(a)} className="cursor-pointer px-3 py-1 rounded-full text-xs font-medium border bg-teal text-white border-teal flex items-center gap-1">
+                                    <div key={a} onClick={() => handleAmenityToggle(a)} className="cursor-pointer px-3 py-1 rounded-full text-xs font-medium border bg-navy text-white border-navy flex items-center gap-1">
                                         {a}
                                     </div>
                                 ))}

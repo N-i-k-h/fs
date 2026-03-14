@@ -77,10 +77,10 @@ const AdminBrochures = () => {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-navy">Brochure Downloads</h1>
+                    <h1 className="text-3xl font-bold text-teal">Brochure Downloads</h1>
                     <p className="text-muted-foreground mt-1">Track who has downloaded brochures and price estimates.</p>
                 </div>
-                <Button onClick={downloadCSV} variant="outline" className="border-teal text-teal hover:bg-teal/10">
+                <Button onClick={downloadCSV} variant="outline" className="border-navy text-navy hover:bg-navy/10">
                     <Download className="w-4 h-4 mr-2" /> Download CSV
                 </Button>
             </div>
@@ -119,7 +119,7 @@ const AdminBrochures = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex items-center text-navy font-medium">
+                                                <div className="flex items-center text-teal font-medium">
                                                     <FileText className="w-4 h-4 mr-2 text-blue-500" />
                                                     {req.spaceName || req.space || "N/A"} Brochure
                                                 </div>

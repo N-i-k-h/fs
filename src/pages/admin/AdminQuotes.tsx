@@ -99,10 +99,10 @@ const AdminQuotes = () => {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-navy">User Quotes</h1>
+                    <h1 className="text-3xl font-bold text-teal">User Quotes</h1>
                     <p className="text-muted-foreground mt-1">Manage requested quotes and estimates.</p>
                 </div>
-                <Button onClick={downloadCSV} variant="outline" className="border-teal text-teal hover:bg-teal/10">
+                <Button onClick={downloadCSV} variant="outline" className="border-navy text-navy hover:bg-navy/10">
                     <Download className="w-4 h-4 mr-2" /> Download CSV
                 </Button>
             </div>
@@ -151,13 +151,13 @@ const AdminQuotes = () => {
                                                         <MapPin className="w-3 h-3 mr-1 text-blue-500" />
                                                         {req.micromarket || 'N/A'}
                                                     </div>
-                                                    <div className="flex items-center text-xs text-navy font-bold mt-1 bg-navy/5 px-2 py-0.5 rounded w-fit">
+                                                    <div className="flex items-center text-xs text-teal font-bold mt-1 bg-teal/5 px-2 py-0.5 rounded w-fit">
                                                         <Users className="w-3 h-3 mr-1" />
                                                         {req.seats} Seats
                                                         {req.type === 'RFP' && ` • ${req.details?.managerCabins || 0} Cabins`}
                                                     </div>
                                                     {req.type === 'RFP' && (
-                                                        <div className="text-[10px] text-teal font-bold uppercase mt-1">
+                                                        <div className="text-[10px] text-navy font-bold uppercase mt-1">
                                                             Meetings: {Object.entries(req.details?.meetingRooms || {}).filter(([_, v]) => Number(v) > 0).length} Types
                                                         </div>
                                                     )}

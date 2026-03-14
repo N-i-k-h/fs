@@ -6,6 +6,13 @@ const sendTourEmail = require('../utils/sendTourEmail');
 
 const Space = require('../models/Space');
 const sendBookingConfirmationEmail = require('../utils/sendBookingConfirmationEmail');
+const Proposal = require('../models/Proposal');
+const User = require('../models/User');
+const sendRFPApprovalEmail = require('../utils/sendRFPApprovalEmail');
+const sendRFPSubmissionEmail = require('../utils/sendRFPSubmissionEmail');
+const sendHandshakeEmail = require('../utils/sendHandshakeEmail');
+const sendProposalNotificationEmail = require('../utils/sendProposalNotificationEmail');
+const sendQuoteNotificationEmail = require('../utils/sendQuoteNotificationEmail');
 
 // Get Requests for specific user (by email)
 router.get('/user/:email', async (req, res) => {
@@ -22,7 +29,8 @@ router.get('/user/:email', async (req, res) => {
 router.get('/analytics', async (req, res) => {
     try {
         // 1. Total Pending (for existing card)
-        const pendingCount = await Request.countDocuments({ status: 'pending' });
+        const pendingCount = await Request.countDocuments({ status: 'pending', type: { $ne: 'Detailed RFP' } });
+        const rfpCount = await Request.countDocuments({ type: 'Detailed RFP', status: 'pending' });
 
         // 2. Approved Requests (for revenue calculation)
         const approvedRequests = await Request.find({ status: 'approved' });
@@ -55,6 +63,7 @@ router.get('/analytics', async (req, res) => {
 
         res.json({
             pendingCount,
+            rfpCount,
             totalRevenue,
             chartData,
             recentActivity
@@ -187,7 +196,17 @@ router.post('/quote', async (req, res) => {
         await newRequest.save();
         console.log('📝 Quote Request Saved:', spaceName, 'by', fullName);
 
-        // Optionally send email here (not implemented yet)
+        // Send email notification to Admin
+        await sendQuoteNotificationEmail({
+            user: fullName,
+            email,
+            phone,
+            space: spaceName,
+            seats,
+            budget,
+            timeline,
+            micromarket
+        });
 
         res.status(201).json({ message: 'Quote requested successfully', request: newRequest });
     } catch (err) {
@@ -216,6 +235,9 @@ router.post('/handshake', async (req, res) => {
 
         await newRequest.save();
         console.log('🤝 Handshake Initiated:', space, 'by', user);
+
+        // Send Email to Admin
+        await sendHandshakeEmail({ user, email, phone, space, seats, budget, timeline });
 
         res.status(201).json({ message: 'Handshake initiated successfully', request: newRequest });
     } catch (err) {
@@ -247,20 +269,15 @@ router.get('/admin-handshakes', async (req, res) => {
                             $match: {
                                 $expr: {
                                     $or: [
+                                        { $eq: ['$_id', '$$ownerId'] },
                                         {
                                             $and: [
-                                                { $ne: ['$$ownerId', null] },
                                                 { $eq: [{ $type: '$$ownerId' }, 'string'] },
-                                                { $eq: [{ $strLenCP: { $ifNull: ['$$ownerId', ''] } }, 24] },
+                                                { $regexMatch: { input: '$$ownerId', regex: /^[0-9a-fA-F]{24}$/ } },
                                                 { $eq: ['$_id', { $toObjectId: '$$ownerId' }] }
                                             ]
                                         },
-                                        {
-                                            $and: [
-                                                { $ne: ['$$ownerId', null] },
-                                                { $eq: ['$email', '$$ownerId'] }
-                                            ]
-                                        }
+                                        { $eq: ['$email', '$$ownerId'] }
                                     ]
                                 }
                             }
@@ -312,6 +329,9 @@ router.post('/rfp', async (req, res) => {
         const newRequest = new Request(requestPayload);
         const saved = await newRequest.save();
 
+        // Send Email Notification
+        await sendRFPSubmissionEmail(requestPayload);
+
         console.log(`[RFP-TRACE-${traceId}] ✅ Saved Successfully: ${saved._id}`);
 
         res.status(201).json({
@@ -330,6 +350,95 @@ router.post('/rfp', async (req, res) => {
             stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
             traceId
         });
+    }
+});
+
+
+// --- Proposal & RFP Approval Flow ---
+
+// 1. Submit Proposal (Broker)
+router.post('/proposal', async (req, res) => {
+    try {
+        const { rfpId, brokerId, spaceId, message } = req.body;
+        const newProposal = new Proposal({
+            rfpId,
+            brokerId,
+            spaceId,
+            message,
+            status: 'pending'
+        });
+        await newProposal.save();
+
+        // Notify Admin about new proposal
+        const proposalWithDetails = await Proposal.findById(newProposal._id)
+            .populate('rfpId')
+            .populate('brokerId')
+            .populate('spaceId');
+
+        if (proposalWithDetails) {
+            await sendProposalNotificationEmail({
+                rfp: proposalWithDetails.rfpId,
+                broker: proposalWithDetails.brokerId,
+                space: proposalWithDetails.spaceId,
+                message: proposalWithDetails.message
+            });
+        }
+
+        res.status(201).json(newProposal);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// 2. Get All Proposals for Admin
+router.get('/proposals/admin', async (req, res) => {
+    try {
+        const proposals = await Proposal.find()
+            .populate('rfpId')
+            .populate('brokerId', 'name email phone')
+            .populate('spaceId', 'name location city price')
+            .sort({ createdAt: -1 });
+        res.json(proposals);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// 3. Approve Proposal (Admin)
+router.put('/proposal/:id/approve', async (req, res) => {
+    try {
+        const proposal = await Proposal.findById(req.params.id)
+            .populate('rfpId')
+            .populate('brokerId')
+            .populate('spaceId');
+
+        if (!proposal) return res.status(404).send('Proposal not found');
+
+        proposal.status = 'approved';
+        await proposal.save();
+
+        // Update the original RFP status
+        if (proposal.rfpId) {
+            const rfp = await Request.findById(proposal.rfpId._id);
+            if (rfp) {
+                rfp.status = 'approved';
+                await rfp.save();
+            }
+        }
+
+        // Send Email with PDF
+        await sendRFPApprovalEmail({
+            rfp: proposal.rfpId,
+            space: proposal.spaceId,
+            broker: proposal.brokerId
+        });
+
+        res.json({ message: 'Proposal approved and emails sent', proposal });
+    } catch (err) {
+        console.error('Approve Proposal Error:', err);
+        res.status(500).send('Server Error');
     }
 });
 

@@ -79,7 +79,7 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-all duration-300",
           isBrokerMode
-            ? "bg-navy shadow-md py-4 border-b border-white/10"
+            ? "bg-teal shadow-md py-4 border-b border-white/10"
             : "bg-white shadow-sm py-3 border-b border-gray-100"
         )}
       >
@@ -195,12 +195,19 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
                 </div>
               </div>
             ) : (
-              <Link
-                to={isBrokerMode ? "/broker/login" : "/login"}
-                className={cn("text-sm font-medium transition-colors", isBrokerMode ? "text-white/90 hover:text-teal" : "text-navy hover:text-teal")}
-              >
-                Login
-              </Link>
+              <div className="flex items-center gap-6">
+                {!isBrokerMode && (
+                  <Link to="/broker/login" className="text-sm font-bold text-teal hover:underline decoration-2 underline-offset-4">
+                    Partner Portal
+                  </Link>
+                )}
+                <Link
+                  to={isBrokerMode ? "/broker/login" : "/login"}
+                  className={cn("text-sm font-medium transition-colors", isBrokerMode ? "text-white/90 hover:text-teal" : "text-navy hover:text-teal")}
+                >
+                  Login
+                </Link>
+              </div>
             )}
 
             {/* Removed List Space Button */}
@@ -231,7 +238,7 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
           {/* Menu Panel - Dynamic Theme */}
           <div className={cn(
             "relative w-full h-[70vh] rounded-b-[3rem] flex flex-col animate-in slide-in-from-top duration-500 ease-out shadow-2xl overflow-hidden",
-            isBrokerMode ? "bg-navy text-white" : "bg-white text-navy"
+            isBrokerMode ? "bg-teal text-white" : "bg-white text-navy"
           )}>
 
             {/* Header: Logo & Close Button */}

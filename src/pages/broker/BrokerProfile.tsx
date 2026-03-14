@@ -49,7 +49,7 @@ const BrokerProfile = () => {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
-                <h1 className="text-3xl font-bold text-navy">My <span className="text-teal">Profile</span></h1>
+                <h1 className="text-3xl font-bold text-teal">My <span className="text-navy">Profile</span></h1>
                 <p className="text-gray-500">Manage your partner identity and contact coordinates.</p>
             </div>
 
@@ -57,23 +57,23 @@ const BrokerProfile = () => {
                 {/* Profile Card */}
                 <Card className="lg:col-span-1 border-none shadow-sm rounded-[2rem] overflow-hidden bg-white">
                     <CardContent className="pt-10 flex flex-col items-center text-center">
-                        <div className="w-24 h-24 rounded-[2rem] bg-teal/10 flex items-center justify-center text-teal text-3xl font-black border-2 border-teal/20 mb-6">
+                        <div className="w-24 h-24 rounded-[2rem] bg-navy/10 flex items-center justify-center text-navy text-3xl font-black border-2 border-navy/20 mb-6">
                             {user?.name?.[0] || 'B'}
                         </div>
-                        <h2 className="text-xl font-bold text-navy">{user?.name}</h2>
+                        <h2 className="text-xl font-bold text-teal">{user?.name}</h2>
                         <div className="flex items-center gap-2 mt-2">
-                            <ShieldCheck className="w-4 h-4 text-teal" />
-                            <span className="text-xs font-black text-teal uppercase tracking-widest">Verified Partner</span>
+                            <ShieldCheck className="w-4 h-4 text-navy" />
+                            <span className="text-xs font-black text-navy uppercase tracking-widest">Verified Partner</span>
                         </div>
 
                         <div className="w-full mt-10 pt-8 border-t border-gray-50 space-y-4">
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-gray-400 font-medium">Buildings Listed</span>
-                                <span className="text-navy font-bold">12</span>
+                                <span className="text-teal font-bold">12</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-gray-400 font-medium">Joined Date</span>
-                                <span className="text-navy font-bold">Oct 2023</span>
+                                <span className="text-teal font-bold">Oct 2023</span>
                             </div>
                         </div>
                     </CardContent>
@@ -82,7 +82,7 @@ const BrokerProfile = () => {
                 {/* Form Card */}
                 <Card className="lg:col-span-2 border-none shadow-sm rounded-[2rem] bg-white">
                     <CardHeader className="p-8 border-b border-gray-50">
-                        <CardTitle className="text-lg font-bold text-navy">Edit Identity</CardTitle>
+                        <CardTitle className="text-lg font-bold text-teal">Edit Identity</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8">
                         <form onSubmit={handleSubmit} className="space-y-8">
@@ -152,7 +152,7 @@ const BrokerProfile = () => {
                             <div className="pt-4 flex justify-end">
                                 <Button
                                     disabled={loading}
-                                    className="bg-navy hover:bg-teal text-white font-bold h-12 px-10 rounded-xl transition-all shadow-lg shadow-navy/20"
+                                    className="bg-teal hover:bg-navy text-white font-bold h-12 px-10 rounded-xl transition-all shadow-lg shadow-teal/20"
                                 >
                                     {loading ? "Saving..." : "Save Profile Details"}
                                 </Button>

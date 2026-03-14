@@ -61,6 +61,14 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ msg: 'Invalid Credentials' });
         }
 
+        // --- ENFORCE SEPARATION ---
+        if (user.role === 'broker') {
+            return res.status(403).json({
+                msg: 'This portal is for Clients only. Please login via the Partner Portal.',
+                isBroker: true
+            });
+        }
+
         if (!user.password) {
             console.log('🚫 Google User attempted password login:', email);
             return res.status(400).json({ msg: 'Please login with Google' });
@@ -158,6 +166,13 @@ router.post('/google-data', async (req, res) => {
         let user = await User.findOne({ email });
 
         if (user) {
+            // --- ENFORCE SEPARATION ---
+            if (user.role === 'broker') {
+                return res.status(403).json({
+                    msg: 'This account is registered as a Partner. Please login via the Partner Portal.',
+                    isBroker: true
+                });
+            }
             if (!user.googleId) {
                 user.googleId = googleId;
                 if (!user.avatar) user.avatar = picture;

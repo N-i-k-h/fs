@@ -14,25 +14,25 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     try {
         // 1️⃣ Send Welcome Email to User
         await transporter.sendMail({
-            from: '"FlickSpace" <nikhilkashyapkn@gmail.com>',
+            from: '"SFT" <nikhilkashyapkn@gmail.com>',
             to: userEmail,
-            subject: 'Welcome to FlickSpace 🎉',
+            subject: 'Welcome to SFT 🎉',
             html: `
         <div style="font-family: Arial;">
           <h2>Welcome ${userName} 👋</h2>
-          <p>Your FlickSpace account is ready.</p>
+          <p>Your SFT account is ready.</p>
           <p>Start exploring workspaces now.</p>
           <br/>
-          <p>— FlickSpace Team</p>
+          <p>— SFT Team</p>
         </div>
       `,
         });
 
         // 2️⃣ Notify Admin
         await transporter.sendMail({
-            from: '"FlickSpace System" <nikhilkashyapkn@gmail.com>',
+            from: '"SFT System" <nikhilkashyapkn@gmail.com>',
             to: process.env.ADMIN_EMAIL,
-            subject: 'New User Login - FlickSpace',
+            subject: 'New User Login - SFT',
             html: `
         <p><strong>Name:</strong> ${userName}</p>
         <p><strong>Email:</strong> ${userEmail}</p>
