@@ -16,6 +16,9 @@ import ClientRFPForm from "./pages/ClientRFPForm";
 import BrokerPropertyForm from "./pages/BrokerPropertyForm";
 import BrokerLogin from "./pages/BrokerLogin";
 import BrokerRegister from "./pages/BrokerRegister";
+import ShareRequirementPage from "./pages/ShareRequirementPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 import AdminLayout from "./layouts/AdminLayout";
 import BrokerLayout from "./layouts/BrokerLayout";
@@ -28,6 +31,7 @@ import BrokerProfile from "./pages/broker/BrokerProfile";
 import BrokerEditSpace from "./pages/broker/BrokerEditSpace";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminRequests from "./pages/admin/AdminRequests";
+import AdminRFPs from "./pages/admin/AdminRFPs";
 import AdminHandshakes from "./pages/admin/AdminHandshakes";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSpaces from "./pages/admin/AdminSpaces";
@@ -36,11 +40,12 @@ import AdminEditSpace from "./pages/admin/AdminEditSpace";
 import AdminQuotes from "./pages/admin/AdminQuotes";
 import AdminBrochures from "./pages/admin/AdminBrochures";
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminBrokerProposals from "./pages/admin/AdminBrokerProposals";
 import ImageUploadExample from "./pages/ImageUploadExample";
 import SimpleUploadExample from "./pages/SimpleUploadExample";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./context/AuthContext";
-import { AIFloatingButton } from "./components/AIFloatingButton";
+import ChatBot from "./components/ChatBot";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +74,8 @@ const App = () => (
               {/* Auth Pages */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
               <Route path="/admin/login" element={<AdminLogin />} />
 
               {/* Dashboard Page */}
@@ -97,23 +104,26 @@ const App = () => (
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="requests" element={<AdminRequests />} />
+                <Route path="rfps" element={<AdminRFPs />} />
                 <Route path="handshakes" element={<AdminHandshakes />} />
                 <Route path="quotes" element={<AdminQuotes />} />
                 <Route path="brochures" element={<AdminBrochures />} />
                 <Route path="spaces" element={<AdminSpaces />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="broker-proposals" element={<AdminBrokerProposals />} />
                 <Route path="add-space" element={<AdminAddSpace />} />
                 <Route path="edit-space/:id" element={<AdminEditSpace />} />
               </Route>
 
               {/* Connect Platform RFP Routes */}
+              <Route path="/share-requirement" element={<ShareRequirementPage />} />
               <Route path="/rfp-form" element={<ClientRFPForm />} />
               <Route path="/broker/submit-property" element={<BrokerPropertyForm />} />
 
               {/* 404 Page */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <AIFloatingButton />
+            <ChatBot />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>

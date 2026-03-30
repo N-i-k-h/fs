@@ -99,7 +99,7 @@ const Register = () => {
                         style={{ backgroundImage: `url(${heroBg})` }}
                     />
                     <div className="relative z-10 text-white p-12 max-w-lg">
-                        <h1 className="text-5xl font-bold mb-6 leading-tight">Join<br />FlickSpace!</h1>
+                        <h1 className="text-5xl font-bold mb-6 leading-tight">Join<br />SFT!</h1>
                         <p className="text-lg opacity-90 leading-relaxed">
                             Create an account to unlock exclusive workspace deals and manage your bookings effortlessly.
                         </p>
@@ -110,14 +110,22 @@ const Register = () => {
                 {/* Right Side - Form */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background overflow-y-auto">
                     <div className="w-full max-w-md space-y-8 my-auto pt-8 lg:pt-0">
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                             <h2 className="text-3xl font-bold text-foreground">Create Account</h2>
-                            <p className="text-muted-foreground">
-                                Already have an account?{" "}
-                                <Link to="/login" className="text-teal font-medium hover:underline">
-                                    Login here
-                                </Link>
-                            </p>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-muted-foreground text-sm">
+                                    Already have an account?{" "}
+                                    <Link to="/login" className="text-teal font-medium hover:underline">
+                                        Login here
+                                    </Link>
+                                </p>
+                                <p className="text-muted-foreground text-sm">
+                                    Are you a property partner?{" "}
+                                    <Link to="/broker/register" className="text-navy font-bold hover:underline decoration-teal decoration-2 underline-offset-4">
+                                        Register as Partner
+                                    </Link>
+                                </p>
+                            </div>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-5">

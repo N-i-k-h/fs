@@ -88,10 +88,10 @@ const AdminUsers = () => {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-navy">User Management</h1>
+                    <h1 className="text-3xl font-bold text-teal">User Management</h1>
                     <p className="text-muted-foreground mt-1">Manage system users and access.</p>
                 </div>
-                <Button onClick={downloadCSV} variant="outline" className="border-teal text-teal hover:bg-teal/10">
+                <Button onClick={downloadCSV} variant="outline" className="border-navy text-navy hover:bg-navy/10">
                     <Download className="w-4 h-4 mr-2" /> Download CSV
                 </Button>
             </div>
@@ -132,7 +132,7 @@ const AdminUsers = () => {
                                                         {user.avatar ? (
                                                             <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
                                                         ) : (
-                                                            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-teal">
+                                                            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-navy">
                                                                 <User className="w-4 h-4" />
                                                             </div>
                                                         )}

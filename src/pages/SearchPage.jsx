@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MapPin, Filter, ChevronDown, Check, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, Filter, ChevronDown, Check, Search, X, ChevronLeft, ChevronRight, FileText, MoveRight } from "lucide-react";
 import axios from "axios";
 import {
   Select,
@@ -13,6 +13,9 @@ import {
 import Header from "@/components/Header";
 import OfficeCard from "@/components/OfficeCard";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/context/AuthContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { LogIn } from "lucide-react";
 
 // Import Videos
 import vid1 from "@/assets/WhatsApp Video 2026-01-06 at 10.16.59 PM.mp4";
@@ -48,18 +51,29 @@ const SearchPage = () => {
   const initialAmenities = searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [];
 
   const [query, setQuery] = useState(initialQuery);
-  const [selectedCity, setSelectedCity] = useState(initialCity);
+  const [selectedCity, setSelectedCity] = useState(initialCity.toLowerCase());
   const [selectedRegion, setSelectedRegion] = useState(initialRegion);
   const [selectedBudget, setSelectedBudget] = useState(initialBudget);
   const [selectedAvailability, setSelectedAvailability] = useState(initialSeats);
   const [selectedAmenities, setSelectedAmenities] = useState(initialAmenities);
+  const [selectedMarket, setSelectedMarket] = useState(searchParams.get("market") || "");
 
+  const { user, loading } = useAuth();
   const [workspaces, setWorkspaces] = useState([]);
   const [filteredSpaces, setFilteredSpaces] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const [amenitiesOpen, setAmenitiesOpen] = useState(false);
   const amenitiesRef = useRef(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      setShowLoginPopup(true);
+    } else {
+      setShowLoginPopup(false);
+    }
+  }, [user, loading]);
 
   // Fetch Data from API
   useEffect(() => {
@@ -103,11 +117,12 @@ const SearchPage = () => {
     const amParam = searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [];
 
     setQuery(qParam);
-    setSelectedCity(cityParam);
+    setSelectedCity(cityParam.toLowerCase());
     setSelectedRegion(regionParam);
     setSelectedBudget(priceParam);
     setSelectedAvailability(seatsParam);
     setSelectedAmenities(amParam);
+    setSelectedMarket(marketParam);
 
     const data = workspaces || [];
     const lowerQ = qParam.toLowerCase();
@@ -117,6 +132,7 @@ const SearchPage = () => {
     const typoMap = {
       "kormangala": "koramangala",
       "kormangla": "koramangala",
+      "banglore": "bangalore", // Added here as well for good measure
       "bengaluru": "bangalore",
       "bombay": "mumbai",
       "gurugram": "gurgaon",
@@ -129,12 +145,19 @@ const SearchPage = () => {
       }
     });
 
+    // Normalize Params for Filtering
+    let normalizedCity = cityParam.toLowerCase().trim();
+    if (typoMap[normalizedCity]) normalizedCity = typoMap[normalizedCity];
+
+    let normalizedMarket = (marketParam || "").toLowerCase().trim();
+    if (typoMap[normalizedMarket]) normalizedMarket = typoMap[normalizedMarket];
+
     const stopWords = ["in", "at", "for", "the", "a", "an", "of", "and", "or", "to", "with", "office", "space"];
 
     // SCORING LOGIC
     let scoredSpaces = data.map((space) => {
       // 1. Static Filters (Strict)
-      if (cityParam && space.city.toLowerCase() !== cityParam.toLowerCase()) return null;
+      if (normalizedCity && space.city.toLowerCase() !== normalizedCity) return null;
 
       // Region Filter
       if (regionParam && regionParam !== "none") {
@@ -143,8 +166,8 @@ const SearchPage = () => {
       }
 
       // Market (Micro-location) Filter
-      if (marketParam) {
-        if (space.location.toLowerCase().trim() !== marketParam.toLowerCase().trim()) return null;
+      if (normalizedMarket) {
+        if (!space.location.toLowerCase().includes(normalizedMarket)) return null;
       }
 
       if (priceParam === "below-10k" && space.price >= 10000) return null;
@@ -268,11 +291,10 @@ const SearchPage = () => {
     <div className="min-h-screen flex flex-col bg-gray-50/30">
       <Header />
 
-      {/* CENTERED FILTER HEADER - Sticky */}
+      {/* CENTERED FILTER HEADER - Sticky (Commented Out per request) */}
+      {/* 
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md pt-24 pb-4 border-b border-gray-200 shrink-0">
         <div className="px-4 mx-auto w-full max-w-[1600px] flex flex-col items-center gap-4">
-
-          {/* 1. Search Bar */}
           <div className="w-full max-w-2xl">
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -294,20 +316,16 @@ const SearchPage = () => {
               </Button>
             </div>
           </div>
-
-          {/* 2. Horizontal Filter Pills */}
           <div className="flex flex-row flex-wrap items-center justify-center gap-3 w-full">
             <Select value={selectedCity || ""} onValueChange={handleCityChange}>
               <SelectTrigger className={`h-10 px-5 w-auto min-w-[140px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedCity ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="City" /></SelectTrigger>
               <SelectContent>
-                {/* Dynamic Cities */}
                 {Array.from(new Set(workspaces.map(w => w.city))).sort().map(city => (
                   <SelectItem key={city} value={city.toLowerCase()}>{city}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            {/* Region Dropdown */}
             {(selectedCity === "bangalore" || !selectedCity) && (
               <Select value={selectedRegion || ""} onValueChange={handleRegionChange}>
                 <SelectTrigger className={`h-10 px-5 w-auto min-w-[140px] rounded-full border bg-white text-sm font-medium hover:border-teal/50 transition-all ${selectedRegion ? "border-teal text-teal bg-teal/5" : "border-gray-200 text-gray-700"}`}><SelectValue placeholder="Region" /></SelectTrigger>
@@ -318,6 +336,19 @@ const SearchPage = () => {
                   ))}
                 </SelectContent>
               </Select>
+            )}
+
+            {selectedMarket && (
+              <div className={`h-10 px-5 rounded-full border border-teal text-teal bg-teal/5 flex items-center gap-2 text-sm font-medium`}>
+                <MapPin className="w-3.5 h-3.5" />
+                {selectedMarket.charAt(0).toUpperCase() + selectedMarket.slice(1)}
+                <button
+                  onClick={() => updateFilters({ market: "" })}
+                  className="ml-1 hover:text-red-500 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
             )}
 
             <Select value={selectedBudget || ""} onValueChange={handleBudgetChange}>
@@ -373,6 +404,17 @@ const SearchPage = () => {
           </div>
         </div>
       </div>
+      */}
+
+      {/* SEARCH COUNTER HEADER */}
+      <div className="pt-32 pb-8 border-b border-gray-100 bg-white">
+        <div className="px-4 mx-auto w-full max-w-[1600px] flex flex-col items-center justify-center text-center">
+            <h2 className="text-3xl md:text-5xl font-black text-navy uppercase tracking-tighter animate-in slide-in-from-bottom-4 duration-700">
+                {filteredSpaces.length > 0 ? `${filteredSpaces.length} Workspaces Found` : "Searching Workspaces..."}
+            </h2>
+            <div className="h-1.5 w-24 bg-teal rounded-full mt-4"></div>
+        </div>
+      </div>
 
       {/* MAIN CONTENT SPLIT (60% List / 40% Map) - Full Page Scroll */}
       <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 pb-0">
@@ -380,17 +422,65 @@ const SearchPage = () => {
 
           {/* LEFT: RESULTS (60%) */}
           <div className="md:col-span-3 flex flex-col gap-6">
+            {/* SEARCH RESULTS HEADER (Disabled) */}
+            {/*
             <div className="flex items-center justify-between" id="results-top">
               <div>
                 <h2 className="text-xl font-bold text-navy">
                   {filteredSpaces.length > 0 ? `${filteredSpaces.length} Workspaces Found` : "No Workspaces Found"}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
-                  {selectedRegion ? `Showing results in ${selectedRegion}` : selectedCity ? `Showing results in ${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}` : "Showing all available spaces"}
+                  {selectedMarket
+                    ? `Showing results in ${selectedMarket.charAt(0).toUpperCase() + selectedMarket.slice(1)}${selectedCity ? `, ${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}` : ""}`
+                    : selectedRegion
+                      ? `Showing results in ${selectedRegion}`
+                      : selectedCity
+                        ? `Showing results in ${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}`
+                        : "Showing all available spaces"}
                 </p>
               </div>
             </div>
+            */}
 
+            {/* RFP SUBMISSION BLOCK (Mandatory Landing Page) */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-1000">
+                <div className="p-10 md:p-16 flex flex-col items-center text-center">
+                    <div className="w-24 h-24 bg-teal/10 rounded-full flex items-center justify-center mb-8">
+                        <FileText className="w-12 h-12 text-teal animate-pulse" />
+                    </div>
+                    <h2 className="text-3xl md:text-5xl font-black text-navy leading-none mb-6">
+                        Send your <span className="text-teal underline decoration-4 underline-offset-8">Exact Requirement</span> in the RFP Form
+                    </h2>
+                    <p className="text-gray-500 max-w-xl mb-10 text-xl font-medium leading-relaxed">
+                        Skip the browsing. Tell us your budget, location, and seat count. Our experts will curate the perfect off-market solution just for you.
+                    </p>
+                    <Button 
+                        onClick={() => navigate("/rfp-form")}
+                        className="h-16 px-12 bg-navy hover:bg-teal text-white font-black uppercase tracking-widest text-sm rounded-2xl shadow-2xl transition-all transform hover:scale-105 active:scale-95 flex items-center gap-4 group"
+                    >
+                        Access Custom RFP Form <MoveRight className="w-6 h-6 transition-transform group-hover:translate-x-2" />
+                    </Button>
+                </div>
+                
+                {/* Visual Trust Indicators */}
+                <div className="grid grid-cols-1 md:grid-cols-3 border-t border-gray-50 bg-gray-50/30">
+                    <div className="p-8 text-center border-r border-gray-100">
+                        <div className="text-teal font-black mb-1 uppercase tracking-widest text-[10px]">Step 1</div>
+                        <div className="text-navy font-bold text-sm">Submit Brief</div>
+                    </div>
+                    <div className="p-8 text-center border-r border-gray-100">
+                        <div className="text-teal font-black mb-1 uppercase tracking-widest text-[10px]">Step 2</div>
+                        <div className="text-navy font-bold text-sm">Expert Curation</div>
+                    </div>
+                    <div className="p-8 text-center">
+                        <div className="text-teal font-black mb-1 uppercase tracking-widest text-[10px]">Step 3</div>
+                        <div className="text-navy font-bold text-sm">Move In</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* WORKSPACE LISTINGS (Commented Out) */}
+            {/*
             {filteredSpaces.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {currentSpaces.map((space) => (
@@ -413,6 +503,7 @@ const SearchPage = () => {
                 <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="h-8 w-8 p-0 rounded-full"><ChevronRight className="w-4 h-4" /></Button>
               </div>
             )}
+            */}
           </div>
 
           {/* RIGHT: MAP (40%) - Sticky */}
@@ -450,6 +541,45 @@ const SearchPage = () => {
       </div>
 
       <Footer />
+
+      {/* LOGIN POPUP MODAL */}
+      <Dialog open={showLoginPopup} onOpenChange={(open) => {
+        // Only allow closing if user is logged in (which shouldn't happen while modal is logic is active)
+        if (user) setShowLoginPopup(false);
+      }}>
+        <DialogContent className="sm:max-w-md bg-white rounded-3xl p-0 overflow-hidden border-none shadow-2xl z-[9999]">
+          <div className="relative p-10 flex flex-col items-center text-center">
+             <div className="w-20 h-20 bg-teal/10 rounded-full flex items-center justify-center mb-6">
+                <LogIn className="w-10 h-10 text-teal" />
+             </div>
+             <DialogHeader>
+                <DialogTitle className="text-3xl font-black text-navy leading-tight mb-4 tracking-tight">
+                    Login and <span className="text-teal">Explore</span> the Workspace
+                </DialogTitle>
+                <DialogDescription className="text-gray-500 text-lg font-medium leading-relaxed mb-8">
+                    To see our exclusive listed properties and submit your RFP requirements, please log in or create an account.
+                </DialogDescription>
+             </DialogHeader>
+             
+             <div className="flex flex-col w-full gap-4 mt-4">
+                <Button 
+                    onClick={() => navigate("/login")}
+                    className="h-14 rounded-2xl bg-teal hover:bg-teal/90 text-white font-bold text-lg shadow-xl shadow-teal/20 transition-all hover:scale-105"
+                >
+                    Login to Continue
+                </Button>
+                <Button 
+                    variant="ghost"
+                    onClick={() => navigate("/")}
+                    className="text-gray-400 font-medium hover:text-navy"
+                >
+                    Back to Landing Page
+                </Button>
+             </div>
+          </div>
+          <div className="h-2 w-full bg-gradient-to-r from-teal via-navy to-teal"></div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

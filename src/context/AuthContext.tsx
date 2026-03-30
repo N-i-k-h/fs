@@ -25,7 +25,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+    const getStoredToken = () => {
+        const t = localStorage.getItem('token');
+        return (t && t !== 'undefined' && t !== 'null') ? t : null;
+    };
+    const [token, setToken] = useState<string | null>(getStoredToken());
     const [loading, setLoading] = useState(true);
 
     // Configure global Axios headers

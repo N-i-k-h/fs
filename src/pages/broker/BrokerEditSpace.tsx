@@ -229,7 +229,7 @@ const BrokerEditSpace = () => {
 
     const commonAmenities = ['WiFi', 'Coffee', 'Meeting Rooms', 'Reception', 'Power Backup', 'AC', 'Parking', 'Printers', 'Cleaning', 'Security'];
 
-    if (loading) return <div className="p-12 text-center text-navy font-bold animate-pulse">Loading Workspace Details...</div>;
+    if (loading) return <div className="p-12 text-center text-teal font-bold animate-pulse">Loading Workspace Details...</div>;
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-24 px-4 text-navy">
@@ -239,11 +239,11 @@ const BrokerEditSpace = () => {
                     <Button variant="ghost" onClick={() => navigate(-1)} className="pl-0 hover:pl-2 transition-all mb-1 h-auto py-1 text-gray-500">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>
-                    <h1 className="text-3xl font-extrabold text-navy tracking-tight">Edit <span className="text-teal">Workspace</span></h1>
+                    <h1 className="text-3xl font-extrabold text-teal tracking-tight">Edit <span className="text-navy">Workspace</span></h1>
                 </div>
                 <div className="flex gap-4">
                     <Button variant="outline" onClick={() => navigate(-1)} className="rounded-xl px-8">Cancel</Button>
-                    <Button onClick={handleSubmit} disabled={submitting} className="bg-teal hover:bg-teal/90 text-white shadow-xl shadow-teal/20 rounded-xl px-10 font-bold h-12">
+                    <Button onClick={handleSubmit} disabled={submitting} className="bg-navy hover:bg-navy/90 text-white shadow-xl shadow-navy/20 rounded-xl px-10 font-bold h-12">
                         {submitting ? "Saving..." : <><Save className="w-4 h-4 mr-2" /> Save Changes</>}
                     </Button>
                 </div>
@@ -256,16 +256,16 @@ const BrokerEditSpace = () => {
                     {/* Basic Information */}
                     <Card className="rounded-3xl border-none shadow-sm overflow-hidden">
                         <CardHeader className="bg-gray-50/50 pb-4">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Info className="w-5 h-5 text-teal" /> Basic Information</CardTitle>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Info className="w-5 h-5 text-navy" /> Basic Information</CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="name" className="text-navy font-semibold">Space Name</Label>
+                                <Label htmlFor="name" className="text-teal font-semibold">Space Name</Label>
                                 <Input id="name" value={formData.name} onChange={handleChange} className="h-12 bg-gray-50 border-none rounded-xl" />
                             </div>
 
                             <div className="space-y-3">
-                                <Label className="text-navy font-semibold">Workspace Categories</Label>
+                                <Label className="text-teal font-semibold">Workspace Categories</Label>
                                 <div className="flex flex-wrap gap-3">
                                     {[
                                         { value: "private-office", label: "Private Office" },
@@ -280,8 +280,8 @@ const BrokerEditSpace = () => {
                                             className={cn(
                                                 "cursor-pointer px-5 py-3 rounded-xl text-sm font-bold border transition-all duration-200",
                                                 formData.type.includes(cat.value)
-                                                    ? "bg-teal text-white border-teal shadow-lg shadow-teal/20"
-                                                    : "bg-white text-gray-600 border-gray-200 hover:border-teal/50 hover:bg-teal/5"
+                                                    ? "bg-navy text-white border-navy shadow-lg shadow-navy/20"
+                                                    : "bg-white text-gray-600 border-gray-200 hover:border-navy/50 hover:bg-navy/5"
                                             )}
                                         >
                                             {cat.label}
@@ -291,7 +291,7 @@ const BrokerEditSpace = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description" className="text-navy font-semibold">Description</Label>
+                                <Label htmlFor="description" className="text-teal font-semibold">Description</Label>
                                 <Textarea
                                     id="description"
                                     value={formData.description}
@@ -302,7 +302,7 @@ const BrokerEditSpace = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="city" className="text-navy font-semibold">City</Label>
+                                    <Label htmlFor="city" className="text-teal font-semibold">City</Label>
                                     <Select onValueChange={(v) => setFormData(p => ({ ...p, city: v }))} value={formData.city}>
                                         <SelectTrigger className="h-12 bg-gray-50 border-none rounded-xl">
                                             <SelectValue />
@@ -313,13 +313,13 @@ const BrokerEditSpace = () => {
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="location" className="text-navy font-semibold">Micro Market (Area)</Label>
+                                    <Label htmlFor="location" className="text-teal font-semibold">Micro Market (Area)</Label>
                                     <Input id="location" value={formData.location} onChange={handleChange} className="h-12 bg-gray-50 border-none rounded-xl" />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="googleMapUrl" className="text-navy font-semibold">Google Map Link</Label>
+                                <Label htmlFor="googleMapUrl" className="text-teal font-semibold">Google Map Link</Label>
                                 <Input
                                     id="googleMapUrl"
                                     value={formData.googleMapUrl}
@@ -333,17 +333,17 @@ const BrokerEditSpace = () => {
                     {/* Pricing & Snapshot */}
                     <Card className="rounded-3xl border-none shadow-sm overflow-hidden text-navy">
                         <CardHeader className="bg-gray-50/50 pb-4">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Banknote className="w-5 h-5 text-teal" /> Pricing & Snapshot</CardTitle>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Banknote className="w-5 h-5 text-navy" /> Pricing & Snapshot</CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="price" className="text-navy font-semibold">Price (₹/Seat)</Label>
+                                    <Label htmlFor="price" className="text-teal font-semibold">Price (₹/Seat)</Label>
                                     <Input id="price" type="number" value={formData.price} onChange={handleChange} className="h-12 bg-gray-50 border-none rounded-xl" />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="seats" className="text-navy font-semibold">Total Seats</Label>
+                                    <Label htmlFor="seats" className="text-teal font-semibold">Total Seats</Label>
                                     <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl">
                                         <Button
                                             type="button"
@@ -374,7 +374,7 @@ const BrokerEditSpace = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="availableSeats" className="text-navy font-semibold">Available Seats</Label>
+                                    <Label htmlFor="availableSeats" className="text-teal font-semibold">Available Seats</Label>
                                     <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl">
                                         <Button
                                             type="button"
@@ -405,18 +405,18 @@ const BrokerEditSpace = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-navy/5 p-6 rounded-2xl border border-navy/10">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-teal/5 p-6 rounded-2xl border border-teal/10">
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Snapshot: Capacity</Label>
-                                    <Input id="snapshot.capacity" value={formData.snapshot.capacity} onChange={handleChange} className="h-11 bg-white border-navy/10 rounded-xl" />
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Snapshot: Capacity</Label>
+                                    <Input id="snapshot.capacity" value={formData.snapshot.capacity} onChange={handleChange} className="h-11 bg-white border-teal/10 rounded-xl" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Snapshot: Area</Label>
-                                    <Input id="snapshot.area" value={formData.snapshot.area} onChange={handleChange} className="h-11 bg-white border-navy/10 rounded-xl" />
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Snapshot: Area</Label>
+                                    <Input id="snapshot.area" value={formData.snapshot.area} onChange={handleChange} className="h-11 bg-white border-teal/10 rounded-xl" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Snapshot: Lock In</Label>
-                                    <Input id="snapshot.lock_in" value={formData.snapshot.lock_in} onChange={handleChange} className="h-11 bg-white border-navy/10 rounded-xl" />
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Snapshot: Lock In</Label>
+                                    <Input id="snapshot.lock_in" value={formData.snapshot.lock_in} onChange={handleChange} className="h-11 bg-white border-teal/10 rounded-xl" />
                                 </div>
                             </div>
                         </CardContent>
@@ -425,26 +425,26 @@ const BrokerEditSpace = () => {
                     {/* Technical Specifications */}
                     <Card className="rounded-3xl border-none shadow-sm overflow-hidden">
                         <CardHeader className="bg-gray-50/50 pb-4">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2"><HardHat className="w-5 h-5 text-teal" /> Technical Specifications</CardTitle>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2"><HardHat className="w-5 h-5 text-navy" /> Technical Specifications</CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Floor to Ceiling</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Floor to Ceiling</Label>
                                     <Input id="tech.floorToCeiling" value={formData.technicalSpecs.floorToCeiling} onChange={handleChange} className="h-11 bg-gray-50 border-none rounded-xl" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Passenger Lifts</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Passenger Lifts</Label>
                                     <Input id="tech.passengerLifts" type="number" value={formData.technicalSpecs.passengerLifts} onChange={handleChange} className="h-11 bg-gray-50 border-none rounded-xl" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Service Lifts</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Service Lifts</Label>
                                     <Input id="tech.serviceLifts" type="number" value={formData.technicalSpecs.serviceLifts} onChange={handleChange} className="h-11 bg-gray-50 border-none rounded-xl" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">HVAC Type</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">HVAC Type</Label>
                                     <Select
                                         onValueChange={(v) => setFormData(p => ({ ...p, technicalSpecs: { ...p.technicalSpecs, hvacType: v } }))}
                                         value={formData.technicalSpecs.hvacType}
@@ -458,7 +458,7 @@ const BrokerEditSpace = () => {
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">IT / ERT Status</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">IT / ERT Status</Label>
                                     <Select
                                         onValueChange={(v) => setFormData(p => ({ ...p, technicalSpecs: { ...p.technicalSpecs, itSezStatus: v } }))}
                                         value={formData.technicalSpecs.itSezStatus}
@@ -478,24 +478,24 @@ const BrokerEditSpace = () => {
                     {/* Detailed Commercials */}
                     <Card className="rounded-3xl border-none shadow-sm overflow-hidden">
                         <CardHeader className="bg-gray-50/50 pb-4">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Banknote className="w-5 h-5 text-teal" /> Detailed Commercials</CardTitle>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Banknote className="w-5 h-5 text-navy" /> Detailed Commercials</CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Rent (₹/SqFt)</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Rent (₹/SqFt)</Label>
                                     <Input id="comm.rentPSFT" value={formData.commercialDetails.rentPSFT} onChange={handleChange} className="h-11 bg-gray-50 border-none rounded-xl" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">CAM Charges (₹/SqFt)</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">CAM Charges (₹/SqFt)</Label>
                                     <Input id="comm.camCharges" value={formData.commercialDetails.camCharges} onChange={handleChange} className="h-11 bg-gray-50 border-none rounded-xl" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Lock-in Period</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Lock-in Period</Label>
                                     <Input id="comm.lockInPeriod" value={formData.commercialDetails.lockInPeriod} onChange={handleChange} className="h-11 bg-gray-50 border-none rounded-xl" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs uppercase text-navy/60 font-black">Rent Escalation (%)</Label>
+                                    <Label className="text-xs uppercase text-teal/60 font-black">Rent Escalation (%)</Label>
                                     <Input id="comm.escalation" value={formData.commercialDetails.escalation} onChange={handleChange} className="h-11 bg-gray-50 border-none rounded-xl" />
                                 </div>
                             </div>
@@ -505,7 +505,7 @@ const BrokerEditSpace = () => {
                     {/* Advanced Details */}
                     <Card className="rounded-3xl border-none shadow-sm overflow-hidden text-navy">
                         <CardHeader className="bg-gray-50/50 pb-4">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Plus className="w-5 h-5 text-teal" /> Advanced Details</CardTitle>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2"><Plus className="w-5 h-5 text-navy" /> Advanced Details</CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 space-y-10">
                             <ListEditor
@@ -559,8 +559,8 @@ const BrokerEditSpace = () => {
                                         className={cn(
                                             "cursor-pointer px-4 py-1.5 rounded-full text-xs font-bold border transition-colors duration-200",
                                             formData.amenities.includes(amenity)
-                                                ? "bg-teal text-white border-teal shadow-md shadow-teal/10"
-                                                : "bg-white text-gray-500 border-gray-100 hover:border-teal/30 hover:bg-teal/5"
+                                                ? "bg-navy text-white border-navy shadow-md shadow-navy/10"
+                                                : "bg-white text-gray-500 border-gray-100 hover:border-navy/30 hover:bg-navy/5"
                                         )}
                                     >
                                         {amenity}
@@ -574,7 +574,7 @@ const BrokerEditSpace = () => {
                                     onChange={(e) => setNewAmenity(e.target.value)}
                                     className="h-10 text-xs bg-gray-50 border-none rounded-lg"
                                 />
-                                <Button size="icon" onClick={addCustomAmenity} className="h-10 w-10 bg-navy hover:bg-navy/90 text-white rounded-lg"><Plus className="w-4 h-4" /></Button>
+                                <Button size="icon" onClick={addCustomAmenity} className="h-10 w-10 bg-teal hover:bg-teal/90 text-white rounded-lg"><Plus className="w-4 h-4" /></Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -582,7 +582,7 @@ const BrokerEditSpace = () => {
                     {/* Image Upload */}
                     <Card className="rounded-3xl border-none shadow-sm overflow-hidden">
                         <CardHeader className="bg-gray-50/50">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2"><ImageIcon className="w-5 h-5 text-teal" /> Images</CardTitle>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2"><ImageIcon className="w-5 h-5 text-navy" /> Images</CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">
                             <MultiImageUpload
@@ -597,7 +597,7 @@ const BrokerEditSpace = () => {
                     <Button
                         onClick={handleSubmit}
                         disabled={submitting}
-                        className="w-full bg-navy hover:bg-navy/90 text-white shadow-xl rounded-2xl h-16 text-lg font-bold"
+                        className="w-full bg-teal hover:bg-teal/90 text-white shadow-xl rounded-2xl h-16 text-lg font-bold"
                     >
                         {submitting ? "Saving..." : "Save All Changes"}
                     </Button>

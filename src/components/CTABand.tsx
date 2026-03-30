@@ -10,9 +10,9 @@ const CTABand = () => {
             Ready to find your space?
           </h2>
           <p className="text-primary-foreground/80 mb-8">
-            Join hundreds of businesses that found their perfect workspace through FlickSpace
+            Join hundreds of businesses that found their perfect workspace through SFT
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="lg">
               Start Your Search

@@ -209,7 +209,7 @@ const HandshakeForm = ({ space }: { space: any }) => {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-bold text-navy uppercase tracking-wide">Email</label>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Email <span className="text-red-500">*</span></label>
           <input
             name="email"
             type="email"
@@ -894,44 +894,50 @@ const SpaceDetail = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100">
-                  <h2 className="text-xl font-bold text-navy mb-1">Schedule a Tour</h2>
-                  <p className="text-xs text-gray-500 mb-6">Connect with our space concierge and secure your team's new home.</p>
+                  <h2 className="text-xl font-bold text-navy mb-1">
+                    {space.type === 'coworking' ? "Schedule a Tour" : "Get Direct Quote"}
+                  </h2>
+                  <p className="text-xs text-gray-500 mb-6 font-medium leading-relaxed">
+                    {space.type === 'coworking' 
+                      ? "Connect with our space concierge and secure your team's new home." 
+                      : "Request a custom proposal for your enterprise workspace requirement."
+                    }
+                  </p>
 
-                  <form className="space-y-4" onSubmit={async (e) => {
-                    e.preventDefault();
-                    // Basic client-side validation logic handled by browser 'required'
-                    // We need to capture the values. Ideally, we should refactor this into a controlled form or proper component.
-                    // For now, let's grab values from the form elements using FormData for simplicity in this inline refactor,
-                    // or better, turn this small section into a controlled state to ensure accuracy as requested.
-                  }}>
-                    {/* We will replace this entire form content with controlled inputs below */}
-                  </form>
-                  {/* REPLACING ABOVE BLOCK WITH ACTUAL IMPLEMENTATION BELOW in the same tool */}
-                  <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
-                    <button
-                      onClick={() => setActiveTab("handshake")}
-                      className={cn(
-                        "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
-                        activeTab === "handshake" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
-                      )}
-                    >
-                      <Handshake className="w-4 h-4" /> Handshake
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("tour")}
-                      className={cn(
-                        "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
-                        activeTab === "tour" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
-                      )}
-                    >
-                      <Calendar className="w-4 h-4" /> Request Tour
-                    </button>
-                  </div>
+                  {space.type === 'coworking' ? (
+                    <>
+                      <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
+                        <button
+                          onClick={() => setActiveTab("handshake")}
+                          className={cn(
+                            "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
+                            activeTab === "handshake" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
+                          )}
+                        >
+                          <Handshake className="w-4 h-4" /> Handshake
+                        </button>
+                        <button
+                          onClick={() => setActiveTab("tour")}
+                          className={cn(
+                            "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
+                            activeTab === "tour" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
+                          )}
+                        >
+                          <Calendar className="w-4 h-4" /> Request Tour
+                        </button>
+                      </div>
 
-                  {activeTab === "tour" ? (
-                    <ScheduleForm space={space} />
+                      {activeTab === "tour" ? (
+                        <ScheduleForm space={space} />
+                      ) : (
+                        <HandshakeForm space={space} />
+                      )}
+                    </>
                   ) : (
-                    <HandshakeForm space={space} />
+                    <div className="bg-teal/5 p-6 rounded-2xl border border-teal/10 mb-6 text-center">
+                        <p className="text-sm font-bold text-navy mb-2">Enterprise Solutions</p>
+                        <p className="text-[10px] text-gray-500 font-medium">For managed and private office spaces, we recommend getting a direct quote or connecting via WhatsApp for customized commercials.</p>
+                    </div>
                   )}
 
                   <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">

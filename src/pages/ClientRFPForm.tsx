@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Building2,
@@ -25,27 +25,45 @@ import Header from "@/components/Header";
 import { toast } from "sonner";
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
+import { BANGALORE_REGIONS } from "@/data/regions";
+
+const ALL_MICRO_LOCATIONS = BANGALORE_REGIONS.flatMap(r => r.microLocations).sort();
 
 const ClientRFPForm = () => {
     const navigate = useNavigate();
+    const { user, loading } = useAuth();
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submittedData, setSubmittedData] = useState<any>(null);
 
+    // Mandate login for RFP form
+    useEffect(() => {
+        if (!loading && !user) {
+            toast.info("Login required", {
+                description: "You must be logged in to share detailed requirements."
+            });
+            navigate("/login");
+        }
+    }, [user, loading, navigate]);
+
     const [formData, setFormData] = useState({
         // A & B: Company & Contact
         clientName: "",
         companyName: "",
+        industry: "",
         yearOfRegistration: "",
         companyDescription: "",
         fundingStatus: "",
         decisionMakerName: "",
         decisionMakerEmail: "",
+        secondarySpocEmail: "",
+        phone: "",
         adminSpocEmail: "",
 
         // C & D: Space & Team
         solutionType: [],
+        region: "",
         preferredLocation: "",
         locationMapLink: "",
         buildingTypePreference: [],
@@ -53,15 +71,23 @@ const ClientRFPForm = () => {
         currentEmployees: "",
         expectedGrowth: "",
         totalSeats: "",
+        expansionSeats: "",
         seatDensity: "",
+        leasePeriod: "",
+        lockInPeriod: "",
+        workingHours: "General", // General or 24/7
 
-        // E: Layout
+        // E: Layout & Amenities
         managerCabins: "",
         meetingRooms: {
             pax3: "0", pax4: "0", pax6: "0", pax8: "0", pax10: "0", pax12: "0"
         },
         receptionRequired: false,
+        serverRoomRequired: false,
+        pantryType: "Common", // Common, Private, Cafeteria
         collaborationZones: "",
+        powerBackup: "Essential",
+        amenities: [], // High-speed Wifi, Gym, Breakout Area, etc.
 
         // F, G & H: Commercials, Timeline & Notes
         budgetRange: "",
@@ -100,7 +126,6 @@ const ClientRFPForm = () => {
         }));
     };
 
-    const { user } = useAuth();
 
     const steps = [
         { id: 1, title: "Company Info", icon: Building2 },
@@ -115,7 +140,7 @@ const ClientRFPForm = () => {
 
         // Only validate the final step (Commercials & Timeline)
         if (s === 4) {
-            return formData.budgetRange && formData.expectedMoveIn;
+            return formData.budgetRange && formData.expectedMoveIn && formData.phone;
         }
         return true;
     };
@@ -139,8 +164,8 @@ const ClientRFPForm = () => {
             return;
         }
 
-        if (!formData.budgetRange || !formData.expectedMoveIn) {
-            toast.error("Please provide budget and move-in timeline.");
+        if (!formData.budgetRange || !formData.expectedMoveIn || !formData.phone) {
+            toast.error("Please provide budget, timeline, and contact number.");
             return;
         }
 
@@ -177,35 +202,85 @@ const ClientRFPForm = () => {
         try {
             const doc = new jsPDF();
             const date = new Date().toLocaleDateString();
+            let y = 60;
+
+            const addLine = (label: string, value: string, indent = 0) => {
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text(`${label}:`, 25 + indent, y);
+                doc.setFont("helvetica", "normal");
+                doc.text(String(value || "N/A"), 75 + indent, y);
+                y += 8;
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+            };
+
+            const addSection = (title: string) => {
+                y += 5;
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(15, 118, 110);
+                doc.text(title.toUpperCase(), 20, y);
+                y += 3;
+                doc.setDrawColor(200, 200, 200);
+                doc.line(20, y, 190, y);
+                y += 10;
+                doc.setTextColor(40, 40, 40);
+            };
 
             // Header
-            doc.setFillColor(15, 118, 110); // Teal
+            doc.setFillColor(15, 118, 110);
             doc.rect(0, 0, 210, 40, 'F');
             doc.setTextColor(255, 255, 255);
-            doc.setFontSize(24);
+            doc.setFontSize(22);
             doc.setFont("helvetica", "bold");
-            doc.text("FlickSpace RFP Summary", 20, 25);
+            doc.text("OFFICE SPACE RFP BRIEF", 20, 25);
 
-            doc.setFontSize(10);
-            doc.text(`Reference: ${submittedData._id?.toUpperCase() || "NEW"}`, 140, 20);
-            doc.text(`Date: ${date}`, 140, 26);
+            doc.setFontSize(9);
+            doc.text(`REF: ${String(submittedData._id || "").toUpperCase()}`, 150, 20);
+            doc.text(`DATE: ${date}`, 150, 26);
 
-            // Details
-            doc.setTextColor(40, 40, 40);
-            doc.setFontSize(14);
-            doc.text("Requirement Details", 20, 60);
-            doc.line(20, 63, 190, 63);
+            // 1. Company Information
+            addSection("Company Information");
+            addLine("Company Name", formData.companyName);
+            addLine("Industry", formData.industry);
+            addLine("Authorized Person", formData.clientName);
+            addLine("Contact Email", formData.decisionMakerEmail);
+            addLine("Contact Phone", formData.phone);
+            addLine("Description", formData.companyDescription);
 
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Company: ${formData.companyName || "N/A"}`, 25, 75);
-            doc.text(`Seats: ${formData.totalSeats}`, 25, 82);
-            doc.text(`Budget: ${formData.budgetRange}`, 25, 89);
-            doc.text(`Preferred Location: ${formData.preferredLocation || "N/A"}`, 25, 96);
-            doc.text(`Move-in: ${formData.expectedMoveIn}`, 25, 103);
+            // 2. Space Requirements
+            addSection("Space Requirements");
+            addLine("Location", formData.preferredLocation);
+            addLine("Solution Type", formData.solutionType.join(", "));
+            addLine("Seats Needed", `${formData.totalSeats} Pax`);
+            addLine("Expansion Plan", `${formData.expansionSeats || "0"} Seats`);
+            addLine("Lease Period", formData.leasePeriod);
+            addLine("Lock-in Period", formData.lockInPeriod);
+            addLine("Working Hours", formData.workingHours);
 
-            doc.save("FlickSpace_RFP.pdf");
-            toast.success("PDF Downloaded!");
+            // 3. Layout & Infrastructure
+            addSection("Layout & Infrastructure");
+            addLine("Manager Cabins", formData.managerCabins);
+            addLine("Meeting Rooms", Object.entries(formData.meetingRooms)
+                .filter(([_, v]) => Number(v) > 0)
+                .map(([k, v]) => `${k.replace('pax', '')}Pax:${v}`).join(", "));
+            addLine("Pantry Type", formData.pantryType);
+            addLine("Server Room", formData.serverRoomRequired ? "Required" : "Not Required");
+            addLine("Reception", formData.receptionRequired ? "Required" : "Not Required");
+            addLine("Amenities", formData.amenities.join(", "));
+
+            // 4. Commercials & Timeline
+            addSection("Commercials & Timeline");
+            addLine("Budget Range", `${formData.budgetRange} ${formData.budgetType}`);
+            addLine("Move-in Timeline", formData.expectedMoveIn);
+            addLine("Parking (Car/2W)", `${formData.carParking || 0} / ${formData.twoWheelerParking || 0}`);
+            addLine("Additional Notes", formData.additionalNotes);
+
+            doc.save(`RFP_${formData.companyName.replace(/\s/g, '_')}.pdf`);
+            toast.success("Professional RFP Generated!");
         } catch (err) {
             console.error(err);
             toast.error("Failed to generate PDF");
@@ -309,6 +384,17 @@ const ClientRFPForm = () => {
                                             <Input id="companyName" value={formData.companyName} onChange={handleTextChange} placeholder="FinTech Labs Pvt Ltd" className="h-12" />
                                         </div>
                                         <div className="space-y-2">
+                                            <Label htmlFor="industry">Industry / Sector</Label>
+                                            <Select onValueChange={(val) => handleSelectChange("industry", val)} value={formData.industry}>
+                                                <SelectTrigger className="h-12"><SelectValue placeholder="Select Industry" /></SelectTrigger>
+                                                <SelectContent>
+                                                    {['IT / ITES', 'Finance / Banking', 'Healthcare', 'Manufacturing', 'Logistics', 'Real Estate', 'Education', 'Media', 'Other'].map(s => (
+                                                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
                                             <Label htmlFor="fundingStatus">Funding Status</Label>
                                             <Select onValueChange={(val) => handleSelectChange("fundingStatus", val)} value={formData.fundingStatus}>
                                                 <SelectTrigger className="h-12"><SelectValue placeholder="Select Status" /></SelectTrigger>
@@ -323,6 +409,10 @@ const ClientRFPForm = () => {
                                             <Label htmlFor="decisionMakerEmail">Decision Maker Email</Label>
                                             <Input id="decisionMakerEmail" type="email" value={formData.decisionMakerEmail} onChange={handleTextChange} placeholder="rahul@fintechlabs.com" className="h-12" />
                                         </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="secondarySpocEmail">Secondary SPOC Email (Optional)</Label>
+                                            <Input id="secondarySpocEmail" type="email" value={formData.secondarySpocEmail} onChange={handleTextChange} placeholder="admin@fintechlabs.com" className="h-12" />
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="companyDescription">Company Description (One-line summary)</Label>
@@ -336,42 +426,85 @@ const ClientRFPForm = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-4">
                                             <Label className="text-navy font-bold">Solution Type Required</Label>
-                                            {['Conventional Lease', 'Managed Office', 'Fully Furnished'].map(type => (
-                                                <div key={type} className="flex items-center space-x-3 p-3 border rounded-xl hover:bg-gray-50 transition-colors">
-                                                    <Checkbox
-                                                        id={`type-${type}`}
-                                                        checked={formData.solutionType.includes(type)}
-                                                        onCheckedChange={(checked) => handleCheckboxChange("solutionType", type, checked)}
-                                                    />
-                                                    <label htmlFor={`type-${type}`} className="text-sm font-medium leading-none cursor-pointer">{type}</label>
-                                                </div>
-                                            ))}
+                                            <div className="grid grid-cols-1 gap-2">
+                                                {['Conventional Lease', 'Managed Office', 'Fully Furnished', 'Co-working (Dedicated Desks)'].map(type => (
+                                                    <div key={type} className="flex items-center space-x-3 p-3 border rounded-xl hover:bg-gray-50 transition-colors">
+                                                        <Checkbox
+                                                            id={`type-${type}`}
+                                                            checked={formData.solutionType.includes(type)}
+                                                            onCheckedChange={(checked) => handleCheckboxChange("solutionType", type, checked)}
+                                                        />
+                                                        <label htmlFor={`type-${type}`} className="text-sm font-medium leading-none cursor-pointer">{type}</label>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                         <div className="space-y-6">
                                             <div className="space-y-2">
-                                                <Label htmlFor="preferredLocation">Preferred Location (Primary)</Label>
-                                                <Input id="preferredLocation" value={formData.preferredLocation} onChange={handleTextChange} placeholder="Outer Ring Road, Bangalore" className="h-12" />
+                                                <Label htmlFor="region">Select Region / Area*</Label>
+                                                <Select onValueChange={(val) => handleSelectChange("region", val)} value={formData.region}>
+                                                    <SelectTrigger className="h-12"><SelectValue placeholder="e.g. Koramangala, HSR Layout" /></SelectTrigger>
+                                                    <SelectContent className="max-h-[300px]">
+                                                        {ALL_MICRO_LOCATIONS.map(loc => (
+                                                            <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="maxRadiusKM">Max Radius from Location (in KM)</Label>
-                                                <Input id="maxRadiusKM" type="number" value={formData.maxRadiusKM} onChange={handleTextChange} placeholder="5" className="h-12" />
+                                                <Label htmlFor="preferredLocation">Specific Landmark (Optional)</Label>
+                                                <Input id="preferredLocation" value={formData.preferredLocation} onChange={handleTextChange} placeholder="e.g. Indiranagar 100ft Road" className="h-12" />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="leasePeriod">Lease Period</Label>
+                                                    <Select onValueChange={(val) => handleSelectChange("leasePeriod", val)} value={formData.leasePeriod}>
+                                                        <SelectTrigger className="h-12"><SelectValue placeholder="e.g. 3 Years" /></SelectTrigger>
+                                                        <SelectContent>
+                                                            {['1 Year', '2 Years', '3 Years', '5 Years', '9 Years'].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="lockInPeriod">Lock-in Period</Label>
+                                                    <Select onValueChange={(val) => handleSelectChange("lockInPeriod", val)} value={formData.lockInPeriod}>
+                                                        <SelectTrigger className="h-12"><SelectValue placeholder="e.g. 1 Year" /></SelectTrigger>
+                                                        <SelectContent>
+                                                            {['No Lock-in', '6 Months', '1 Year', '2 Years', '3 Years'].map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Working Hours</Label>
+                                                <Select onValueChange={(val) => handleSelectChange("workingHours", val)} value={formData.workingHours}>
+                                                    <SelectTrigger className="h-12"><SelectValue /></SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="General">8/5 General Shift</SelectItem>
+                                                        <SelectItem value="24/7">24/7 Operational</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
                                             </div>
                                         </div>
                                     </div>
                                     <hr className="border-gray-100" />
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                         <div className="space-y-2">
-                                            <Label htmlFor="totalSeats">Total Seats Required</Label>
+                                            <Label htmlFor="totalSeats">Seats Needed Now</Label>
                                             <Input id="totalSeats" type="number" value={formData.totalSeats} onChange={handleTextChange} placeholder="120" className="h-12" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="currentEmployees">Current Employee Count</Label>
+                                            <Label htmlFor="expansionSeats">Expansion (1-2 Yr)</Label>
+                                            <Input id="expansionSeats" type="number" value={formData.expansionSeats} onChange={handleTextChange} placeholder="30" className="h-12" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="currentEmployees">Current Count</Label>
                                             <Input id="currentEmployees" type="number" value={formData.currentEmployees} onChange={handleTextChange} placeholder="80" className="h-12" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="seatDensity">Expected Seat Density</Label>
+                                            <Label htmlFor="seatDensity">Seat Density</Label>
                                             <Select onValueChange={(val) => handleSelectChange("seatDensity", val)} value={formData.seatDensity}>
-                                                <SelectTrigger className="h-12"><SelectValue placeholder="Select Density" /></SelectTrigger>
+                                                <SelectTrigger className="h-12"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="3/2">3.5 / 2 (Spacious)</SelectItem>
                                                     <SelectItem value="3.5/2">3.5 / 2 (Standard)</SelectItem>
@@ -386,25 +519,42 @@ const ClientRFPForm = () => {
                             {step === 3 && (
                                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                        <div>
-                                            <Label className="text-navy font-bold block mb-4">Core Layout Requirements</Label>
-                                            <div className="space-y-6">
-                                                <div className="flex items-center justify-between">
-                                                    <label className="text-sm font-medium">Number of Manager Cabins</label>
-                                                    <Input type="number" className="w-24 h-10" id="managerCabins" value={formData.managerCabins} onChange={handleTextChange} />
+                                        <div className="space-y-6">
+                                            <Label className="text-navy font-bold block">Layout Requirements</Label>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-bold text-gray-400">MANAGER CABINS</label>
+                                                    <Input type="number" className="h-12" id="managerCabins" value={formData.managerCabins} onChange={handleTextChange} />
                                                 </div>
-                                                <div className="flex items-center justify-between">
-                                                    <label className="text-sm font-medium">Collaboration Zones</label>
-                                                    <Input type="number" className="w-24 h-10" id="collaborationZones" value={formData.collaborationZones} onChange={handleTextChange} />
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-bold text-gray-400">COLLAB ZONES</label>
+                                                    <Input type="number" className="h-12" id="collaborationZones" value={formData.collaborationZones} onChange={handleTextChange} />
                                                 </div>
-                                                <div className="flex items-center space-x-3">
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="flex items-center space-x-3 p-3 border rounded-xl">
                                                     <Checkbox id="reception" checked={formData.receptionRequired} onCheckedChange={(c) => setFormData(p => ({ ...p, receptionRequired: !!c }))} />
-                                                    <label htmlFor="reception" className="text-sm font-medium">Reception Area Required</label>
+                                                    <label htmlFor="reception" className="text-xs font-bold text-gray-700">RECEPTION</label>
                                                 </div>
+                                                <div className="flex items-center space-x-3 p-3 border rounded-xl">
+                                                    <Checkbox id="server" checked={formData.serverRoomRequired} onCheckedChange={(c) => setFormData(p => ({ ...p, serverRoomRequired: !!c }))} />
+                                                    <label htmlFor="server" className="text-xs font-bold text-gray-700">SERVER ROOM</label>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Pantry / Cafeteria</Label>
+                                                <Select onValueChange={(val) => handleSelectChange("pantryType", val)} value={formData.pantryType}>
+                                                    <SelectTrigger className="h-12"><SelectValue /></SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="Common">Common Building Pantry</SelectItem>
+                                                        <SelectItem value="Private">Dedicated Private Pantry</SelectItem>
+                                                        <SelectItem value="Cafeteria">Full In-house Cafeteria</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
                                             </div>
                                         </div>
                                         <div>
-                                            <Label className="text-navy font-bold block mb-4">Meeting Rooms Required</Label>
+                                            <Label className="text-navy font-bold block mb-4">Meeting Rooms</Label>
                                             <div className="grid grid-cols-2 gap-4">
                                                 {['3 Pax', '4 Pax', '6 Pax', '8 Pax', '10 Pax', '12 Pax'].map(pax => (
                                                     <div key={pax} className="flex items-center justify-between gap-2 p-2 border rounded-lg">
@@ -417,6 +567,21 @@ const ClientRFPForm = () => {
                                                         />
                                                     </div>
                                                 ))}
+                                            </div>
+                                            <div className="mt-6">
+                                                <Label className="text-navy font-bold block mb-3">Core Amenities Required</Label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {['100% Power Backup', 'High-speed Internet', 'Breakout Area', 'Executive Gym', 'Creche / Daycare'].map(am => (
+                                                        <div key={am} className="flex items-center space-x-2">
+                                                            <Checkbox
+                                                                id={`am-${am}`}
+                                                                checked={formData.amenities.includes(am)}
+                                                                onCheckedChange={(c) => handleCheckboxChange("amenities", am, c)}
+                                                            />
+                                                            <label htmlFor={`am-${am}`} className="text-[10px] font-bold text-gray-500 uppercase">{am}</label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -449,6 +614,10 @@ const ClientRFPForm = () => {
                                                     <Label>Two-Wheeler</Label>
                                                     <Input type="number" id="twoWheelerParking" value={formData.twoWheelerParking} onChange={handleTextChange} placeholder="Qty" className="h-12" />
                                                 </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="phone">Contact Number <span className="text-red-500">*</span></Label>
+                                                <Input id="phone" value={formData.phone} onChange={handleTextChange} placeholder="+91 98765 43210" className="h-12" />
                                             </div>
                                         </div>
                                         <div className="space-y-6">

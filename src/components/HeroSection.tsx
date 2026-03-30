@@ -50,10 +50,10 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col items-center text-center mt-[-4rem]">
+      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col items-center text-center mt-24">
 
         {/* Mode Toggle */}
-        <div className="mb-10 flex p-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl animate-in fade-in zoom-in duration-700">
+        <div className="mb-12 mt-24 flex p-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl animate-in fade-in zoom-in duration-700">
           <button
             onClick={() => setMode("client")}
             className={cn(
@@ -85,7 +85,7 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
 
         <p className="text-lg text-black max-w-2xl mb-12 animate-in slide-in-from-bottom-6 duration-700 delay-200 fade-in font-medium">
           {mode === "client"
-            ? "An exclusive collection of coworking spaces, private offices, and meeting rooms, tailored for modern teams."
+            ? ""
             : "Connect with high-intent clients (RFP Platform) and list your property details to get verified leads."
           }
         </p>
@@ -116,14 +116,16 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
                 </Button>
               </div>
 
-              <div className="flex items-center justify-center gap-4">
-                <p className="text-sm font-bold text-navy/60 uppercase tracking-widest">Need a specialized solution?</p>
-                <Button
-                  variant="outline"
+              {/* RFP CTA below the bar */}
+              <div className="flex justify-center mt-8 animate-in slide-in-from-top-4 duration-700 delay-500 fade-in">
+                <Button 
                   onClick={() => navigate("/rfp-form")}
-                  className="rounded-full border-teal text-teal hover:bg-teal hover:text-white font-bold px-6 h-10 transition-all"
+                  className="h-14 px-10 bg-white/30 backdrop-blur-md border border-white/40 hover:bg-white/90 text-navy font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl transition-all hover:scale-110 active:scale-95 flex items-center gap-3 group"
                 >
-                  Create Detailed RFP <MoveRight className="w-4 h-4 ml-2" />
+                  Custom Requirement? <span className="text-teal">Fill RFP Form</span> 
+                  <div className="w-6 h-6 rounded-full bg-teal text-white flex items-center justify-center transition-transform group-hover:translate-x-1">
+                    <MoveRight className="w-3.5 h-3.5" />
+                  </div>
                 </Button>
               </div>
             </div>

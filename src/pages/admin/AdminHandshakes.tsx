@@ -27,7 +27,7 @@ const AdminHandshakes = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <div>
-                <h1 className="text-3xl font-bold text-navy">Successful <span className="text-teal">Handshakes</span></h1>
+                <h1 className="text-3xl font-bold text-teal">Successful <span className="text-navy">Handshakes</span></h1>
                 <p className="text-gray-500">Overview of all direct client-to-partner connections.</p>
             </div>
 
@@ -70,7 +70,7 @@ const AdminHandshakes = () => {
 
                                     {/* The "Handshake" Bridge */}
                                     <div className="bg-gray-50 lg:w-24 flex items-center justify-center py-4 lg:py-0">
-                                        <div className="w-12 h-12 rounded-full bg-teal text-white flex items-center justify-center shadow-lg shadow-teal/20 animate-pulse">
+                                        <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center shadow-lg shadow-navy/20 animate-pulse">
                                             <Handshake className="w-6 h-6" />
                                         </div>
                                     </div>
@@ -78,7 +78,7 @@ const AdminHandshakes = () => {
                                     {/* Partner/Office Side */}
                                     <div className="flex-1 p-8 bg-white border-t lg:border-t-0 lg:border-l border-gray-100">
                                         <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-10 h-10 rounded-xl bg-teal/10 flex items-center justify-center text-teal font-bold">P</div>
+                                            <div className="w-10 h-10 rounded-xl bg-navy/10 flex items-center justify-center text-navy font-bold">P</div>
                                             <div>
                                                 <h3 className="font-bold text-navy">{h.brokerInfo?.name || "Unknown Partner"}</h3>
                                                 <p className="text-xs text-gray-400">Workspace Partner</p>
@@ -86,7 +86,7 @@ const AdminHandshakes = () => {
                                         </div>
                                         <div className="p-4 bg-gray-50 rounded-2xl mb-4">
                                             <div className="flex items-start gap-3">
-                                                <Building2 className="w-5 h-5 text-teal mt-0.5" />
+                                                <Building2 className="w-5 h-5 text-navy mt-0.5" />
                                                 <div>
                                                     <p className="font-bold text-navy text-sm">{h.space}</p>
                                                     <p className="text-xs text-gray-500">{h.spaceInfo?.location}, {h.spaceInfo?.city}</p>

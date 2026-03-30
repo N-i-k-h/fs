@@ -155,7 +155,7 @@ const AIAssistantPage = () => {
                                 <Sparkles className="w-5 h-5 text-teal" />
                             </div>
                             <div>
-                                <h2 className="font-bold text-lg leading-tight">FlickSpace AI</h2>
+                                <h2 className="font-bold text-lg leading-tight">SFT AI</h2>
                                 <p className="text-xs text-blue-200">Workspace Acquisition Assistant</p>
                             </div>
                         </div>

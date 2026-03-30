@@ -31,7 +31,6 @@ const Login = () => {
             login(res.data.token, res.data.user);
             toast.success("Welcome back!");
             if (res.data.user.role === 'admin') navigate('/admin');
-            else if (res.data.user.role === 'broker') navigate('/broker');
             else navigate('/');
         } catch (err: any) {
             console.error(err);
@@ -68,7 +67,6 @@ const Login = () => {
 
             const userRole = res.data.user.role;
             if (userRole === 'admin') navigate('/admin');
-            else if (userRole === 'broker') navigate('/broker');
             else navigate('/');
         } catch (err) {
             console.error(err);
@@ -87,7 +85,7 @@ const Login = () => {
                         style={{ backgroundImage: `url(${heroBg})` }}
                     />
                     <div className="relative z-10 text-white p-12 max-w-lg">
-                        <h1 className="text-5xl font-bold mb-6 leading-tight">Hello<br />FlickSpace! 👋</h1>
+                        <h1 className="text-5xl font-bold mb-6 leading-tight">Hello<br />SFT! 👋</h1>
                         <p className="text-lg opacity-90 leading-relaxed">
                             Skip repetitive and manual searching. Get highly productive through our AI-powered platform and save tons of time!
                         </p>
@@ -98,14 +96,22 @@ const Login = () => {
                 {/* Right Side - Form */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
                     <div className="w-full max-w-md space-y-8 pt-8 lg:pt-0">
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                             <h2 className="text-3xl font-bold text-foreground">Welcome Back!</h2>
-                            <p className="text-muted-foreground">
-                                Don't have an account?{" "}
-                                <Link to="/register" className="text-teal font-medium hover:underline">
-                                    Create a new account now
-                                </Link>
-                            </p>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-muted-foreground text-sm">
+                                    Don't have an account?{" "}
+                                    <Link to="/register" className="text-teal font-medium hover:underline">
+                                        Create a new account now
+                                    </Link>
+                                </p>
+                                <p className="text-muted-foreground text-sm">
+                                    Are you a property partner?{" "}
+                                    <Link to="/broker/login" className="text-navy font-bold hover:underline decoration-teal decoration-2 underline-offset-4">
+                                        Login to Partner Portal
+                                    </Link>
+                                </p>
+                            </div>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -156,9 +162,21 @@ const Login = () => {
 
                             <div className="text-center text-sm">
                                 <span className="text-muted-foreground">Forget password? </span>
-                                <button type="button" className="font-bold text-foreground hover:underline">Click here</button>
+                                <Link to="/forgot-password" title="Click to reset password" className="font-bold text-foreground hover:underline">Click here</Link>
                             </div>
                         </form>
+
+                        {/* Secondary RFP CTA */}
+                        <div className="pt-8 border-t border-border/50 text-center">
+                            <p className="text-muted-foreground text-sm mb-4 italic">Need a customized office solution instead?</p>
+                            <Button 
+                                variant="outline" 
+                                onClick={() => navigate("/rfp-form")}
+                                className="w-full h-12 border-teal/20 text-teal hover:bg-teal/5 font-bold rounded-xl flex items-center justify-center gap-2"
+                            >
+                                Submit Custom RFP Brief
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -6,20 +6,20 @@ const Footer = () => {
   return (
     <footer className="bg-navy pt-16 pb-8 text-white">
       <div className="container mx-auto px-6">
-        
+
         {/* --- Top Section: 4 Columns --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          
+
           {/* 1. Brand & About */}
           <div className="space-y-4">
             <a href="/" className="flex items-center gap-2 group">
-              <img 
-                src={logo} 
-                alt="FlickSpace" 
-                className="h-10 w-auto object-contain" 
+              <img
+                src={logo}
+                alt="SFT"
+                className="h-10 w-auto object-contain"
               />
               <span className="text-2xl font-bold tracking-tight">
-                Flick<span className="text-teal">Space</span>
+                SFT
               </span>
             </a>
             <p className="text-gray-400 text-sm leading-relaxed">
@@ -63,11 +63,11 @@ const Footer = () => {
             <ul className="space-y-4 text-sm text-gray-400 mb-6">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-teal shrink-0" />
-                <span>123 Startup Avenue, Indiranagar,<br/>Bangalore, India 560038</span>
+                <span>123 Startup Avenue, Indiranagar,<br />Bangalore, India 560038</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-teal shrink-0" />
-                <a href="mailto:hello@flickspace.com" className="hover:text-white transition-colors">hello@flickspace.com</a>
+                <a href="mailto:hello@sft.com" className="hover:text-white transition-colors">hello@sft.com</a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-teal shrink-0" />
@@ -83,7 +83,7 @@ const Footer = () => {
 
         {/* --- Bottom Section --- */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <p>© 2024 FlickSpace. All rights reserved.</p>
+          <p>© 2026 SFT. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-teal transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-teal transition-colors">Terms of Service</a>
@@ -105,8 +105,8 @@ const FooterLink = ({ href, children }) => (
 
 // Helper Component for Social Icons
 const SocialIcon = ({ icon, href }) => (
-  <a 
-    href={href} 
+  <a
+    href={href}
     className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-teal hover:text-white transition-all duration-300"
   >
     {icon}

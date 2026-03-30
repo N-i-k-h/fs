@@ -6,6 +6,15 @@ const sendTourEmail = require('../utils/sendTourEmail');
 
 const Space = require('../models/Space');
 const sendBookingConfirmationEmail = require('../utils/sendBookingConfirmationEmail');
+const Proposal = require('../models/Proposal');
+const User = require('../models/User');
+const sendRFPApprovalEmail = require('../utils/sendRFPApprovalEmail');
+const sendRFPSubmissionEmail = require('../utils/sendRFPSubmissionEmail');
+const sendHandshakeEmail = require('../utils/sendHandshakeEmail');
+const sendProposalNotificationEmail = require('../utils/sendProposalNotificationEmail');
+const sendQuoteNotificationEmail = require('../utils/sendQuoteNotificationEmail');
+const Payment = require('../models/Payment');
+const auth = require('../middleware/auth');
 
 // Get Requests for specific user (by email)
 router.get('/user/:email', async (req, res) => {
@@ -22,7 +31,8 @@ router.get('/user/:email', async (req, res) => {
 router.get('/analytics', async (req, res) => {
     try {
         // 1. Total Pending (for existing card)
-        const pendingCount = await Request.countDocuments({ status: 'pending' });
+        const pendingCount = await Request.countDocuments({ status: 'pending', type: { $ne: 'Detailed RFP' } });
+        const rfpCount = await Request.countDocuments({ type: 'Detailed RFP', status: 'pending' });
 
         // 2. Approved Requests (for revenue calculation)
         const approvedRequests = await Request.find({ status: 'approved' });
@@ -55,6 +65,7 @@ router.get('/analytics', async (req, res) => {
 
         res.json({
             pendingCount,
+            rfpCount,
             totalRevenue,
             chartData,
             recentActivity
@@ -187,7 +198,17 @@ router.post('/quote', async (req, res) => {
         await newRequest.save();
         console.log('📝 Quote Request Saved:', spaceName, 'by', fullName);
 
-        // Optionally send email here (not implemented yet)
+        // Send email notification to Admin
+        await sendQuoteNotificationEmail({
+            user: fullName,
+            email,
+            phone,
+            space: spaceName,
+            seats,
+            budget,
+            timeline,
+            micromarket
+        });
 
         res.status(201).json({ message: 'Quote requested successfully', request: newRequest });
     } catch (err) {
@@ -216,6 +237,9 @@ router.post('/handshake', async (req, res) => {
 
         await newRequest.save();
         console.log('🤝 Handshake Initiated:', space, 'by', user);
+
+        // Send Email to Admin
+        await sendHandshakeEmail({ user, email, phone, space, seats, budget, timeline });
 
         res.status(201).json({ message: 'Handshake initiated successfully', request: newRequest });
     } catch (err) {
@@ -247,20 +271,15 @@ router.get('/admin-handshakes', async (req, res) => {
                             $match: {
                                 $expr: {
                                     $or: [
+                                        { $eq: ['$_id', '$$ownerId'] },
                                         {
                                             $and: [
-                                                { $ne: ['$$ownerId', null] },
                                                 { $eq: [{ $type: '$$ownerId' }, 'string'] },
-                                                { $eq: [{ $strLenCP: { $ifNull: ['$$ownerId', ''] } }, 24] },
+                                                { $regexMatch: { input: '$$ownerId', regex: /^[0-9a-fA-F]{24}$/ } },
                                                 { $eq: ['$_id', { $toObjectId: '$$ownerId' }] }
                                             ]
                                         },
-                                        {
-                                            $and: [
-                                                { $ne: ['$$ownerId', null] },
-                                                { $eq: ['$email', '$$ownerId'] }
-                                            ]
-                                        }
+                                        { $eq: ['$email', '$$ownerId'] }
                                     ]
                                 }
                             }
@@ -302,7 +321,7 @@ router.post('/rfp', async (req, res) => {
             seats: Number(formData.totalSeats) || 0,
             budget: `${formData.budgetRange || 'TBD'} ${formData.budgetType ? '(' + formData.budgetType + ')' : ''}`,
             timeline: formData.expectedMoveIn || 'Flexible',
-            micromarket: formData.preferredLocation || 'Not Specified',
+            micromarket: formData.region || formData.preferredLocation || 'Not Specified',
             type: 'Detailed RFP',
             status: 'pending',
             details: formData
@@ -311,6 +330,28 @@ router.post('/rfp', async (req, res) => {
         console.log(`[RFP-TRACE-${traceId}] 💾 Attempting to save to DB...`);
         const newRequest = new Request(requestPayload);
         const saved = await newRequest.save();
+
+        // 🚀 BROADCAST TO ALL BROKERS: Find ALL brokers to notify
+        let brokerEmails = [];
+        try {
+            const brokers = await User.find({ role: 'broker' });
+            brokerEmails = brokers.map(b => b.email);
+            
+            if (brokerEmails.length > 0) {
+                console.log(`[RFP-TRACE-${traceId}] 🎯 Broadcasting to ${brokerEmails.length} brokers`);
+            }
+        } catch (err) {
+            console.error(`[RFP-TRACE-${traceId}] ⚠️ Broker matching failed:`, err.message);
+        }
+
+        // 📧 SEND NOTIFICATIONS (Async Fallback)
+        try {
+            await sendRFPSubmissionEmail(requestPayload, brokerEmails);
+            console.log(`[RFP-TRACE-${traceId}] 📧 Notifications dispatched`);
+        } catch (emailErr) {
+            console.warn(`[RFP-TRACE-${traceId}] ⚠️ Email alert failed, but RFP is safe:`, emailErr.message);
+            // We do NOT return a 500 here, as the entity is already saved.
+        }
 
         console.log(`[RFP-TRACE-${traceId}] ✅ Saved Successfully: ${saved._id}`);
 
@@ -333,4 +374,263 @@ router.post('/rfp', async (req, res) => {
     }
 });
 
+
+// --- Proposal & RFP Approval Flow ---
+
+// 1. Submit Proposal (Broker)
+router.post('/proposal', async (req, res) => {
+    try {
+        const { rfpId, brokerId, spaceId, message } = req.body;
+        const newProposal = new Proposal({
+            rfpId,
+            brokerId,
+            spaceId,
+            message,
+            status: 'pending'
+        });
+        await newProposal.save();
+
+        // Notify Admin about new proposal
+        const proposalWithDetails = await Proposal.findById(newProposal._id)
+            .populate('rfpId')
+            .populate('brokerId')
+            .populate('spaceId');
+
+        if (proposalWithDetails) {
+            await sendProposalNotificationEmail({
+                rfp: proposalWithDetails.rfpId,
+                broker: proposalWithDetails.brokerId,
+                space: proposalWithDetails.spaceId,
+                message: proposalWithDetails.message
+            });
+        }
+
+        res.status(201).json(newProposal);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// 2. Get All Proposals for Admin
+router.get('/proposals/admin', async (req, res) => {
+    try {
+        const proposals = await Proposal.find()
+            .populate('rfpId')
+            .populate('brokerId', 'name email phone')
+            .populate('spaceId', 'name location city price')
+            .sort({ createdAt: -1 });
+        res.json(proposals);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// 3. Approve Proposal (Admin)
+router.put('/proposal/:id/approve', async (req, res) => {
+    try {
+        const proposal = await Proposal.findById(req.params.id)
+            .populate('rfpId')
+            .populate('brokerId')
+            .populate('spaceId');
+
+        if (!proposal) return res.status(404).send('Proposal not found');
+
+        proposal.status = 'approved';
+        await proposal.save();
+
+        // Update the original RFP status
+        if (proposal.rfpId) {
+            const rfp = await Request.findById(proposal.rfpId._id);
+            if (rfp) {
+                rfp.status = 'approved';
+                await rfp.save();
+            }
+        }
+
+        // Send Email with PDF
+        await sendRFPApprovalEmail({
+            rfp: proposal.rfpId,
+            space: proposal.spaceId,
+            broker: proposal.brokerId
+        });
+
+        res.json({ message: 'Proposal approved and emails sent', proposal });
+    } catch (err) {
+        console.error('Approve Proposal Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// 4. Get Proposals for Client (proposals for their RFPs)
+router.get('/proposals/client/:email', async (req, res) => {
+    try {
+        // 1. Find all RFPs for this client
+        const myRfps = await Request.find({ email: req.params.email, type: { $in: ['RFP', 'Detailed RFP'] } });
+        const rfpIds = myRfps.map(r => r._id);
+
+        // 2. Find all proposals for these RFPs
+        const proposals = await Proposal.find({ rfpId: { $in: rfpIds } })
+            .populate('rfpId')
+            .populate('brokerId', 'name email phone avatar')
+            .populate('spaceId', 'name location city price images')
+            .sort({ createdAt: -1 });
+
+        res.json(proposals);
+    } catch (err) {
+        console.error('Fetch Client Proposals Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// 5. Update Proposal Status (Client/Admin)
+router.put('/proposal/:id/status', async (req, res) => {
+    try {
+        const { status } = req.body;
+        const proposal = await Proposal.findById(req.params.id)
+            .populate('rfpId')
+            .populate('brokerId')
+            .populate('spaceId');
+
+        if (!proposal) return res.status(404).json({ message: 'Proposal not found' });
+
+        proposal.status = status;
+        await proposal.save();
+
+        // If client selects "Handshake", notify admin/broker
+        if (status === 'Handshake') {
+            const handshakeDetails = {
+                user: proposal.rfpId?.clientName || proposal.rfpId?.user || 'Client',
+                email: proposal.rfpId?.email,
+                phone: proposal.rfpId?.phone,
+                space: proposal.spaceId?.name,
+                seats: proposal.rfpId?.seats,
+                budget: proposal.rfpId?.budget,
+                timeline: proposal.rfpId?.timeline
+            };
+
+            // Notify Admin
+            await sendHandshakeEmail(handshakeDetails);
+
+            // Notify Broker
+            if (proposal.brokerId?.email) {
+                await sendHandshakeEmail({
+                    ...handshakeDetails,
+                    to: proposal.brokerId.email
+                });
+            }
+        }
+
+        res.json(proposal);
+    } catch (err) {
+        console.error('Update Proposal Status Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// 6. Get Proposals for Broker (proposals they submitted)
+router.get('/proposals/broker/:brokerId', async (req, res) => {
+    try {
+        const proposals = await Proposal.find({ brokerId: req.params.brokerId })
+            .populate('rfpId')
+            .populate('spaceId', 'name location city price images')
+            .sort({ createdAt: -1 });
+        res.json(proposals);
+    } catch (err) {
+        console.error('Fetch Broker Proposals Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+
+// Get RFP Details for Broker (Filtered by Payment)
+router.get('/rfp/:id/details', auth, async (req, res) => {
+    try {
+        const rfp = await Request.findById(req.params.id);
+        if (!rfp) return res.status(404).json({ msg: 'RFP not found' });
+
+        const payments = await Payment.find({
+            broker: req.user.id,
+            request: rfp._id,
+            status: 'captured'
+        });
+
+        const hasPaidRFP = payments.some(p => p.type === 'rfp_details');
+        const hasPaidClient = payments.some(p => p.type === 'client_details');
+
+        if (!hasPaidRFP) {
+            return res.status(200).json({ 
+                msg: 'Payment required for RFP details', 
+                needsPayment: true,
+                hasPaidRFP: false,
+                hasPaidClient: false 
+            });
+        }
+
+        // Base RFP Specs (Always available after 1st payment)
+        const responseData = {
+            _id: rfp._id,
+            type: rfp.type,
+            status: rfp.status,
+            createdAt: rfp.createdAt,
+            // Specs
+            seats: rfp.seats,
+            budget: rfp.budget,
+            timeline: rfp.timeline,
+            micromarket: rfp.micromarket,
+            companyName: rfp.companyName,
+            details: rfp.details, // This contains the infrastructure specs
+            hasPaidRFP: true,
+            hasPaidClient: hasPaidClient
+        };
+
+        // Add Client Details only if 2nd payment is made
+        if (hasPaidClient) {
+            responseData.clientName = rfp.clientName || rfp.user;
+            responseData.email = rfp.email;
+            responseData.phone = rfp.phone;
+        }
+
+        res.json(responseData);
+    } catch (err) {
+        console.error('Fetch RFP Details Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Get Requests for Broker Hub (Masked)
+router.get('/broker-hub', auth, async (req, res) => {
+    try {
+        const requests = await Request.find({ type: 'Detailed RFP' }).sort({ createdAt: -1 });
+        
+        // Fetch all payments for this broker
+        const payments = await Payment.find({
+            broker: req.user.id,
+            status: 'captured'
+        });
+
+        // Mask companyName if not paid
+        const maskedRequests = requests.map(req => {
+            const hasPaidRFP = payments.some(p => p.request.toString() === req._id.toString() && p.type === 'rfp_details');
+            const hasPaidClient = payments.some(p => p.request.toString() === req._id.toString() && p.type === 'client_details');
+            
+            const reqObj = req.toObject();
+            if (!hasPaidClient) {
+                reqObj.companyName = "[CONFIDENTIAL - PAY TO UNLOCK]";
+                reqObj.clientName = "[LOCKED]";
+                reqObj.email = "[LOCKED]";
+                reqObj.phone = "[LOCKED]";
+            }
+            return reqObj;
+        });
+
+        res.json(maskedRequests);
+    } catch (err) {
+        console.error('Broker Hub Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
+

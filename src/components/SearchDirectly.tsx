@@ -1,4 +1,4 @@
-import { Search, MapPin, Users, Building } from "lucide-react";
+import { Search, MapPin, Users, Building, MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -198,6 +198,17 @@ const SearchDirectly = () => {
                             </Button>
                         </div>
 
+                    </div>
+                    {/* Footnote RFP Section */}
+                    <div className="flex justify-center mt-10 pt-8 border-t border-gray-100">
+                        <Button 
+                            variant="ghost"
+                            onClick={() => navigate("/rfp-form")}
+                            className="text-navy/60 hover:text-teal font-black uppercase tracking-[0.2em] text-[10px] flex items-center gap-3 transition-all hover:bg-transparent"
+                        >
+                            Need a tailored workspace? <span className="text-teal underline decoration-2 underline-offset-4">Fill RFP Form</span>
+                            <MoveRight className="w-4 h-4 ml-1" />
+                        </Button>
                     </div>
                 </div>
             </div>
