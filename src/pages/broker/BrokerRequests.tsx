@@ -353,26 +353,20 @@ const BrokerRequests = () => {
                                                     🧪 SKIP PAYMENT (TEST)
                                                 </Button>
                                             </div>
-                                        ) : !status.hasPaidClient ? (
-                                            <>
-                                                <Button onClick={() => handlePayment(rfp._id, 'client_details')} className="w-full h-14 rounded-2xl bg-teal hover:bg-navy text-white font-bold group/btn shadow-lg shadow-teal/10 active:scale-[0.98] transition-all">
-                                                    <Phone className="w-4 h-4 mr-2 group-hover/btn:animate-bounce" />
-                                                    Pay and Get Client Details (₹1)
-                                                </Button>
-                                                <Button
-                                                    variant="link"
-                                                    onClick={() => handleTestUnlock(rfp._id, 'client_details')}
-                                                    className="text-[10px] text-gray-400 hover:text-teal font-bold p-0 h-auto"
-                                                >
-                                                    🧪 SKIP PAYMENT (TEST)
-                                                </Button>
-                                            </>
                                         ) : proposal ? (
-                                            <Button disabled className="w-full h-14 rounded-2xl bg-green-50 text-green-600 border border-green-100 font-bold opacity-100">
-                                                <ShieldCheck className="w-5 h-5 mr-2" /> Proposal Sent
-                                            </Button>
+                                            <div className="space-y-3">
+                                                <Button disabled className="w-full h-14 rounded-2xl bg-green-50 text-green-600 border border-green-100 font-black opacity-100">
+                                                    <ShieldCheck className="w-5 h-5 mr-2" /> Proposal Sent
+                                                </Button>
+                                                <div className="p-4 bg-teal/5 rounded-2xl border border-teal/10 flex items-center justify-center gap-3">
+                                                    <div className="w-2 h-2 bg-teal rounded-full animate-pulse" />
+                                                    <p className="text-[10px] font-black text-teal uppercase tracking-widest text-center leading-tight">
+                                                        Awaiting Client<br/>Handshake
+                                                    </p>
+                                                </div>
+                                            </div>
                                         ) : (
-                                            <Button onClick={() => { setSelectedRfp(rfp); setIsProposalModalOpen(true); }} className="w-full h-14 rounded-2xl bg-navy hover:bg-teal text-white font-bold shadow-lg shadow-navy/20 active:scale-[0.98] transition-all">
+                                            <Button onClick={() => { setSelectedRfp(rfp); setIsProposalModalOpen(true); }} className="w-full h-14 rounded-2xl bg-teal hover:bg-navy text-white font-black shadow-lg shadow-teal/10 active:scale-[0.98] transition-all">
                                                 <Send className="w-4 h-4 mr-2" /> Send Proposal
                                             </Button>
                                         )}
@@ -419,29 +413,17 @@ const BrokerRequests = () => {
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 text-navy">
                                                 <div className="w-1.5 h-6 bg-navy rounded-full" />
-                                                <h4 className="text-lg font-black uppercase tracking-tight">Client Contact</h4>
+                                                <h4 className="text-lg font-black uppercase tracking-tight">Client Verification</h4>
                                             </div>
-                                            {status.hasPaidClient ? (
-                                                <div className="bg-navy/5 p-4 rounded-2xl border border-navy/5 space-y-2">
-                                                    <div className="flex items-center gap-3">
-                                                        <CheckCircle2 className="w-4 h-4 text-teal" />
-                                                        <span className="font-bold text-navy">{detail.clientName}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-3 text-sm text-gray-500 font-medium pl-7">
-                                                        <Mail className="w-3.5 h-3.5" /> {detail.email}
-                                                    </div>
-                                                    <div className="flex items-center gap-3 text-sm text-gray-500 font-medium pl-7">
-                                                        <Phone className="w-3.5 h-3.5" /> {detail.phone}
-                                                    </div>
+                                            <div className="h-[90px] bg-gray-50 rounded-2xl flex items-center justify-center border border-dashed border-gray-200 p-4">
+                                                <div className="text-center">
+                                                    <Lock className="w-5 h-5 text-gray-300 mx-auto mb-1" />
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-relaxed">
+                                                        Identity Shield Active.<br/>
+                                                        Wait for client handshake to unlock contact.
+                                                    </p>
                                                 </div>
-                                            ) : (
-                                                <div className="h-[90px] bg-gray-50 rounded-2xl flex items-center justify-center border border-dashed border-gray-200">
-                                                    <div className="text-center group cursor-pointer" onClick={() => handlePayment(rfp._id, 'client_details')}>
-                                                        <Lock className="w-5 h-5 text-gray-300 mx-auto mb-1 group-hover:text-teal transition-colors" />
-                                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-teal transition-colors">Pay ₹1 to Unlock Contact</p>
-                                                    </div>
-                                                </div>
-                                            )}
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -713,8 +695,8 @@ const BrokerRequests = () => {
                 <h3 className="text-xl font-black text-navy tracking-tight">Enterprise Lead Protection Workflow</h3>
                 <p className="text-gray-500 text-sm max-w-2xl mx-auto font-medium">
                     To maintain the highest quality of corporate lead data, we follow a gated acquisition process.
-                    Unlock RFP specifications first to ensure your space is a perfect fit, then acquire lead contact
-                    details to initiate the formal proposal process. All transactions are secure and non-refundable.
+                    Unlock RFP specifications first to ensure your space fits, then send a proposal. Once the client
+                    initiates a <b>Handshake</b>, you can acquire full contact details in your Direct Handshakes portal.
                 </p>
             </div>
         </div>
