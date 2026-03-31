@@ -58,17 +58,23 @@ router.get('/analytics', async (req, res) => {
             bookings: monthlyData[key]
         }));
 
-        // 4. Recent Activity (Last 5 approved bookings)
-        const recentActivity = await Request.find({ status: 'approved' })
-            .sort({ updatedAt: -1 })
-            .limit(5);
+        // 5. Handshake Analytics
+        const handshakeCount = await Proposal.countDocuments({ status: 'Handshake' });
+        const proposalCount = await Proposal.countDocuments({});
+
+        // 6. Corporate Revenue (RFP & Client Details)
+        const payments = await Payment.find({ status: 'captured' });
+        const corporateRevenue = payments.reduce((acc, p) => acc + (p.amount / 100), 0); // Convert paise to INR
 
         res.json({
             pendingCount,
             rfpCount,
             totalRevenue,
             chartData,
-            recentActivity
+            recentActivity,
+            handshakeCount,
+            proposalCount,
+            corporateRevenue
         });
 
     } catch (err) {
@@ -248,10 +254,11 @@ router.post('/handshake', async (req, res) => {
     }
 });
 
-// Get All Handshakes for Admin (with Broker Details)
+// Get All Handshakes for Admin (Unified)
 router.get('/admin-handshakes', async (req, res) => {
     try {
-        const handshakes = await Request.aggregate([
+        // 1. Get Direct Handshakes (Requests)
+        const directHandshakes = await Request.aggregate([
             { $match: { type: 'Handshake' } },
             {
                 $lookup: {
@@ -267,37 +274,47 @@ router.get('/admin-handshakes', async (req, res) => {
                     from: 'users',
                     let: { ownerId: '$spaceInfo.owner' },
                     pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $or: [
-                                        { $eq: ['$_id', '$$ownerId'] },
-                                        {
-                                            $and: [
-                                                { $eq: [{ $type: '$$ownerId' }, 'string'] },
-                                                { $regexMatch: { input: '$$ownerId', regex: /^[0-9a-fA-F]{24}$/ } },
-                                                { $eq: ['$_id', { $toObjectId: '$$ownerId' }] }
-                                            ]
-                                        },
-                                        { $eq: ['$email', '$$ownerId'] }
-                                    ]
-                                }
-                            }
-                        }
+                        { $match: { $expr: { $or: [{ $eq: ['$_id', '$$ownerId'] }, { $eq: ['$email', '$$ownerId'] }] } } }
                     ],
                     as: 'brokerInfo'
                 }
             },
-            { $unwind: { path: '$brokerInfo', preserveNullAndEmptyArrays: true } },
-            { $sort: { createdAt: -1 } }
+            { $unwind: { path: '$brokerInfo', preserveNullAndEmptyArrays: true } }
         ]);
 
-        res.json(handshakes);
+        // 2. Get Proposal Handshakes (Proposals)
+        const proposalHandshakes = await Proposal.find({ status: 'Handshake' })
+            .populate('rfpId')
+            .populate('brokerId')
+            .populate('spaceId');
+
+        // 3. Format Proposal Handshakes to match the Direct Handshake schema
+        const formattedProposals = proposalHandshakes.map(p => ({
+            _id: p._id,
+            user: p.rfpId?.clientName || p.rfpId?.user || 'Unknown',
+            email: p.rfpId?.email,
+            phone: p.rfpId?.phone,
+            seats: p.rfpId?.seats,
+            timeline: p.rfpId?.timeline,
+            space: p.spaceId?.name,
+            spaceInfo: p.spaceId,
+            brokerInfo: p.brokerId,
+            isProposal: true,
+            createdAt: p.createdAt
+        }));
+
+        // 4. Combine and Sort
+        const allHandshakes = [...directHandshakes, ...formattedProposals].sort((a, b) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        res.json(allHandshakes);
     } catch (err) {
-        console.error('❌ Admin Handshake Error:', err);
+        console.error('Fetch Unified Handshakes Error:', err);
         res.status(500).send('Server Error');
     }
 });
+
 
 // Create New Detailed RFP
 router.post('/rfp', async (req, res) => {

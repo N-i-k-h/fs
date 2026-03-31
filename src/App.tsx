@@ -41,6 +41,7 @@ import AdminQuotes from "./pages/admin/AdminQuotes";
 import AdminBrochures from "./pages/admin/AdminBrochures";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminBrokerProposals from "./pages/admin/AdminBrokerProposals";
+import AdminPayments from "./pages/admin/AdminPayments";
 import ImageUploadExample from "./pages/ImageUploadExample";
 import SimpleUploadExample from "./pages/SimpleUploadExample";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -111,6 +112,7 @@ const App = () => (
                 <Route path="spaces" element={<AdminSpaces />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="broker-proposals" element={<AdminBrokerProposals />} />
+                <Route path="payments" element={<AdminPayments />} />
                 <Route path="add-space" element={<AdminAddSpace />} />
                 <Route path="edit-space/:id" element={<AdminEditSpace />} />
               </Route>

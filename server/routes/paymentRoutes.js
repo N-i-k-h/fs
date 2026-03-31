@@ -161,4 +161,19 @@ router.get('/status/:requestId', auth, async (req, res) => {
     }
 });
 
+// Get All Payments for Admin
+router.get('/admin-payments', async (req, res) => {
+    try {
+        const payments = await Payment.find({ status: 'captured' })
+            .populate('broker', 'name email phone role')
+            .populate('request', 'companyName user email type')
+            .sort({ createdAt: -1 });
+
+        res.json(payments);
+    } catch (err) {
+        console.error('Fetch Admin Payments Error:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

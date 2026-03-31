@@ -33,8 +33,11 @@ const AdminDashboard = () => {
     const [userCount, setUserCount] = useState<number | null>(null);
     const [analytics, setAnalytics] = useState<any>({
         totalRevenue: 0,
+        corporateRevenue: 0,
         pendingCount: 0,
         rfpCount: 0,
+        handshakeCount: 0,
+        proposalCount: 0,
         chartData: [],
         recentActivity: []
     });
@@ -119,36 +122,36 @@ const AdminDashboard = () => {
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
+                    title="Corp Revenue"
+                    value={`₹${(analytics.corporateRevenue || 0).toLocaleString()}`}
+                    subtext="Lead / RFP Unlocks"
+                    icon={TrendingUp}
+                    colorClass="text-pink-600"
+                    borderClass="border-l-pink-500"
+                />
+                <StatCard
+                    title="Handshakes"
+                    value={analytics.handshakeCount}
+                    subtext="Successful closures"
+                    icon={CalendarCheck}
+                    colorClass="text-teal-600"
+                    borderClass="border-l-teal-500"
+                />
+                <StatCard
+                    title="Proposals"
+                    value={analytics.proposalCount}
+                    subtext="Active broker bids"
+                    icon={BarChart}
+                    colorClass="text-amber-600"
+                    borderClass="border-l-amber-500"
+                />
+                <StatCard
                     title="Total Revenue"
-                    value={`₹${analytics.totalRevenue.toLocaleString()}`}
-                    subtext="From confirmed bookings"
+                    value={`₹${(analytics.totalRevenue + analytics.corporateRevenue).toLocaleString()}`}
+                    subtext="Platform combined"
                     icon={DollarSign}
                     colorClass="text-emerald-600"
                     borderClass="border-l-emerald-500"
-                />
-                <StatCard
-                    title="Active Users"
-                    value={userCount !== null ? userCount : '...'}
-                    subtext="Total registered accounts"
-                    icon={Users}
-                    colorClass="text-blue-600"
-                    borderClass="border-l-blue-500"
-                />
-                <StatCard
-                    title="Pending Requests"
-                    value={analytics.pendingCount}
-                    subtext="Requires immediate attention"
-                    icon={CalendarCheck}
-                    colorClass="text-orange-600"
-                    borderClass="border-l-orange-500"
-                />
-                <StatCard
-                    title="Active RFPs"
-                    value={analytics.rfpCount}
-                    subtext="Corporate requirements"
-                    icon={FileText}
-                    colorClass="text-purple-600"
-                    borderClass="border-l-purple-500"
                 />
                 <StatCard
                     title="Total Spaces"

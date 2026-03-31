@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, FileText, PlusCircle, LogOut, Building2, Menu, X, DollarSign, Download, Handshake, CheckCircle, MessageSquare, Send } from "lucide-react";
+import { LayoutDashboard, Users, FileText, PlusCircle, LogOut, Building2, Menu, X, DollarSign, Download, Handshake, CheckCircle, MessageSquare, Send, TrendingUp, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
@@ -26,6 +26,7 @@ const AdminLayout = () => {
 
     const menuItems = [
         { icon: LayoutDashboard, label: "Analysis", path: "/admin" },
+        { icon: TrendingUp, label: "Lead Revenue", path: "/admin/payments" },
         { icon: FileText, label: "Tour Requests", path: "/admin/requests" },
         { icon: MessageSquare, label: "Corporate RFPs", path: "/admin/rfps" },
         { icon: Send, label: "Broker Proposals", path: "/admin/broker-proposals" },
