@@ -50,40 +50,44 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col items-center text-center mt-24">
+      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col items-center text-center mt-8">
 
         {/* Mode Toggle */}
-        <div className="mb-12 mt-24 flex p-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl animate-in fade-in zoom-in duration-700">
+        <div className="mb-12 mt-8 flex p-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl animate-in fade-in zoom-in duration-700">
           <button
             onClick={() => setMode("client")}
             className={cn(
-              "px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
+              "px-4 md:px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
               mode === "client" ? "bg-teal text-white shadow-lg" : "text-navy/80 hover:text-navy hover:bg-white/10"
             )}
           >
-            I'm Looking for Space
+            Client Login
           </button>
           <button
             onClick={() => setMode("broker")}
             className={cn(
-              "px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
+              "px-4 md:px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
               mode === "broker" ? "bg-teal text-white shadow-lg" : "text-navy/80 hover:text-navy hover:bg-white/10"
             )}
           >
-            Register your Workspace
+            Partner Login
           </button>
         </div>
 
         {/* Heading */}
-        <h1 className="text-5xl md:text-7xl font-bold text-navy leading-[1.1] tracking-tight mb-6 animate-in slide-in-from-bottom-6 duration-700 delay-100 fade-in">
-          {mode === "client" ? (
-            <>Find Your Ideal <span className="text-teal">Workspace</span></>
-          ) : (
+        <h1 className={cn(
+          "text-4xl md:text-7xl font-bold text-navy leading-[1.1] tracking-tight animate-in slide-in-from-bottom-6 duration-700 delay-100 fade-in px-2",
+          mode === "client" ? "mb-0" : "mb-6"
+        )}>
+          {mode === "client" ? null : (
             <>Maximize Your <span className="text-teal">Occupancy</span></>
           )}
         </h1>
 
-        <p className="text-lg text-black max-w-2xl mb-12 animate-in slide-in-from-bottom-6 duration-700 delay-200 fade-in font-medium">
+        <p className={cn(
+          "text-lg text-black max-w-2xl animate-in slide-in-from-bottom-6 duration-700 delay-200 fade-in font-medium",
+          mode === "client" ? "mb-6" : "mb-12"
+        )}>
           {mode === "client"
             ? ""
             : "Connect with high-intent clients (RFP Platform) and list your property details to get verified leads."
@@ -120,7 +124,7 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
               <div className="flex justify-center mt-8 animate-in slide-in-from-top-4 duration-700 delay-500 fade-in">
                 <Button 
                   onClick={() => navigate("/rfp-form")}
-                  className="h-14 px-10 bg-white/30 backdrop-blur-md border border-white/40 hover:bg-white/90 text-navy font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl transition-all hover:scale-110 active:scale-95 flex items-center gap-3 group"
+                  className="h-14 px-10 bg-white hover:bg-gray-50 text-navy font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl transition-all hover:scale-110 active:scale-95 flex items-center gap-3 group border border-gray-100"
                 >
                   Custom Requirement? <span className="text-teal">Fill RFP Form</span> 
                   <div className="w-6 h-6 rounded-full bg-teal text-white flex items-center justify-center transition-transform group-hover:translate-x-1">

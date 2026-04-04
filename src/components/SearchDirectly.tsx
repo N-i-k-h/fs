@@ -106,14 +106,7 @@ const SearchDirectly = () => {
             <div className="max-w-6xl mx-auto">
                 <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-6 md:p-8 border border-gray-100">
 
-                    <div className="flex items-center gap-2 mb-6 text-navy">
-                        <div className="p-2 bg-teal/10 rounded-lg">
-                            <Search className="w-6 h-6 text-teal" strokeWidth={3} />
-                        </div>
-                        <h3 className="text-2xl font-bold">Search Directly</h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-[1.5fr_1.5fr_1fr_auto] gap-4 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
 
                         {/* City Dropdown */}
                         <div className="space-y-2">
@@ -188,27 +181,6 @@ const SearchDirectly = () => {
                             />
                         </div>
 
-                        {/* Search Button */}
-                        <div className="">
-                            <Button
-                                onClick={handleSearch}
-                                className="w-full h-12 bg-teal hover:bg-teal/90 text-white font-bold rounded-lg shadow-lg hover:shadow-teal/20 transition-all text-base"
-                            >
-                                <Search className="w-5 h-5 mr-2" /> Search
-                            </Button>
-                        </div>
-
-                    </div>
-                    {/* Footnote RFP Section */}
-                    <div className="flex justify-center mt-10 pt-8 border-t border-gray-100">
-                        <Button 
-                            variant="ghost"
-                            onClick={() => navigate("/rfp-form")}
-                            className="text-navy/60 hover:text-teal font-black uppercase tracking-[0.2em] text-[10px] flex items-center gap-3 transition-all hover:bg-transparent"
-                        >
-                            Need a tailored workspace? <span className="text-teal underline decoration-2 underline-offset-4">Fill RFP Form</span>
-                            <MoveRight className="w-4 h-4 ml-1" />
-                        </Button>
                     </div>
                 </div>
             </div>

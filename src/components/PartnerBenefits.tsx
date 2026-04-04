@@ -47,7 +47,7 @@ const PartnerBenefits = () => {
                         Partner Benefits
                     </span>
                     <h2 className="text-4xl md:text-5xl font-bold text-navy mb-6">
-                        Why Choose <span className="text-teal">SFT</span> for Your Office?
+                        Why Choose <span className="text-teal">Xplore</span> SFT for Your Office?
                     </h2>
                     <p className="text-lg text-gray-500">
                         We empower space owners with enterprise-grade tools to manage listings and secure corporate tenancies through the industry's first live RFP platform.

@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FeaturedSpaces from "@/components/FeaturedSpaces";
-import WorkspaceCategories from "@/components/WorkspaceCategories";
 import HowItWorks from "@/components/HowItWorks";
 import Industries from "@/components/Industries";
 import ContactSection from "@/components/ContactSection";
-import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 import SearchDirectly from "@/components/SearchDirectly";
 import OurRegions from "@/components/OurRegions";
@@ -55,16 +53,8 @@ const Index = () => {
 
         {mode === "client" ? (
           <>
-            {/* 2. Structured Search Directly (Overlapping Hero) */}
-            <SearchDirectly />
-
-            {/* 2.5. Our Regions */}
+            {/* 2.5. Micro-Markets Map */}
             <OurRegions />
-
-            {/* 3. Workspace Categories (Solutions) */}
-            <div className="relative z-10">
-              <WorkspaceCategories />
-            </div>
 
             {/* 3. Featured Individual Spaces */}
             <FeaturedSpaces />
@@ -84,7 +74,6 @@ const Index = () => {
             <BrokerStats />
 
             {/* Broker Specific Sections */}
-            <WorkspaceCategories />
             <PartnerBenefits />
             <BrokerHowItWorks />
 
@@ -123,7 +112,6 @@ const Index = () => {
 
         {/* 6. Contact & Testimonials */}
         <ContactSection />
-        <Testimonials />
 
       </main>
       <Footer />

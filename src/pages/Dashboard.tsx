@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
+import MarketRibbon from "@/components/MarketRibbon";
 import { Button } from "@/components/ui/button";
 import {
     User,
@@ -177,7 +178,7 @@ const Dashboard = () => {
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(22);
             doc.setFont("helvetica", "bold");
-            doc.text("SFT CORPORATE BRIEF", 20, 25);
+            doc.text("XPLORE SFT CORPORATE BRIEF", 20, 25);
             doc.setFontSize(8);
             const refId = rfp._id ? String(rfp._id).toUpperCase() : "RFP-OFFLINE";
             doc.text(`REFERENCE ID: ${refId}`, 145, 20);
@@ -226,9 +227,9 @@ const Dashboard = () => {
             // Footer
             doc.setFontSize(7);
             doc.setTextColor(150, 150, 150);
-            doc.text("© 2026 SFT Connect. Confidential Document - Generated via Corporate Dashboard", 105, 285, { align: 'center' });
+            doc.text("© 2026 Xplore SFT Connect. Confidential Document - Generated via Corporate Dashboard", 105, 285, { align: 'center' });
 
-            doc.save(`SFT_RFP_${refId.slice(-6)}.pdf`);
+            doc.save(`Xplore_SFT_RFP_${refId.slice(-6)}.pdf`);
             toast.success("Detailed Summary Downloaded!");
         } catch (error) {
             console.error("PDF Generate Error:", error);
@@ -253,6 +254,10 @@ const Dashboard = () => {
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-navy text-center md:text-left">Welcome back, <span className="text-teal">{user?.name}</span></h1>
                     <p className="text-muted-foreground text-center md:text-left">Manage your workspace search and active requirements.</p>
+                </div>
+
+                <div className="mb-12">
+                    <MarketRibbon className="-mt-8" />
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8">

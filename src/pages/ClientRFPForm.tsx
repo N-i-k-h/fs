@@ -64,6 +64,7 @@ const ClientRFPForm = () => {
         // C & D: Space & Team
         solutionType: [],
         region: "",
+        secondaryRegion: "",
         preferredLocation: "",
         locationMapLink: "",
         buildingTypePreference: [],
@@ -75,7 +76,9 @@ const ClientRFPForm = () => {
         seatDensity: "",
         leasePeriod: "",
         lockInPeriod: "",
-        workingHours: "General", // General or 24/7
+        workingHours: "General", 
+        otherWorkingHours: "",
+        otherIndustry: "",
 
         // E: Layout & Amenities
         managerCabins: "",
@@ -146,6 +149,13 @@ const ClientRFPForm = () => {
     };
 
     const nextStep = () => {
+        if (step === 1) {
+            if (formData.decisionMakerEmail && formData.secondarySpocEmail && formData.decisionMakerEmail === formData.secondarySpocEmail) {
+                toast.error("Decision Maker and Secondary SPOC emails must be unique.");
+                return;
+            }
+        }
+
         if (validateStep(step)) {
             setStep(s => Math.min(s + 1, 4));
         } else {
@@ -376,12 +386,12 @@ const ClientRFPForm = () => {
                                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <Label htmlFor="clientName">Client Name (Authorized Person)</Label>
-                                            <Input id="clientName" value={formData.clientName} onChange={handleTextChange} placeholder="Rahul Sharma" className="h-12" />
-                                        </div>
-                                        <div className="space-y-2">
                                             <Label htmlFor="companyName">Legal Company Name</Label>
                                             <Input id="companyName" value={formData.companyName} onChange={handleTextChange} placeholder="FinTech Labs Pvt Ltd" className="h-12" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="clientName">Client Name (Authorized Person)</Label>
+                                            <Input id="clientName" value={formData.clientName} onChange={handleTextChange} placeholder="Rahul Sharma" className="h-12" />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="industry">Industry / Sector</Label>
@@ -393,6 +403,15 @@ const ClientRFPForm = () => {
                                                     ))}
                                                 </SelectContent>
                                             </Select>
+                                            {formData.industry === "Other" && (
+                                                <Input 
+                                                    id="otherIndustry" 
+                                                    value={formData.otherIndustry} 
+                                                    onChange={handleTextChange} 
+                                                    placeholder="Specify your industry" 
+                                                    className="h-10 mt-2 border-teal/30 focus:border-teal" 
+                                                />
+                                            )}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="fundingStatus">Funding Status</Label>
@@ -441,9 +460,20 @@ const ClientRFPForm = () => {
                                         </div>
                                         <div className="space-y-6">
                                             <div className="space-y-2">
-                                                <Label htmlFor="region">Select Region / Area*</Label>
+                                                <Label htmlFor="region">Select Region / Area* (1st Preference)</Label>
                                                 <Select onValueChange={(val) => handleSelectChange("region", val)} value={formData.region}>
                                                     <SelectTrigger className="h-12"><SelectValue placeholder="e.g. Koramangala, HSR Layout" /></SelectTrigger>
+                                                    <SelectContent className="max-h-[300px]">
+                                                        {ALL_MICRO_LOCATIONS.map(loc => (
+                                                            <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="secondaryRegion">Select Region / Area (2nd Preference)</Label>
+                                                <Select onValueChange={(val) => handleSelectChange("secondaryRegion", val)} value={formData.secondaryRegion}>
+                                                    <SelectTrigger className="h-12"><SelectValue placeholder="Optional secondary preference" /></SelectTrigger>
                                                     <SelectContent className="max-h-[300px]">
                                                         {ALL_MICRO_LOCATIONS.map(loc => (
                                                             <SelectItem key={loc} value={loc}>{loc}</SelectItem>
@@ -482,8 +512,18 @@ const ClientRFPForm = () => {
                                                     <SelectContent>
                                                         <SelectItem value="General">8/5 General Shift</SelectItem>
                                                         <SelectItem value="24/7">24/7 Operational</SelectItem>
+                                                        <SelectItem value="Other">Other</SelectItem>
                                                     </SelectContent>
                                                 </Select>
+                                                {formData.workingHours === "Other" && (
+                                                    <Input 
+                                                        id="otherWorkingHours" 
+                                                        value={formData.otherWorkingHours} 
+                                                        onChange={handleTextChange} 
+                                                        placeholder="e.g. 10/6 Flexy hours" 
+                                                        className="h-10 mt-2 border-teal/30 focus:border-teal" 
+                                                    />
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -498,11 +538,11 @@ const ClientRFPForm = () => {
                                             <Input id="expansionSeats" type="number" value={formData.expansionSeats} onChange={handleTextChange} placeholder="30" className="h-12" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="currentEmployees">Current Count</Label>
+                                            <Label htmlFor="currentEmployees">Current Headcount</Label>
                                             <Input id="currentEmployees" type="number" value={formData.currentEmployees} onChange={handleTextChange} placeholder="80" className="h-12" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="seatDensity">Seat Density</Label>
+                                            <Label htmlFor="seatDensity">Workstation Size</Label>
                                             <Select onValueChange={(val) => handleSelectChange("seatDensity", val)} value={formData.seatDensity}>
                                                 <SelectTrigger className="h-12"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>
@@ -569,6 +609,12 @@ const ClientRFPForm = () => {
                                                 ))}
                                             </div>
                                             <div className="mt-6">
+                                                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between mb-4">
+                                                    <span className="text-xs font-bold text-navy uppercase">Total Meeting Capacity</span>
+                                                    <span className="text-sm font-black text-teal">
+                                                        {Object.entries(formData.meetingRooms).reduce((acc, [k, v]) => acc + (Number(v) * Number(k.replace('pax', ''))), 0)} Seats
+                                                    </span>
+                                                </div>
                                                 <Label className="text-navy font-bold block mb-3">Core Amenities Required</Label>
                                                 <div className="grid grid-cols-2 gap-2">
                                                     {['100% Power Backup', 'High-speed Internet', 'Breakout Area', 'Executive Gym', 'Creche / Daycare'].map(am => (
@@ -622,16 +668,17 @@ const ClientRFPForm = () => {
                                         </div>
                                         <div className="space-y-6">
                                             <div className="space-y-2">
-                                                <Label htmlFor="expectedMoveIn">Expected Move-in Timeline</Label>
-                                                <Select onValueChange={(val) => handleSelectChange("expectedMoveIn", val)} value={formData.expectedMoveIn}>
-                                                    <SelectTrigger className="h-12"><SelectValue placeholder="Select Move-in" /></SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="Immediate">Immediate</SelectItem>
-                                                        <SelectItem value="1 Month">Within 1 Month</SelectItem>
-                                                        <SelectItem value="3 Months">Within 3 Months</SelectItem>
-                                                        <SelectItem value="Flexible">Flexible</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
+                                                <Label htmlFor="expectedMoveIn">Expected Move-in Date</Label>
+                                                <div className="relative">
+                                                    <Input 
+                                                        id="expectedMoveIn" 
+                                                        type="date" 
+                                                        value={formData.expectedMoveIn} 
+                                                        onChange={handleTextChange} 
+                                                        className="h-12 w-full pr-10" 
+                                                    />
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 font-medium">Select the tentative date of occupancy.</p>
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="additionalNotes">Special Requirements / Notes</Label>

@@ -19,7 +19,7 @@ const Footer = () => {
                 className="h-10 w-auto object-contain"
               />
               <span className="text-2xl font-bold tracking-tight">
-                SFT
+                <span className="text-teal">Xplore</span> SFT
               </span>
             </a>
             <p className="text-gray-400 text-sm leading-relaxed">
@@ -83,7 +83,7 @@ const Footer = () => {
 
         {/* --- Bottom Section --- */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <p>© 2026 SFT. All rights reserved.</p>
+          <p>© 2026 Xplore SFT. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-teal transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-teal transition-colors">Terms of Service</a>

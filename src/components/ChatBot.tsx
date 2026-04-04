@@ -217,7 +217,7 @@ const ChatBot = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg tracking-tight">SFT Bot</h3>
+                  <h3 className="font-bold text-white text-lg tracking-tight">Xplore SFT Bot</h3>
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]" />
                     <span className="text-xs text-blue-100/80 font-medium">Always Active</span>
@@ -323,7 +323,7 @@ const ChatBot = () => {
                 <Send className="w-4 h-4 ml-0.5" />
               </button>
             </div>
-            <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">Powered by SFT Bot</p>
+            <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">Powered by Xplore SFT Bot</p>
           </form>
         </div>
       )}
@@ -363,7 +363,7 @@ const ChatBot = () => {
             )}
           </button>
           {!isOpen && (
-            <span className="text-[11px] font-bold text-[#3b46a8] tracking-wide">SFT Bot</span>
+            <span className="text-[11px] font-bold text-[#3b46a8] tracking-wide">Xplore SFT Bot</span>
           )}
         </div>
       </div>

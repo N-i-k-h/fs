@@ -99,7 +99,7 @@ const Register = () => {
                         style={{ backgroundImage: `url(${heroBg})` }}
                     />
                     <div className="relative z-10 text-white p-12 max-w-lg">
-                        <h1 className="text-5xl font-bold mb-6 leading-tight">Join<br />SFT!</h1>
+                        <h1 className="text-5xl font-bold mb-6 leading-tight">Join<br /><span className="text-teal">Xplore</span> SFT!</h1>
                         <p className="text-lg opacity-90 leading-relaxed">
                             Create an account to unlock exclusive workspace deals and manage your bookings effortlessly.
                         </p>

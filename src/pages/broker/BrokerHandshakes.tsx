@@ -60,7 +60,7 @@ const BrokerHandshakes = () => {
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount: order.amount,
                 currency: order.currency,
-                name: "SFT Corporate",
+                name: "Xplore SFT Corporate",
                 description: "Unlock Client Contact Leads",
                 order_id: order.id,
                 handler: async (response: any) => {

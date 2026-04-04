@@ -16,10 +16,6 @@ interface NavItem {
 
 const CLIENT_NAV_ITEMS: NavItem[] = [
   { label: "Home", path: "/" },
-  { label: "Workspaces", path: "/search" },
-  { label: "Share Requirement", path: "/share-requirement" },
-  { label: "Featured Space", path: "/#featured" },
-  { label: "Dashboard", path: "/dashboard" },
   { label: "Contact", path: "#", action: "contact" },
 ];
 
@@ -69,7 +65,9 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
       <header className={cn("fixed inset-x-0 top-0 z-50 transition-all duration-300 px-6", isBrokerMode ? "bg-teal py-4 shadow-md" : (isScrolled ? "bg-white py-3 shadow-md border-b border-gray-100" : "bg-white/80 backdrop-blur-md py-4 shadow-sm"))}>
         <div className="container mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group relative z-50 transition-transform active:scale-95">
-            <span className={cn("text-2xl font-black tracking-tight font-outfit", isBrokerMode ? "text-white" : "text-navy group-hover:text-teal")}>SFT</span>
+            <span className={cn("text-xl md:text-2xl font-black tracking-tight font-outfit", isBrokerMode ? "text-white" : "text-navy group-hover:text-teal")}>
+              <span className="text-teal">Xplore</span> SFT
+            </span>
             {isBrokerMode && <span className="text-[10px] font-black text-teal p-1 bg-white rounded-md tracking-widest leading-none">PARTNER</span>}
           </Link>
 
@@ -103,7 +101,9 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
         <div className="fixed inset-0 z-[60] bg-white animate-in slide-in-from-right duration-500">
           <div className="flex flex-col h-full p-8">
             <div className="flex justify-between items-center mb-12">
-               <span className="text-2xl font-black text-navy font-outfit">SFT</span>
+               <span className="text-2xl font-black font-outfit text-navy">
+                  <span className="text-teal">Xplore</span> SFT
+               </span>
                <button onClick={() => setIsMenuOpen(false)}><X className="w-8 h-8" /></button>
             </div>
             <div className="flex flex-col gap-8 flex-1">

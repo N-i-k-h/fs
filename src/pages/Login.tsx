@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero.png";
 import Header from "@/components/Header";
+import MarketRibbon from "@/components/MarketRibbon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -85,7 +86,7 @@ const Login = () => {
                         style={{ backgroundImage: `url(${heroBg})` }}
                     />
                     <div className="relative z-10 text-white p-12 max-w-lg">
-                        <h1 className="text-5xl font-bold mb-6 leading-tight">Hello<br />SFT! 👋</h1>
+                        <h1 className="text-5xl font-bold mb-6 leading-tight">Hello<br /><span className="text-teal">Xplore</span> SFT! 👋</h1>
                         <p className="text-lg opacity-90 leading-relaxed">
                             Skip repetitive and manual searching. Get highly productive through our AI-powered platform and save tons of time!
                         </p>
@@ -179,6 +180,18 @@ const Login = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Premium Features Preview */}
+            <div className="py-24 bg-gray-50/50 border-t border-gray-100">
+                <div className="text-center mb-12">
+                    <span className="inline-block px-4 py-1 bg-teal/10 text-teal rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                        Locked Intelligence
+                    </span>
+                    <h3 className="text-3xl font-black text-navy uppercase italic tracking-tight">Unlock <span className="text-teal">The Platform</span></h3>
+                    <p className="text-gray-400 font-bold text-sm mt-2">Sign in to access exclusive corporate tools and property data</p>
+                </div>
+                <MarketRibbon className="pb-10" />
             </div>
         </div>
     );

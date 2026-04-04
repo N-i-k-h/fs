@@ -121,7 +121,7 @@ const BrokerRequests = () => {
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_SW2lCuhjsGREvC",
                 amount: order.amount,
                 currency: order.currency,
-                name: "SFT Corporate",
+                name: "Xplore SFT Corporate",
                 description: type === 'rfp_details' ? "Unlock RFP Specifications" : "Unlock Client Contact Leads",
                 order_id: order.id,
                 handler: async (response: any) => {
@@ -238,7 +238,7 @@ const BrokerRequests = () => {
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(20);
         doc.setFont("helvetica", "bold");
-        doc.text("SFT CORPORATE BRIEF", 20, 25);
+        doc.text("XPLORE SFT CORPORATE BRIEF", 20, 25);
         doc.setFontSize(8);
         doc.text(`REF ID: ${String(data._id).toUpperCase()}`, 145, 20);
         doc.text(`ISSUED: ${date}`, 145, 26);
@@ -267,9 +267,9 @@ const BrokerRequests = () => {
 
         doc.setFontSize(7);
         doc.setTextColor(150, 150, 150);
-        doc.text("Confidential Document - Generated via SFT Partner Network", 105, 285, { align: 'center' });
+        doc.text("Confidential Document - Generated via Xplore SFT Partner Network", 105, 285, { align: 'center' });
 
-        doc.save(`SFT_Brief_${data.companyName?.replace(/\s/g, '_')}.pdf`);
+        doc.save(`Xplore_SFT_Brief_${data.companyName?.replace(/\s/g, '_')}.pdf`);
         toast.success("Detailed Brief Downloaded!");
     };
 

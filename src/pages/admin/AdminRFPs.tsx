@@ -94,7 +94,7 @@ const AdminRFPs = () => {
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(20);
             doc.setFont("helvetica", "bold");
-            doc.text("SFT CORPORATE BRIEF", 20, 25);
+            doc.text("XPLORE SFT CORPORATE BRIEF", 20, 25);
             doc.setFontSize(8);
             doc.text(`REFERENCE ID: ${String(rfp._id).toUpperCase()}`, 145, 20);
             doc.text(`ISSUED ON: ${date}`, 145, 26);
@@ -135,7 +135,7 @@ const AdminRFPs = () => {
             addLine("Parking (Car/2W)", `${data.carParking || 0} / ${data.twoWheelerParking || 0}`);
             addLine("Additional Notes", data.additionalNotes);
 
-            doc.save(`RFP_Brief_${rfp.companyName?.replace(/\s/g, '_')}.pdf`);
+            doc.save(`Xplore_RFP_Brief_${rfp.companyName?.replace(/\s/g, '_')}.pdf`);
             toast.success("RFP Brief Downloaded!");
         } catch (error) {
             console.error("PDF Generate Error:", error);

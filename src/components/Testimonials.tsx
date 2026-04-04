@@ -1,17 +1,17 @@
 
 const testimonials = [
     {
-        text: "Finding a 10-person workspace in Koramangala was seamless. With SFT, we were moved in within 3 days!",
+        text: "Finding a 10-person workspace in Koramangala was seamless. With Xplore SFT, we were moved in within 3 days!",
         author: "Aditi Rao",
         role: "Ops Lead, TechStack"
     },
     {
-        text: "SFT helped us save 40% on overheads. We found a managed office in Whitefield that fit our budget perfectly.",
+        text: "Xplore SFT helped us save 40% on overheads. We found a managed office in Whitefield that fit our budget perfectly.",
         author: "Vikram Malhotra",
         role: "Director, V-Prop"
     },
     {
-        text: "The flexibility offered by SFT is unmatched. We expanded our team in HSR Layout without any long-term lease stress.",
+        text: "The flexibility offered by Xplore SFT is unmatched. We expanded our team in HSR Layout without any long-term lease stress.",
         author: "Neha Sharma",
         role: "Founder, Bloomly"
     },
