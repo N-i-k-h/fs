@@ -12,8 +12,17 @@ import {
     ChevronRight,
     ChevronLeft,
     CheckCircle,
-    Download
+    Download,
+    PieChart as PieIcon
 } from "lucide-react";
+import { 
+    PieChart, 
+    Pie, 
+    Cell, 
+    Tooltip, 
+    ResponsiveContainer, 
+    Legend 
+} from "recharts";
 import { jsPDF } from "jspdf";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -384,6 +393,8 @@ const ClientRFPForm = () => {
 
                             {step === 1 && (
                                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <Label htmlFor="companyName">Legal Company Name</Label>
@@ -442,6 +453,31 @@ const ClientRFPForm = () => {
 
                             {step === 2 && (
                                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-teal/5 p-6 rounded-2xl border border-teal/10">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="totalSeats" className="text-teal font-bold">Seats Needed Now</Label>
+                                            <Input id="totalSeats" type="number" value={formData.totalSeats} onChange={handleTextChange} placeholder="120" className="h-12 border-teal/20" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="expansionSeats" className="text-teal font-bold">Expansion (1-2 Yr)</Label>
+                                            <Input id="expansionSeats" type="number" value={formData.expansionSeats} onChange={handleTextChange} placeholder="30" className="h-12 border-teal/20" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="currentEmployees" className="text-teal font-bold">Current Headcount</Label>
+                                            <Input id="currentEmployees" type="number" value={formData.currentEmployees} onChange={handleTextChange} placeholder="80" className="h-12 border-teal/20" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="seatDensity" className="text-teal font-bold">Workstation Size</Label>
+                                            <Select onValueChange={(val) => handleSelectChange("seatDensity", val)} value={formData.seatDensity}>
+                                                <SelectTrigger className="h-12 border-teal/20"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="3/2">3.5 / 2 (Spacious)</SelectItem>
+                                                    <SelectItem value="3.5/2">3.5 / 2 (Standard)</SelectItem>
+                                                    <SelectItem value="4/2">4 / 2 (Compact)</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-4">
                                             <Label className="text-navy font-bold">Solution Type Required</Label>
@@ -527,32 +563,7 @@ const ClientRFPForm = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <hr className="border-gray-100" />
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="totalSeats">Seats Needed Now</Label>
-                                            <Input id="totalSeats" type="number" value={formData.totalSeats} onChange={handleTextChange} placeholder="120" className="h-12" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="expansionSeats">Expansion (1-2 Yr)</Label>
-                                            <Input id="expansionSeats" type="number" value={formData.expansionSeats} onChange={handleTextChange} placeholder="30" className="h-12" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="currentEmployees">Current Headcount</Label>
-                                            <Input id="currentEmployees" type="number" value={formData.currentEmployees} onChange={handleTextChange} placeholder="80" className="h-12" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="seatDensity">Workstation Size</Label>
-                                            <Select onValueChange={(val) => handleSelectChange("seatDensity", val)} value={formData.seatDensity}>
-                                                <SelectTrigger className="h-12"><SelectValue placeholder="Select" /></SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="3/2">3.5 / 2 (Spacious)</SelectItem>
-                                                    <SelectItem value="3.5/2">3.5 / 2 (Standard)</SelectItem>
-                                                    <SelectItem value="4/2">4 / 2 (Compact)</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    </div>
+
                                 </div>
                             )}
 
@@ -631,8 +642,69 @@ const ClientRFPForm = () => {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Mathematical seat distribution chart */}
+                                    <div className="mt-12 p-8 bg-blue-50/50 rounded-[2rem] border border-blue-100 shadow-sm animate-in fade-in duration-700">
+                                        <div className="flex flex-col md:flex-row items-center gap-8">
+                                            <div className="flex-1 space-y-4">
+                                                <h4 className="text-xl font-black text-navy uppercase italic">Seat <span className="text-blue-600">Distribution</span></h4>
+                                                <p className="text-sm text-gray-500 font-medium">Visualizing your layout efficiency across {formData.totalSeats || 0} total seats.</p>
+                                                
+                                                <div className="grid grid-cols-2 gap-4 mt-6">
+                                                    {[
+                                                        { label: "Cabins (4/ca)", val: Number(formData.managerCabins || 0) * 4 },
+                                                        { label: "Collab (6/zo)", val: Number(formData.collaborationZones || 0) * 6 },
+                                                        { label: "Meeting (Sum)", val: Object.entries(formData.meetingRooms).reduce((acc, [k, v]) => acc + (Number(v) * Number(k.replace('pax', ''))), 0) },
+                                                        { 
+                                                            label: "Workstations", 
+                                                            val: Math.max(0, Number(formData.totalSeats || 0) - 
+                                                                (Number(formData.managerCabins || 0) * 4) - 
+                                                                (Number(formData.collaborationZones || 0) * 6) - 
+                                                                Object.entries(formData.meetingRooms).reduce((acc, [k, v]) => acc + (Number(v) * Number(k.replace('pax', ''))), 0))
+                                                        }
+                                                    ].map((item, idx) => (
+                                                        <div key={idx} className="flex items-center gap-2">
+                                                            <div className={`w-3 h-3 rounded-full ${['bg-blue-800', 'bg-blue-600', 'bg-blue-400', 'bg-blue-200'][idx]}`} />
+                                                            <span className="text-[10px] font-bold text-navy uppercase truncate">{item.label}: {item.val}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="w-full md:w-64 h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={[
+                                                                { name: "Cabins", value: Number(formData.managerCabins || 0) * 4 },
+                                                                { name: "Collab Zones", value: Number(formData.collaborationZones || 0) * 6 },
+                                                                { name: "Meeting Rooms", value: Object.entries(formData.meetingRooms).reduce((acc, [k, v]) => acc + (Number(v) * Number(k.replace('pax', ''))), 0) },
+                                                                { 
+                                                                    name: "Workstations", 
+                                                                    value: Math.max(0, Number(formData.totalSeats || 0) - 
+                                                                        (Number(formData.managerCabins || 0) * 4) - 
+                                                                        (Number(formData.collaborationZones || 0) * 6) - 
+                                                                        Object.entries(formData.meetingRooms).reduce((acc, [k, v]) => acc + (Number(v) * Number(k.replace('pax', ''))), 0))
+                                                                }
+                                                            ].filter(d => d.value > 0)}
+                                                            innerRadius={60}
+                                                            outerRadius={80}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            {['#1e3a8a', '#2563eb', '#60a5fa', '#bfdbfe'].map((color, index) => (
+                                                                <Cell key={`cell-${index}`} fill={color} />
+                                                            ))}
+                                                        </Pie>
+                                                        <Tooltip />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
+
 
                             {step === 4 && (
                                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -669,14 +741,41 @@ const ClientRFPForm = () => {
                                         <div className="space-y-6">
                                             <div className="space-y-2">
                                                 <Label htmlFor="expectedMoveIn">Expected Move-in Date</Label>
-                                                <div className="relative">
-                                                    <Input 
-                                                        id="expectedMoveIn" 
-                                                        type="date" 
-                                                        value={formData.expectedMoveIn} 
-                                                        onChange={handleTextChange} 
-                                                        className="h-12 w-full pr-10" 
-                                                    />
+                                                <div className="flex gap-2">
+                                                    <Select 
+                                                        onValueChange={(val) => {
+                                                            const currentVal = formData.expectedMoveIn || "";
+                                                            const year = currentVal.includes(" ") ? currentVal.split(" ")[1] : new Date().getFullYear();
+                                                            handleSelectChange("expectedMoveIn", `${val} ${year}`);
+                                                        }} 
+                                                        value={formData.expectedMoveIn.split(" ")[0]}
+                                                    >
+                                                        <SelectTrigger className="h-12 flex-[2]">
+                                                            <SelectValue placeholder="Month" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                                                                <SelectItem key={m} value={m}>{m}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <Select 
+                                                        onValueChange={(val) => {
+                                                            const currentVal = formData.expectedMoveIn || "";
+                                                            const month = currentVal.includes(" ") ? currentVal.split(" ")[0] : "January";
+                                                            handleSelectChange("expectedMoveIn", `${month} ${val}`);
+                                                        }} 
+                                                        value={formData.expectedMoveIn.split(" ")[1]}
+                                                    >
+                                                        <SelectTrigger className="h-12 flex-1">
+                                                            <SelectValue placeholder="Year" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {[2025, 2026, 2027, 2028, 2029, 2030].map(y => (
+                                                                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
                                                 </div>
                                                 <p className="text-[10px] text-gray-400 font-medium">Select the tentative date of occupancy.</p>
                                             </div>

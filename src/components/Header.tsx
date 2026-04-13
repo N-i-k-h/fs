@@ -2,26 +2,32 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Home, Search, Monitor, FileText, BarChart2, Phone, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ContactModal";
 import { useAuth } from "@/context/AuthContext";
+import MarketRibbon from "@/components/MarketRibbon";
 import { toast } from "sonner";
 
 interface NavItem {
   label: string;
   path: string;
+  icon: any;
   action?: string;
 }
 
 const CLIENT_NAV_ITEMS: NavItem[] = [
-  { label: "Home", path: "/" },
-  { label: "Contact", path: "#", action: "contact" },
+  { label: "Home", path: "/", icon: Home },
+  { label: "ExploreSFT", path: "/search", icon: Search },
+  { label: "StudioSFT", path: "#", icon: Monitor },
+  { label: "RFP Platform", path: "/rfp-form", icon: FileText },
+  { label: "Market Intel", path: "#", icon: BarChart2 },
+  { label: "Contact", path: "#", icon: Phone, action: "contact" },
 ];
 
 const BROKER_NAV_ITEMS: NavItem[] = [
-  { label: "Home", path: "/" },
-  { label: "Register Office", path: "/broker/submit-property" },
+  { label: "Home", path: "/", icon: Home },
+  { label: "Register Office", path: "/broker/submit-property", icon: Building2 },
 ];
 
 const Header = ({ mode }: { mode?: "client" | "broker" }) => {
@@ -35,7 +41,12 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
 
   const isBrokerPath = location.pathname.startsWith('/broker') || location.pathname.startsWith('/admin');
   const isBrokerMode = mode === "broker" || isBrokerPath;
-  const NAV_ITEMS = isBrokerMode ? BROKER_NAV_ITEMS : CLIENT_NAV_ITEMS;
+  let NAV_ITEMS = isBrokerMode ? BROKER_NAV_ITEMS : CLIENT_NAV_ITEMS;
+
+  // Filter items for unauthenticated users
+  if (!user) {
+    NAV_ITEMS = NAV_ITEMS.filter(item => ["Home", "Contact"].includes(item.label));
+  }
 
   useEffect(() => {
     console.log("✅ Header v2.311 Loaded");
@@ -73,10 +84,33 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
 
           <nav className="hidden md:flex items-center gap-8">
             {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const content = (
+                <span className="flex items-center gap-2">
+                  <Icon className="w-4 h-4" />
+                  {item.label}
+                </span>
+              );
               if (item.action === "contact") {
-                return <button key={item.label} onClick={() => setIsContactOpen(true)} className={cn("text-sm font-bold transition-all hover:scale-105", isBrokerMode ? "text-white/90 hover:text-white" : "text-navy hover:text-teal")}>{item.label}</button>;
+                return (
+                  <button 
+                    key={item.label} 
+                    onClick={() => setIsContactOpen(true)} 
+                    className={cn("text-sm font-bold transition-all hover:scale-105", isBrokerMode ? "text-white/90 hover:text-white" : "text-navy hover:text-teal")}
+                  >
+                    {content}
+                  </button>
+                );
               }
-              return <Link key={item.label} to={item.path} className={cn("text-sm font-bold transition-all hover:scale-105", isBrokerMode ? "text-white/90 hover:text-white" : "text-navy hover:text-teal")}>{item.label}</Link>;
+              return (
+                <Link 
+                  key={item.label} 
+                  to={item.path} 
+                  className={cn("text-sm font-bold transition-all hover:scale-105", isBrokerMode ? "text-white/90 hover:text-white" : "text-navy hover:text-teal")}
+                >
+                  {content}
+                </Link>
+              );
             })}
           </nav>
 
@@ -86,9 +120,7 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
                  <span className={cn("text-xs font-black", isBrokerMode ? "text-white" : "text-navy")}>{user.name}</span>
                  <div onClick={() => navigate(user.role === 'admin' ? '/admin' : (user.role === 'broker' ? '/broker' : '/dashboard'))} className="w-10 h-10 rounded-full bg-teal text-white flex items-center justify-center font-bold cursor-pointer hover:shadow-lg transition-shadow border-2 border-white">{user.name.charAt(0).toUpperCase()}</div>
                </div>
-            ) : (
-               <Link to="/login" className={cn("text-sm font-bold px-6 py-2 rounded-xl transition-all", isBrokerMode ? "bg-white text-teal hover:bg-teal-50" : "bg-teal text-white hover:bg-navy shadow-lg shadow-teal/20")}>Login</Link>
-            )}
+            ) : null}
           </div>
 
           <button className={cn("md:hidden", isBrokerMode ? "text-white" : "text-navy")} onClick={() => setIsMenuOpen(true)}>
@@ -106,11 +138,28 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
                </span>
                <button onClick={() => setIsMenuOpen(false)}><X className="w-8 h-8" /></button>
             </div>
-            <div className="flex flex-col gap-8 flex-1">
-               {NAV_ITEMS.map((item) => (
-                 <Link key={item.label} to={item.path} onClick={() => setIsMenuOpen(false)} className="text-2xl font-black text-navy border-b border-gray-100 pb-2">{item.label}</Link>
-               ))}
-               {user ? <button onClick={() => { logout(); setIsMenuOpen(false); }} className="text-2xl font-black text-red-500 text-left mt-auto">Logout</button> : <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-2xl font-black text-teal mt-auto">Login</Link>}
+            <div className="flex flex-col gap-8 flex-1 overflow-y-auto">
+               {NAV_ITEMS.map((item) => {
+                 const Icon = item.icon;
+                 return (
+                    <Link 
+                      key={item.label} 
+                      to={item.path} 
+                      onClick={() => {
+                        if (item.action === "contact") {
+                          setIsContactOpen(true);
+                        }
+                        setIsMenuOpen(false);
+                      }} 
+                      className="text-2xl font-black text-navy border-b border-gray-100 pb-2 flex items-center gap-4"
+                    >
+                      <Icon className="w-6 h-6 text-teal" />
+                      {item.label}
+                    </Link>
+                 );
+               })}
+               
+               {user ? <button onClick={() => { logout(); setIsMenuOpen(false); }} className="text-2xl font-black text-red-500 text-left mt-auto">Logout</button> : null}
             </div>
           </div>
         </div>

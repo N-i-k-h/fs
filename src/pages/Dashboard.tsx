@@ -256,9 +256,7 @@ const Dashboard = () => {
                     <p className="text-muted-foreground text-center md:text-left">Manage your workspace search and active requirements.</p>
                 </div>
 
-                <div className="mb-12">
-                    <MarketRibbon className="-mt-8" />
-                </div>
+                <div className="mb-4"></div>
 
                 <div className="flex flex-col lg:flex-row gap-8">
                     <aside className="w-full lg:w-72 flex-shrink-0">

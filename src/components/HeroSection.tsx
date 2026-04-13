@@ -32,128 +32,115 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
   };
 
   return (
-    <section className="relative min-h-[92vh] flex flex-col justify-center items-center overflow-hidden font-sans">
-
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
-        {/* Subtle white overlay */}
-        <div className="absolute inset-0 bg-white/10 transition-all duration-1000 hover:bg-white/20 pointer-events-none" />
-      </div>
-
+    <section className="relative min-h-[90vh] flex flex-col justify-center items-center overflow-hidden bg-white font-sans">
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col items-center text-center mt-8">
-
-        {/* Mode Toggle */}
-        <div className="mb-12 mt-8 flex p-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-2xl animate-in fade-in zoom-in duration-700">
-          <button
-            onClick={() => setMode("client")}
-            className={cn(
-              "px-4 md:px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
-              mode === "client" ? "bg-teal text-white shadow-lg" : "text-navy/80 hover:text-navy hover:bg-white/10"
-            )}
-          >
-            Client Login
-          </button>
-          <button
-            onClick={() => setMode("broker")}
-            className={cn(
-              "px-4 md:px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
-              mode === "broker" ? "bg-teal text-white shadow-lg" : "text-navy/80 hover:text-navy hover:bg-white/10"
-            )}
-          >
-            Partner Login
-          </button>
-        </div>
-
-        {/* Heading */}
-        <h1 className={cn(
-          "text-4xl md:text-7xl font-bold text-navy leading-[1.1] tracking-tight animate-in slide-in-from-bottom-6 duration-700 delay-100 fade-in px-2",
-          mode === "client" ? "mb-0" : "mb-6"
-        )}>
-          {mode === "client" ? null : (
-            <>Maximize Your <span className="text-teal">Occupancy</span></>
-          )}
-        </h1>
-
-        <p className={cn(
-          "text-lg text-black max-w-2xl animate-in slide-in-from-bottom-6 duration-700 delay-200 fade-in font-medium",
-          mode === "client" ? "mb-6" : "mb-12"
-        )}>
-          {mode === "client"
-            ? ""
-            : "Connect with high-intent clients (RFP Platform) and list your property details to get verified leads."
-          }
-        </p>
-
-        {/* Dynamic Input based on Mode */}
-        <div className="w-full max-w-4xl animate-in slide-in-from-bottom-8 duration-700 delay-300 fade-in">
-          {mode === "client" ? (
-            <div className="space-y-6">
-              <div className="flex items-center w-full bg-white rounded-full border border-gray-200 shadow-xl hover:shadow-2xl transition-all duration-300 px-2 py-2 md:bg-white/80 md:backdrop-blur-sm group mx-auto max-w-3xl">
-                <Search className="w-5 h-5 text-gray-400 ml-4 shrink-0 group-focus-within:text-teal transition-colors" />
-                <input
-                  type="text"
-                  name="hero-search-query"
-                  autoComplete="off"
-                  spellCheck="false"
-                  placeholder="Try 'Private cabin in Koramangala for 10 people'"
-                  className="flex-1 min-w-0 border-0 focus:ring-0 text-base md:text-lg font-medium text-navy placeholder:text-gray-400 h-10 md:h-12 px-2 bg-transparent focus:outline-none"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                />
-                <Button
-                  onClick={handleSearch}
-                  className="bg-teal hover:bg-teal/90 text-white rounded-full w-10 h-10 md:w-auto md:h-12 md:px-8 p-0 flex items-center justify-center text-base font-bold shadow-md transform hover:scale-105 transition-all shrink-0 z-20"
-                >
-                  <span className="md:hidden flex items-center justify-center"><MoveRight className="w-5 h-5" /></span>
-                  <span className="hidden md:inline">Search Spaces</span>
-                </Button>
-              </div>
-
-              {/* RFP CTA below the bar */}
-              <div className="flex justify-center mt-8 animate-in slide-in-from-top-4 duration-700 delay-500 fade-in">
+      <div className="relative z-10 w-full flex flex-col items-center">
+        
+        {!user ? (
+          /* Split Screen for Unauthenticated Users */
+          <div className="flex flex-col md:flex-row w-full min-h-[90vh]">
+            {/* Left Part - Client */}
+            <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-20 border-b md:border-b-0 md:border-r border-gray-100 group transition-all duration-700 hover:bg-teal/5">
+              <div className="animate-in slide-in-from-left-12 duration-1000 ease-out flex flex-col items-center">
+                <h2 className="hidden md:block text-5xl md:text-7xl font-black text-navy mb-12 uppercase italic tracking-tighter leading-none">
+                  For <br /><span className="text-teal">Clients</span>
+                </h2>
                 <Button 
-                  onClick={() => navigate("/rfp-form")}
-                  className="h-14 px-10 bg-white hover:bg-gray-50 text-navy font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl transition-all hover:scale-110 active:scale-95 flex items-center gap-3 group border border-gray-100"
+                  onClick={() => { setMode("client"); navigate("/login"); }}
+                  className="h-20 px-16 bg-navy hover:bg-teal text-white rounded-3xl font-black uppercase tracking-widest text-base shadow-2xl hover:scale-105 active:scale-95 transition-all group-hover:shadow-teal/20"
                 >
-                  Custom Requirement? <span className="text-teal">Fill RFP Form</span> 
-                  <div className="w-6 h-6 rounded-full bg-teal text-white flex items-center justify-center transition-transform group-hover:translate-x-1">
-                    <MoveRight className="w-3.5 h-3.5" />
-                  </div>
+                  Client Login <MoveRight className="ml-4 w-6 h-6" />
                 </Button>
               </div>
             </div>
-          ) : (
-            <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <Button
-                onClick={handleListProperty}
-                className="bg-teal hover:bg-teal/90 text-white rounded-full h-15 px-12 text-xl font-bold shadow-2xl transform hover:scale-105 transition-all flex items-center gap-3"
-              >
-                List My Property <MoveRight className="w-6 h-6" />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate("/broker/login")}
-                className="bg-white/50 backdrop-blur-md border-white/40 text-navy rounded-full h-15 px-10 text-lg font-bold shadow-lg hover:bg-white transition-all"
-              >
-                Broker Login
-              </Button>
+            
+            {/* Right Part - Partner */}
+            <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-20 group transition-all duration-700 hover:bg-navy/5">
+              <div className="animate-in slide-in-from-right-12 duration-1000 ease-out text-center md:text-right flex flex-col items-center md:items-end">
+                <h2 className="hidden md:block text-5xl md:text-7xl font-black text-navy mb-12 uppercase italic tracking-tighter leading-none">
+                  For <br /><span className="text-teal">Partners</span>
+                </h2>
+                <Button 
+                  onClick={() => { setMode("broker"); navigate("/broker/login"); }}
+                  className="h-20 px-16 bg-teal hover:bg-navy text-white rounded-3xl font-black uppercase tracking-widest text-base shadow-2xl hover:scale-105 active:scale-95 transition-all group-hover:shadow-navy/20"
+                >
+                  Partner Login <MoveRight className="ml-4 w-6 h-6" />
+                </Button>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          /* Authenticated View - Professional White Workspace */
+          <div className="w-full max-w-7xl px-4 flex flex-col items-center text-center py-20 animate-in fade-in duration-1000">
+            <h1 className="text-5xl md:text-8xl font-black text-navy leading-[1] tracking-tighter uppercase italic mb-8">
+              {mode === "client" ? (
+                <>Find Your <span className="text-teal">Space</span></>
+              ) : (
+                <>Maximize <span className="text-teal">Occupancy</span></>
+              )}
+            </h1>
+            
+            <p className="text-xl text-gray-500 max-w-2xl mb-12 font-medium">
+              {mode === "client" 
+                ? "Search from thousands of verified listings or submit a custom RFP."
+                : "Manage your listings and connect with high-fidelity corporate requirements."
+              }
+            </p>
 
+            <div className="w-full max-w-4xl">
+              {mode === "client" ? (
+                <div className="space-y-8">
+                  <div className="flex items-center w-full bg-white rounded-3xl border-2 border-gray-100 shadow-2xl px-3 py-3 group mx-auto max-w-3xl focus-within:border-teal/50 transition-all">
+                    <Search className="w-6 h-6 text-gray-400 ml-4 shrink-0 group-focus-within:text-teal" />
+                    <input
+                      type="text"
+                      placeholder="Try 'Private cabin in Koramangala for 10 people'"
+                      className="flex-1 min-w-0 border-0 focus:ring-0 text-xl font-bold text-navy placeholder:text-gray-300 h-14 px-4 bg-transparent focus:outline-none"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    />
+                    <Button
+                      onClick={handleSearch}
+                      className="bg-teal hover:bg-navy text-white rounded-2xl h-14 px-10 flex items-center justify-center text-lg font-black uppercase tracking-widest shadow-lg transform hover:scale-105 transition-all"
+                    >
+                      Search
+                    </Button>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => navigate("/rfp-form")}
+                    className="h-16 px-12 bg-navy hover:bg-teal text-white font-black uppercase tracking-widest text-sm rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-4 group"
+                  >
+                    Custom Requirement? <span className="text-teal">Fill RFP Form</span> 
+                    <div className="w-8 h-8 rounded-full bg-teal text-white flex items-center justify-center transition-transform group-hover:translate-x-1">
+                      <MoveRight className="w-4 h-4" />
+                    </div>
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col md:flex-row gap-6 justify-center">
+                  <Button
+                    onClick={handleListProperty}
+                    className="bg-teal hover:bg-navy text-white rounded-3xl h-20 px-16 text-2xl font-black uppercase tracking-widest shadow-2xl transform hover:scale-105 transition-all flex items-center gap-4"
+                  >
+                    List My Property <MoveRight className="w-8 h-8" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate("/broker/login")}
+                    className="bg-white border-2 border-navy/10 text-navy rounded-3xl h-20 px-12 text-xl font-black uppercase tracking-widest shadow-lg hover:border-teal transition-all"
+                  >
+                    Dashboard
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
+
   );
 };
 

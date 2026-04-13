@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import heroBg from "@/assets/hero.png";
 import Header from "@/components/Header";
-import MarketRibbon from "@/components/MarketRibbon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +8,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { toast } from "sonner";
+import { Search, Sparkles, ArrowRight, Compass, Monitor, Zap, BarChart3 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -44,11 +44,9 @@ const Login = () => {
     const googleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
-                // Fetch profile using access_token
                 const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
                     headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
                 });
-
                 loginWithProfile(userInfo.data);
             } catch (error) {
                 console.error(error);
@@ -65,7 +63,6 @@ const Login = () => {
             });
             login(res.data.token, res.data.user);
             toast.success("Welcome back!");
-
             const userRole = res.data.user.role;
             if (userRole === 'admin') navigate('/admin');
             else navigate('/');
@@ -76,122 +73,141 @@ const Login = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
             <Header />
-            <div className="min-h-screen flex w-full pt-16 lg:pt-0">
-                {/* Left Side - Image */}
-                <div className="hidden lg:flex w-1/2 bg-navy relative items-center justify-center overflow-hidden">
-                    <div
-                        className="absolute inset-0 bg-cover bg-center opacity-80"
-                        style={{ backgroundImage: `url(${heroBg})` }}
-                    />
-                    <div className="relative z-10 text-white p-12 max-w-lg">
-                        <h1 className="text-5xl font-bold mb-6 leading-tight">Hello<br /><span className="text-teal">Xplore</span> SFT! 👋</h1>
-                        <p className="text-lg opacity-90 leading-relaxed">
-                            Skip repetitive and manual searching. Get highly productive through our AI-powered platform and save tons of time!
-                        </p>
-                    </div>
-                    <div className="absolute inset-0 bg-navy/40 mix-blend-multiply" />
-                </div>
+            <div className="flex-1 flex items-center justify-center p-4 pt-24">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.98, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="w-full max-w-[1000px] min-h-[660px] bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100"
+                >
+                    {/* Left Side: Branding */}
+                    <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="hidden md:flex md:w-5/12 bg-navy p-12 flex-col justify-between relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-teal/10 rounded-full -mr-32 -mt-32 blur-3xl opacity-50" />
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal/10 rounded-full -ml-32 -mb-32 blur-3xl opacity-50" />
 
-                {/* Right Side - Form */}
-                <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
-                    <div className="w-full max-w-md space-y-8 pt-8 lg:pt-0">
-                        <div className="space-y-4">
-                            <h2 className="text-3xl font-bold text-foreground">Welcome Back!</h2>
-                            <div className="flex flex-col gap-2">
-                                <p className="text-muted-foreground text-sm">
-                                    Don't have an account?{" "}
-                                    <Link to="/register" className="text-teal font-medium hover:underline">
-                                        Create a new account now
-                                    </Link>
-                                </p>
-                                <p className="text-muted-foreground text-sm">
-                                    Are you a property partner?{" "}
-                                    <Link to="/broker/login" className="text-navy font-bold hover:underline decoration-teal decoration-2 underline-offset-4">
-                                        Login to Partner Portal
-                                    </Link>
-                                </p>
-                            </div>
+                        <div className="relative z-10">
+                            <h1 className="text-4xl font-bold text-white mb-4 tracking-tight leading-tight">Client <br /><span className="text-teal text-5xl">Portal.</span></h1>
+                            <p className="text-white/60 text-lg leading-relaxed max-w-[240px]">
+                                Your enterprise-grade AI assistant for smart workspace discovery.
+                            </p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="space-y-4">
+                        <div className="relative z-10 space-y-6">
+                            {[
+                                { icon: Compass, label: "Explore SFT" },
+                                { icon: Monitor, label: "Studio SFT" },
+                                { icon: Zap, label: "RFP Platform" },
+                                { icon: BarChart3, label: "Market Intel" }
+                            ].map((item, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.6 + (i * 0.1) }}
+                                    className="flex items-center gap-4 group cursor-default"
+                                >
+                                    <div className="p-3 bg-white/10 rounded-xl group-hover:bg-teal group-hover:text-white transition-all duration-300">
+                                        <item.icon className="text-teal group-hover:text-white w-6 h-6 transition-colors" />
+                                    </div>
+                                    <div className="text-white font-medium group-hover:text-teal transition-colors">{item.label}</div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    {/* Right Side: Form */}
+                    <div className="flex-1 p-8 md:p-16 flex flex-col justify-center bg-white overflow-y-auto">
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="max-w-md mx-auto w-full"
+                        >
+                            <div className="mb-10 text-center md:text-left">
+                                <h2 className="text-3xl font-black text-navy mb-2 tracking-tight">Client Login</h2>
+                                <p className="text-gray-400 font-medium">
+                                    Welcome back! Access your tailored dashboard.
+                                </p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="email">Email Address</Label>
+                                    <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">Email Address</Label>
                                     <Input
                                         id="email"
                                         name="email"
                                         type="email"
+                                        placeholder="name@company.com"
                                         value={formData.email}
                                         onChange={handleChange}
                                         required
-                                        className="h-12 bg-secondary/30"
+                                        className="h-14 bg-gray-50 border-gray-100 rounded-2xl focus:ring-teal focus:border-teal px-6 transition-all"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="password">Password</Label>
+                                    <div className="flex justify-between items-center mr-1">
+                                        <Label htmlFor="password" className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">Password</Label>
+                                        <Link to="/forgot-password" title="Click to reset password" className="text-xs text-teal font-black hover:underline tracking-tight">FORGOT?</Link>
+                                    </div>
                                     <Input
                                         id="password"
                                         name="password"
                                         type="password"
+                                        placeholder="••••••••"
                                         value={formData.password}
                                         onChange={handleChange}
                                         required
-                                        className="h-12 bg-secondary/30"
+                                        className="h-14 bg-gray-50 border-gray-100 rounded-2xl focus:ring-teal focus:border-teal px-6 transition-all"
                                     />
                                 </div>
-                            </div>
 
-                            <Button type="submit" disabled={loading} className="w-full h-12 text-base font-semibold bg-navy hover:bg-navy/90 text-white">
-                                {loading ? "Logging in..." : "Login Now"}
-                            </Button>
+                                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                    <Button type="submit" disabled={loading} className="w-full h-14 text-lg font-black bg-navy hover:bg-teal text-white rounded-2xl shadow-xl shadow-navy/10 hover:shadow-teal/20 transition-all flex items-center justify-center gap-2 border-none">
+                                        {loading ? "Verifying..." : <><ArrowRight className="w-5 h-5" /> SIGN IN</>}
+                                    </Button>
+                                </motion.div>
 
-                            <div className="relative">
-                                <div className="absolute inset-0 flex items-center">
-                                    <span className="w-full border-t border-border" />
+                                <div className="relative py-2">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t border-gray-100" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-white px-2 text-gray-400 font-bold tracking-widest">Or</span>
+                                    </div>
                                 </div>
-                                <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-background px-2 text-muted-foreground">Or login with</span>
+
+                                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                    <Button variant="outline" type="button" onClick={() => googleLogin()} className="w-full h-14 font-black border-2 border-gray-100 hover:bg-teal hover:text-white hover:border-teal rounded-2xl transition-all">
+                                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5 mr-3" alt="Google" />
+                                        LOGIN WITH GOOGLE
+                                    </Button>
+                                </motion.div>
+
+                                <div className="text-center pt-8">
+                                    <p className="text-gray-400 text-sm font-medium">
+                                        Don't have an account?{" "}
+                                        <Link to="/register" className="text-teal font-black hover:underline decoration-teal decoration-2 underline-offset-4 ml-1">
+                                            Create Now
+                                        </Link>
+                                    </p>
+                                    <p className="text-gray-400 text-xs font-bold mt-4 uppercase tracking-widest">
+                                        Are you a partner?{" "}
+                                        <Link to="/broker/login" className="text-navy hover:text-teal font-black transition-colors">
+                                            Switch to Partner Portal
+                                        </Link>
+                                    </p>
                                 </div>
-                            </div>
-
-                            <Button variant="outline" type="button" onClick={() => googleLogin()} className="w-full h-12 font-medium border-border hover:bg-secondary">
-                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5 mr-2" alt="Google" />
-                                Login with Google
-                            </Button>
-
-                            <div className="text-center text-sm">
-                                <span className="text-muted-foreground">Forget password? </span>
-                                <Link to="/forgot-password" title="Click to reset password" className="font-bold text-foreground hover:underline">Click here</Link>
-                            </div>
-                        </form>
-
-                        {/* Secondary RFP CTA */}
-                        <div className="pt-8 border-t border-border/50 text-center">
-                            <p className="text-muted-foreground text-sm mb-4 italic">Need a customized office solution instead?</p>
-                            <Button 
-                                variant="outline" 
-                                onClick={() => navigate("/rfp-form")}
-                                className="w-full h-12 border-teal/20 text-teal hover:bg-teal/5 font-bold rounded-xl flex items-center justify-center gap-2"
-                            >
-                                Submit Custom RFP Brief
-                            </Button>
-                        </div>
+                            </form>
+                        </motion.div>
                     </div>
-                </div>
-            </div>
-
-            {/* Premium Features Preview */}
-            <div className="py-24 bg-gray-50/50 border-t border-gray-100">
-                <div className="text-center mb-12">
-                    <span className="inline-block px-4 py-1 bg-teal/10 text-teal rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-                        Locked Intelligence
-                    </span>
-                    <h3 className="text-3xl font-black text-navy uppercase italic tracking-tight">Unlock <span className="text-teal">The Platform</span></h3>
-                    <p className="text-gray-400 font-bold text-sm mt-2">Sign in to access exclusive corporate tools and property data</p>
-                </div>
-                <MarketRibbon className="pb-10" />
+                </motion.div>
             </div>
         </div>
     );

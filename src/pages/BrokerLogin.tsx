@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { toast } from "sonner";
-import { Building2, ShieldCheck, ArrowRight } from "lucide-react";
+import { Building2, ShieldCheck, ArrowRight, Compass, Monitor, Zap, BarChart3 } from "lucide-react";
 
 import { motion } from "framer-motion";
 
@@ -65,14 +65,6 @@ const BrokerLogin = () => {
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal/10 rounded-full -ml-32 -mb-32 blur-3xl opacity-50" />
 
                         <div className="relative z-10">
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ type: "spring", damping: 15, delay: 0.4 }}
-                                className="w-12 h-12 rounded-2xl bg-teal flex items-center justify-center font-bold text-2xl text-white mb-8 shadow-lg shadow-teal/20"
-                            >
-                                F
-                            </motion.div>
                             <h1 className="text-4xl font-bold text-white mb-4 tracking-tight leading-tight">Partner <br /><span className="text-teal text-5xl">Portal.</span></h1>
                             <p className="text-white/60 text-lg leading-relaxed max-w-[200px]">
                                 Join India's fastest growing workspace network.
@@ -81,8 +73,10 @@ const BrokerLogin = () => {
 
                         <div className="relative z-10 space-y-6">
                             {[
-                                { icon: Building2, label: "List & Manage Spaces" },
-                                { icon: ShieldCheck, label: "Verified Client Leads" }
+                                { icon: Compass, label: "Explore SFT" },
+                                { icon: Monitor, label: "Studio SFT" },
+                                { icon: Zap, label: "RFP Platform" },
+                                { icon: BarChart3, label: "Market Intel" }
                             ].map((item, i) => (
                                 <motion.div
                                     key={i}

@@ -446,131 +446,190 @@ const BrokerRequests = () => {
                     </DialogHeader>
 
                     <div className="space-y-8 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-                        {!isAddingNewOffice ? (
-                            <div className="space-y-6">
-                                <div className="space-y-4">
-                                    <Label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] pl-1">Select Property to Pitch</Label>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        {mySpaces.map((space) => (
-                                            <div
-                                                key={space._id}
-                                                onClick={() => setProposalData({ ...proposalData, spaceId: space._id })}
-                                                className={cn(
-                                                    "p-5 rounded-[1.5rem] border-2 transition-all cursor-pointer flex items-center justify-between group",
-                                                    proposalData.spaceId === space._id
-                                                        ? 'border-teal bg-teal/5 shadow-inner'
-                                                        : 'border-gray-50 bg-gray-50/30 hover:border-gray-200 hover:bg-gray-50'
-                                                )}
-                                            >
-                                                <div className="flex items-center gap-4">
-                                                    <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center transition-colors shadow-sm", proposalData.spaceId === space._id ? 'bg-teal text-white' : 'bg-white text-gray-300')}>
-                                                        <Building2 className="w-6 h-6" />
+                        {(() => {
+                            const [subStep, setSubStep] = useState(1);
+
+                            const submitProposal = async () => {
+                                if (!proposalData.spaceId) { toast.error("Please select a space"); return; }
+                                try {
+                                    await axios.post('/api/requests/proposal', {
+                                        rfpId: selectedRfp._id,
+                                        brokerId: user?.id,
+                                        spaceId: proposalData.spaceId,
+                                        message: proposalData.message
+                                    });
+                                    toast.success("Proposal Sent!");
+                                    setIsProposalModalOpen(false);
+                                    setProposalData({ spaceId: "", message: "" });
+                                    fetchData();
+                                } catch (err: any) {
+                                    toast.error(err.response?.data?.message || "Failed to send proposal");
+                                }
+                            };
+
+                            return !isAddingNewOffice ? (
+                                <div className="space-y-6">
+                                    <div className="space-y-4">
+                                        <Label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] pl-1">Select Property to Pitch</Label>
+                                        <div className="grid grid-cols-1 gap-3">
+                                            {mySpaces.map((space) => (
+                                                <div
+                                                    key={space._id}
+                                                    onClick={() => setProposalData({ ...proposalData, spaceId: space._id })}
+                                                    className={cn(
+                                                        "p-5 rounded-[1.5rem] border-2 transition-all cursor-pointer flex items-center justify-between group",
+                                                        proposalData.spaceId === space._id
+                                                            ? 'border-teal bg-teal/5 shadow-inner'
+                                                            : 'border-gray-50 bg-gray-50/30 hover:border-gray-200 hover:bg-gray-50'
+                                                    )}
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center transition-colors shadow-sm", proposalData.spaceId === space._id ? 'bg-teal text-white' : 'bg-white text-gray-300')}>
+                                                            <Building2 className="w-6 h-6" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-black text-navy">{space.name}</p>
+                                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{space.location}, {space.city}</p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <p className="font-black text-navy">{space.name}</p>
-                                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{space.location}, {space.city}</p>
+                                                    {proposalData.spaceId === space._id && <CheckCircle2 className="w-6 h-6 text-teal" />}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <Button 
+                                            onClick={() => { setIsAddingNewOffice(true); setSubStep(1); }}
+                                            className="w-full h-16 rounded-2xl bg-sky-400 hover:bg-sky-500 text-white font-black text-lg shadow-lg shadow-sky-100 transition-all border-none italic"
+                                        >
+                                            <Plus className="w-5 h-5 mr-3" /> Add New Workspace
+                                        </Button>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <Label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] pl-1">Pitch Message (Optional)</Label>
+                                        <Textarea
+                                            placeholder="Highlight key features that match the client's specs..."
+                                            value={proposalData.message}
+                                            onChange={e => setProposalData({ ...proposalData, message: e.target.value })}
+                                            className="rounded-[1.5rem] min-h-[140px] border-none bg-gray-50 focus:bg-white transition-all text-navy font-medium p-6"
+                                        />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-10 animate-in slide-in-from-right-4 duration-500">
+                                    <div className="flex items-center justify-between border-b border-gray-100 pb-6">
+                                        <div>
+                                            <h4 className="text-xl font-black text-navy uppercase tracking-tight italic">Step 0{subStep} <span className="text-teal">/ 04</span></h4>
+                                            <div className="flex gap-1 mt-2">
+                                                {[1, 2, 3, 4].map(s => (
+                                                    <div key={s} className={cn("h-1 rounded-full transition-all", s === subStep ? "w-8 bg-teal" : "w-4 bg-gray-100")} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <Button variant="ghost" onClick={() => setIsAddingNewOffice(false)} className="text-gray-400 font-bold hover:text-navy uppercase text-[10px]">Close Wizard</Button>
+                                    </div>
+
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={subStep}
+                                            initial={{ opacity: 0, x: 10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            className="space-y-8"
+                                        >
+                                            {subStep === 1 && (
+                                                <div className="space-y-4">
+                                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest pl-1 italic">Identity & Vibe</p>
+                                                    <Input placeholder="Space Name" value={newOfficeData.name} onChange={e => setNewOfficeData({...newOfficeData, name: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                    <Input placeholder="Micro Market (e.g. Koramangala)" value={newOfficeData.location} onChange={e => setNewOfficeData({...newOfficeData, location: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                    <Textarea placeholder="Vibes and environment description..." value={newOfficeData.description} onChange={e => setNewOfficeData({...newOfficeData, description: e.target.value})} className="rounded-2xl border-none bg-gray-50/50 h-32 p-6 font-medium" />
+                                                </div>
+                                            )}
+
+                                            {subStep === 2 && (
+                                                <div className="space-y-4">
+                                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest pl-1 italic">Pricing & Snapshot</p>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <Input type="number" placeholder="Price per seat" value={newOfficeData.price} onChange={e => setNewOfficeData({...newOfficeData, price: parseInt(e.target.value)})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                        <Input placeholder="Capacity Snapshot" value={newOfficeData.capacity} onChange={e => setNewOfficeData({...newOfficeData, capacity: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <Input placeholder="Area (e.g. 2500 Sq Ft)" value={newOfficeData.area} onChange={e => setNewOfficeData({...newOfficeData, area: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                        <Input placeholder="Lock-in Period" value={newOfficeData.lockIn} onChange={e => setNewOfficeData({...newOfficeData, lockIn: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
                                                     </div>
                                                 </div>
-                                                {proposalData.spaceId === space._id && <CheckCircle2 className="w-6 h-6 text-teal" />}
-                                            </div>
-                                        ))}
+                                            )}
+
+                                            {subStep === 3 && (
+                                                <div className="space-y-4">
+                                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest pl-1 italic">Technical Core</p>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <Input placeholder="Floor to Ceiling" value={newOfficeData.floorToCeiling} onChange={e => setNewOfficeData({...newOfficeData, floorToCeiling: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                        <Input type="number" placeholder="Passenger Lifts" value={newOfficeData.passengerLifts} onChange={e => setNewOfficeData({...newOfficeData, passengerLifts: parseInt(e.target.value)})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                    </div>
+                                                    <Input placeholder="HVAC Type (e.g. Centralized)" value={newOfficeData.hvacType} onChange={e => setNewOfficeData({...newOfficeData, hvacType: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                </div>
+                                            )}
+
+                                            {subStep === 4 && (
+                                                <div className="space-y-4">
+                                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest pl-1 italic">Final Commercials</p>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <Input type="number" placeholder="Basement (₹/SqFt)" value={newOfficeData.basement} onChange={e => setNewOfficeData({...newOfficeData, basement: parseInt(e.target.value)})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                        <Input type="number" placeholder="CAM (₹/SqFt)" value={newOfficeData.cam} onChange={e => setNewOfficeData({...newOfficeData, cam: parseInt(e.target.value)})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                    </div>
+                                                    <Input placeholder="Rent Escalation (%)" value={newOfficeData.rentEscalation} onChange={e => setNewOfficeData({...newOfficeData, rentEscalation: e.target.value})} className="h-14 rounded-2xl border-none bg-gray-50/50 px-6 font-bold" />
+                                                </div>
+                                            )}
+                                        </motion.div>
+                                    </AnimatePresence>
+
+                                    <div className="flex gap-4 pt-6">
+                                        <Button 
+                                            variant="ghost" 
+                                            onClick={() => subStep > 1 ? setSubStep(subStep - 1) : setIsAddingNewOffice(false)}
+                                            className="h-14 px-8 rounded-2xl font-bold text-gray-400"
+                                        >
+                                            {subStep === 1 ? "Cancel" : "Back"}
+                                        </Button>
+                                        {subStep < 4 ? (
+                                            <Button 
+                                                onClick={() => setSubStep(subStep + 1)}
+                                                className="flex-1 h-16 rounded-2xl bg-navy hover:bg-teal text-white font-black text-lg transition-all italic"
+                                            >
+                                                Next Step <ChevronRight className="w-5 h-5 ml-2 inline" />
+                                            </Button>
+                                        ) : (
+                                            <Button 
+                                                onClick={async () => {
+                                                    try {
+                                                        const response = await axios.post('/api/spaces', newOfficeData, {
+                                                            headers: { 'x-auth-token': localStorage.getItem('token') }
+                                                        });
+                                                        await fetchData();
+                                                        setProposalData({ ...proposalData, spaceId: response.data._id });
+                                                        setIsAddingNewOffice(false);
+                                                        setSelectedRfp(selectedRfp);
+                                                        toast.success("Workspace Provisioned & Selected");
+                                                    } catch (err) {
+                                                        toast.error("Failed to provision workspace");
+                                                    }
+                                                }}
+                                                className="flex-1 h-16 rounded-2xl bg-teal hover:bg-navy text-white font-black text-lg transition-all shadow-xl shadow-teal/10 italic"
+                                            >
+                                                PUBLISH & SELECT
+                                            </Button>
+                                        )}
                                     </div>
-                                    <Button 
-                                        onClick={() => setIsAddingNewOffice(true)}
-                                        className="w-full h-16 rounded-2xl bg-sky-400 hover:bg-sky-500 text-white font-black text-lg shadow-lg shadow-sky-100 transition-all border-none"
-                                    >
-                                        <Plus className="w-5 h-5 mr-3" /> Add New Workspace
-                                    </Button>
                                 </div>
-
-                                <div className="space-y-4">
-                                    <Label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] pl-1">Pitch Message (Optional)</Label>
-                                    <Textarea
-                                        placeholder="Highlight key features that match the client's specs..."
-                                        value={proposalData.message}
-                                        onChange={e => setProposalData({ ...proposalData, message: e.target.value })}
-                                        className="rounded-[1.5rem] min-h-[140px] border-none bg-gray-50 focus:bg-white transition-all text-navy font-medium p-6"
-                                    />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-10 animate-in slide-in-from-right-4 duration-500">
-                                <div className="flex items-center justify-between border-b border-gray-100 pb-6">
-                                    <h4 className="text-xl font-black text-navy uppercase tracking-tight">Provision New Workspace</h4>
-                                    <Button variant="ghost" onClick={() => setIsAddingNewOffice(false)} className="text-gray-400 font-bold hover:text-navy">Back to List</Button>
-                                </div>
-
-                                {/* Section 1: Basic Information */}
-                                <div className="space-y-4">
-                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest">Section 01: Basic Information</p>
-                                    <Input placeholder="Space Name (e.g. WeWork Galaxy)" value={newOfficeData.name} onChange={e => setNewOfficeData({...newOfficeData, name: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                    <Input placeholder="Micro Market (e.g. Koramangala)" value={newOfficeData.location} onChange={e => setNewOfficeData({...newOfficeData, location: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                    <Textarea placeholder="Vibes and environment description..." value={newOfficeData.description} onChange={e => setNewOfficeData({...newOfficeData, description: e.target.value})} className="rounded-xl border-gray-100 bg-gray-50/50 h-32" />
-                                </div>
-
-                                {/* Section 2: Pricing & Snapshot */}
-                                <div className="space-y-4">
-                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest">Section 02: Pricing & Snapshot</p>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input type="number" placeholder="Price per seat" value={newOfficeData.price} onChange={e => setNewOfficeData({...newOfficeData, price: parseInt(e.target.value)})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                        <Input placeholder="Capacity Snapshot" value={newOfficeData.capacity} onChange={e => setNewOfficeData({...newOfficeData, capacity: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input placeholder="Area (e.g. 2500 Sq Ft)" value={newOfficeData.area} onChange={e => setNewOfficeData({...newOfficeData, area: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                        <Input placeholder="Lock-in Period" value={newOfficeData.lockIn} onChange={e => setNewOfficeData({...newOfficeData, lockIn: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                    </div>
-                                </div>
-
-                                {/* Section 3: Technical Specifications */}
-                                <div className="space-y-4">
-                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest">Section 03: Technical Specs</p>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input placeholder="Floor to Ceiling" value={newOfficeData.floorToCeiling} onChange={e => setNewOfficeData({...newOfficeData, floorToCeiling: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                        <Input type="number" placeholder="Passenger Lifts" value={newOfficeData.passengerLifts} onChange={e => setNewOfficeData({...newOfficeData, passengerLifts: parseInt(e.target.value)})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                    </div>
-                                    <Input placeholder="HVAC Type (e.g. Centralized)" value={newOfficeData.hvacType} onChange={e => setNewOfficeData({...newOfficeData, hvacType: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                </div>
-
-                                {/* Section 4: Detailed Commercials */}
-                                <div className="space-y-4">
-                                    <p className="text-[11px] font-black text-teal uppercase tracking-widest">Section 04: Detailed Commercials</p>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input type="number" placeholder="Basement (₹/SqFt)" value={newOfficeData.basement} onChange={e => setNewOfficeData({...newOfficeData, basement: parseInt(e.target.value)})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                        <Input type="number" placeholder="CAM (₹/SqFt)" value={newOfficeData.cam} onChange={e => setNewOfficeData({...newOfficeData, cam: parseInt(e.target.value)})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                    </div>
-                                    <Input placeholder="Rent Escalation (%)" value={newOfficeData.rentEscalation} onChange={e => setNewOfficeData({...newOfficeData, rentEscalation: e.target.value})} className="h-14 rounded-xl border-gray-100 bg-gray-50/50" />
-                                </div>
-
-                                <Button 
-                                    onClick={async () => {
-                                        // Simple inline save and select
-                                        try {
-                                            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/spaces`, newOfficeData, {
-                                                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                                            });
-                                            if (response.data.success) {
-                                                await fetchData(); // Refresh list
-                                                setProposalData({ ...proposalData, spaceId: response.data.space._id });
-                                                setIsAddingNewOffice(false);
-                                                toast.success("Workspace Provisioned & Selected");
-                                            }
-                                        } catch (err) {
-                                            toast.error("Failed to provision workspace");
-                                        }
-                                    }}
-                                    className="w-full h-16 rounded-2xl bg-teal hover:bg-navy text-white font-black text-lg transition-all"
-                                >
-                                    Publish & Select Workspace
-                                </Button>
-                            </div>
-                        )}
+                            );
+                        })()}
                     </div>
 
-                    <DialogFooter className="sm:justify-start gap-4">
+                    <DialogFooter className="sm:justify-start gap-4 border-t border-gray-50 pt-8 mt-4">
                         {!isAddingNewOffice && (
                             <Button
                                 onClick={submitProposal}
-                                className="flex-1 bg-navy hover:bg-teal text-white h-16 rounded-2xl font-black text-lg shadow-xl shadow-navy/20 active:scale-[0.98] transition-all"
+                                className="flex-1 bg-navy hover:bg-teal text-white h-16 rounded-2xl font-black text-lg shadow-xl shadow-navy/20 active:scale-[0.98] transition-all italic"
                             >
                                 <Send className="w-5 h-5 mr-3" /> Deliver Proposal to Client
                             </Button>

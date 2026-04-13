@@ -12,6 +12,7 @@ import PartnerBenefits from "@/components/PartnerBenefits";
 import BrokerHowItWorks from "@/components/BrokerHowItWorks";
 import BrokerLiveRequests from "@/components/BrokerLiveRequests";
 import BrokerStats from "@/components/BrokerStats";
+import MarketRibbon from "@/components/MarketRibbon";
 import { MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -53,14 +54,14 @@ const Index = () => {
 
         {mode === "client" ? (
           <>
+            {/* 4. Streamline Process / Market Insights */}
+            <HowItWorks />
+
             {/* 2.5. Micro-Markets Map */}
-            <OurRegions />
+            {!user ? <OurRegions /> : null}
 
             {/* 3. Featured Individual Spaces */}
             <FeaturedSpaces />
-
-            {/* 4. Streamline Process */}
-            <HowItWorks />
 
             {/* 5. Industries We Serve */}
             <Industries />

@@ -44,7 +44,7 @@ const BrokerLayout = () => {
             >
                 <Link to="/" className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-teal flex items-center justify-center font-bold text-xl text-white">S</div>
-                    <span className="font-bold text-xl tracking-tight text-gray-900">SFT<span className="text-teal">.</span></span>
+                    <span className="font-bold text-xl tracking-tight text-gray-900 border-none "><span className="text-teal">Xplore</span> SFT<span className="text-teal">.</span></span>
                 </Link>
                 <button className="md:hidden text-gray-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
                     <X className="w-6 h-6" />
