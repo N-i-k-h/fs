@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Home, Search, Monitor, FileText, BarChart2, Phone, Building2 } from "lucide-react";
+import { Menu, X, Home, Search, Monitor, FileText, BarChart2, Phone, Building2, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ContactModal";
 import { useAuth } from "@/context/AuthContext";
@@ -27,8 +27,24 @@ const CLIENT_NAV_ITEMS: NavItem[] = [
 
 const BROKER_NAV_ITEMS: NavItem[] = [
   { label: "Home", path: "/", icon: Home },
-  { label: "Register Office", path: "/broker/submit-property", icon: Building2 },
+  { label: "Dashboard", path: "/broker", icon: Building2 },
+  { label: "My Spaces", path: "/broker/spaces", icon: Building2 },
+  { label: "Client RFPs", path: "/broker/requests", icon: FileText },
+  { label: "Handshakes", path: "/broker/handshakes", icon: MessageSquare },
+  { label: "Contact", path: "#", icon: Phone, action: "contact" },
 ];
+
+const ADMIN_NAV_ITEMS: NavItem[] = [
+  { label: "Analysis", path: "/admin", icon: BarChart2 },
+  { label: "Revenue", path: "/admin/payments", icon: Monitor },
+  { label: "Tours", path: "/admin/requests", icon: FileText },
+  { label: "RFPs", path: "/admin/rfps", icon: MessageSquare },
+  { label: "Proposals", path: "/admin/broker-proposals", icon: Building2 },
+  { label: "Users", path: "/admin/users", icon: Search },
+];
+
+
+
 
 const Header = ({ mode }: { mode?: "client" | "broker" }) => {
   const navigate = useNavigate();
@@ -39,9 +55,17 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
   const [scrollbarWidth, setScrollbarWidth] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const isBrokerPath = location.pathname.startsWith('/broker') || location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith('/admin');
+  const isBrokerPath = location.pathname.startsWith('/broker') || isAdminPath;
   const isBrokerMode = mode === "broker" || isBrokerPath;
-  let NAV_ITEMS = isBrokerMode ? BROKER_NAV_ITEMS : CLIENT_NAV_ITEMS;
+  
+  let NAV_ITEMS = CLIENT_NAV_ITEMS;
+  if (isAdminPath || (user?.role === 'admin' && isBrokerPath)) {
+    NAV_ITEMS = ADMIN_NAV_ITEMS;
+  } else if (isBrokerMode) {
+    NAV_ITEMS = BROKER_NAV_ITEMS;
+  }
+
 
   // Filter items for unauthenticated users
   if (!user) {

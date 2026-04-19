@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Building2, Search, Plus, MoreVertical, Edit2, Trash2, MapPin, ExternalLink } from "lucide-react";
+import { Building2, Search, Plus, MoreVertical, Edit2, Trash2, MapPin, ExternalLink, Bot } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -103,10 +104,16 @@ const BrokerSpaces = () => {
                         />
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button onClick={() => navigate("/broker/add-space-bot")} variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white font-bold rounded-2xl h-12 px-6 shadow-sm transition-all flex items-center gap-2">
+                            <Bot className="w-5 h-5" /> Assistant
+                        </Button>
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Button onClick={() => navigate("/broker/submit-property")} className="bg-navy hover:bg-teal text-white font-bold rounded-2xl h-12 px-6 shadow-xl shadow-navy/10 border-none transition-all">
                             <Plus className="w-5 h-5 mr-1" /> Add Building
                         </Button>
                     </motion.div>
+
                 </div>
             </motion.div>
 

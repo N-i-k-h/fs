@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { useNavigate } from "react-router-dom";
-import { FileText, MapPin, Users, CheckCircle2, Send, Lock, CreditCard, ShieldCheck, Eye, Phone, Mail, Building2, X, Plus } from "lucide-react";
+import { FileText, MapPin, Users, CheckCircle2, Send, Lock, CreditCard, ShieldCheck, Eye, Phone, Mail, Building2, X, Plus, ChevronRight } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -41,6 +43,8 @@ const BrokerRequests = () => {
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
     const [selectedRfp, setSelectedRfp] = useState<any>(null);
     const [paymentType, setPaymentType] = useState<'rfp_details' | 'client_details'>('rfp_details');
+    const [subStep, setSubStep] = useState(1);
+
 
     const [proposalData, setProposalData] = useState({
         spaceId: "",
@@ -446,28 +450,8 @@ const BrokerRequests = () => {
                     </DialogHeader>
 
                     <div className="space-y-8 py-8 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-                        {(() => {
-                            const [subStep, setSubStep] = useState(1);
+                        {!isAddingNewOffice ? (
 
-                            const submitProposal = async () => {
-                                if (!proposalData.spaceId) { toast.error("Please select a space"); return; }
-                                try {
-                                    await axios.post('/api/requests/proposal', {
-                                        rfpId: selectedRfp._id,
-                                        brokerId: user?.id,
-                                        spaceId: proposalData.spaceId,
-                                        message: proposalData.message
-                                    });
-                                    toast.success("Proposal Sent!");
-                                    setIsProposalModalOpen(false);
-                                    setProposalData({ spaceId: "", message: "" });
-                                    fetchData();
-                                } catch (err: any) {
-                                    toast.error(err.response?.data?.message || "Failed to send proposal");
-                                }
-                            };
-
-                            return !isAddingNewOffice ? (
                                 <div className="space-y-6">
                                     <div className="space-y-4">
                                         <Label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] pl-1">Select Property to Pitch</Label>
@@ -621,8 +605,8 @@ const BrokerRequests = () => {
                                         )}
                                     </div>
                                 </div>
-                            );
-                        })()}
+                        )}
+
                     </div>
 
                     <DialogFooter className="sm:justify-start gap-4 border-t border-gray-50 pt-8 mt-4">

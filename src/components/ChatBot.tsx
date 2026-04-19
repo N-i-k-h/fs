@@ -12,11 +12,13 @@ const INITIAL_MESSAGES = [
 ];
 
 const QUICK_ACTIONS = [
+  { label: "Fill RFP Form (Interactive)", value: "rfp_bot" },
   { label: "I am looking for a workspace", value: "search" },
   { label: "I want to list my space", value: "list" },
   { label: "Request a Quote", value: "quote" },
   { label: "Something Else", value: "other" }
 ];
+
 
 const questions = [
   "What's your name?", // 0: Name
@@ -107,7 +109,13 @@ const ChatBot = () => {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      if (action.value === "search") {
+      if (action.value === "rfp_bot") {
+        setMessages(prev => [...prev, { id: Date.now() + 1, text: "Excellent! I'll take you to our interactive RFP builder.", isBot: true }]);
+        setTimeout(() => {
+          setIsOpen(false);
+          navigate("/sft-bot");
+        }, 1500);
+      } else if (action.value === "search") {
         setCurrentStep(0);
         setMessages(prev => [...prev, { id: Date.now() + 1, text: questions[0], isBot: true }]);
       } else if (action.value === "list") {
@@ -196,6 +204,9 @@ const ChatBot = () => {
       }
     }, 800);
   };
+
+  // --- 4. RENDER GUARD ---
+  if (!user) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-4">

@@ -34,7 +34,8 @@ const BrokerLogin = () => {
             login(res.data.token, user);
             localStorage.setItem("flickspace_mode", "broker");
             toast.success(`Welcome back, ${user.name}!`);
-            navigate('/broker');
+            navigate('/');
+
         } catch (err: any) {
             console.error(err);
             toast.error(err.response?.data?.msg || "Login failed");

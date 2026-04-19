@@ -80,59 +80,64 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
               )}
             </h1>
             
-            <p className="text-xl text-gray-500 max-w-2xl mb-12 font-medium">
-              {mode === "client" 
-                ? "Search from thousands of verified listings or submit a custom RFP."
-                : "Manage your listings and connect with high-fidelity corporate requirements."
-              }
-            </p>
-
-            <div className="w-full max-w-4xl">
+            <div className="w-full max-w-4xl mt-4">
               {mode === "client" ? (
-                <div className="space-y-8">
-                  <div className="flex items-center w-full bg-white rounded-3xl border-2 border-gray-100 shadow-2xl px-3 py-3 group mx-auto max-w-3xl focus-within:border-teal/50 transition-all">
-                    <Search className="w-6 h-6 text-gray-400 ml-4 shrink-0 group-focus-within:text-teal" />
+                <div className="space-y-12">
+                  {/* Simplified Search Bar */}
+                  <div className="flex items-center w-full bg-white rounded-3xl border-2 border-gray-100 shadow-2xl px-2 py-2 group mx-auto max-w-2xl focus-within:border-teal/30 transition-all">
+                    <Search className="w-5 h-5 text-gray-400 ml-4 shrink-0 group-focus-within:text-teal" />
                     <input
                       type="text"
-                      placeholder="Try 'Private cabin in Koramangala for 10 people'"
-                      className="flex-1 min-w-0 border-0 focus:ring-0 text-xl font-bold text-navy placeholder:text-gray-300 h-14 px-4 bg-transparent focus:outline-none"
+                      placeholder="Try 'Private cabin in Koramangala'"
+                      className="flex-1 min-w-0 border-0 focus:ring-0 text-lg font-bold text-navy placeholder:text-gray-300 h-14 px-4 bg-transparent focus:outline-none"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     />
                     <Button
                       onClick={handleSearch}
-                      className="bg-teal hover:bg-navy text-white rounded-2xl h-14 px-10 flex items-center justify-center text-lg font-black uppercase tracking-widest shadow-lg transform hover:scale-105 transition-all"
+                      className="bg-teal hover:bg-navy text-white rounded-2xl h-14 w-14 sm:w-auto sm:px-10 flex items-center justify-center text-lg font-black uppercase tracking-widest shadow-lg transition-all shrink-0"
                     >
-                      Search
+                      <Search className="w-5 h-5 sm:hidden" />
+                      <span className="hidden sm:inline text-sm">Search</span>
                     </Button>
                   </div>
                   
-                  <Button 
-                    onClick={() => navigate("/rfp-form")}
-                    className="h-16 px-12 bg-navy hover:bg-teal text-white font-black uppercase tracking-widest text-sm rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-4 group"
-                  >
-                    Custom Requirement? <span className="text-teal">Fill RFP Form</span> 
-                    <div className="w-8 h-8 rounded-full bg-teal text-white flex items-center justify-center transition-transform group-hover:translate-x-1">
-                      <MoveRight className="w-4 h-4" />
-                    </div>
-                  </Button>
+                  {/* Toggle Style Buttons */}
+                  <div className="inline-flex bg-gray-50 p-1.5 rounded-[2rem] border border-gray-100 shadow-inner">
+                    <button 
+                      onClick={() => navigate("/rfp-form")}
+                      className="h-12 px-6 sm:px-10 bg-[#38bdf8] text-white font-black uppercase tracking-widest text-[10px] rounded-[1.5rem] shadow-lg transition-all active:scale-95 whitespace-nowrap"
+                    >
+                      Fill RFP Form
+                    </button>
+                    <button 
+                      onClick={() => navigate("/sft-bot")}
+                      className="h-12 px-6 sm:px-10 bg-transparent text-gray-400 hover:text-navy font-black uppercase tracking-widest text-[10px] rounded-[1.5rem] transition-all active:scale-95 whitespace-nowrap"
+                    >
+                      Talk to Bot
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="flex flex-col md:flex-row gap-6 justify-center">
-                  <Button
-                    onClick={handleListProperty}
-                    className="bg-teal hover:bg-navy text-white rounded-3xl h-20 px-16 text-2xl font-black uppercase tracking-widest shadow-2xl transform hover:scale-105 transition-all flex items-center gap-4"
-                  >
-                    List My Property <MoveRight className="w-8 h-8" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate("/broker/login")}
-                    className="bg-white border-2 border-navy/10 text-navy rounded-3xl h-20 px-12 text-xl font-black uppercase tracking-widest shadow-lg hover:border-teal transition-all"
-                  >
-                    Dashboard
-                  </Button>
+                <div className="space-y-12">
+                   <div className="inline-flex bg-gray-50 p-1.5 rounded-[2rem] border border-gray-100 shadow-inner mx-auto">
+                    <Button 
+                      variant="ghost"
+                      onClick={() => navigate("/broker/submit-property")}
+                      className="h-12 px-6 sm:px-10 bg-[#38bdf8] text-white font-black uppercase tracking-widest text-[10px] rounded-[1.5rem] shadow-lg hover:bg-[#38bdf8] transition-all active:scale-95 whitespace-nowrap"
+                    >
+                      List Space
+                    </Button>
+                    <Button 
+                      variant="ghost"
+                      onClick={() => navigate("/broker/add-space-bot")}
+                      className="h-12 px-6 sm:px-10 bg-transparent text-gray-400 hover:text-navy font-black uppercase tracking-widest text-[10px] rounded-[1.5rem] transition-all active:scale-95 whitespace-nowrap hover:bg-white/50"
+                    >
+                      Talk to Bot
+                    </Button>
+
+                  </div>
                 </div>
               )}
             </div>

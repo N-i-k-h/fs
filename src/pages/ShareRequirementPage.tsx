@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, MessageCircle, Mail, MapPin, FileText, ChevronRight } from "lucide-react";
+import { Phone, MessageCircle, Mail, MapPin, FileText, ChevronRight, Bot } from "lucide-react";
+
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -213,6 +214,23 @@ const ShareRequirementPage = () => {
                           className="h-10 px-5 rounded-lg border-navy text-navy hover:bg-navy hover:text-white transition-all font-black uppercase text-[10px] tracking-widest whitespace-nowrap flex items-center gap-2"
                       >
                           Detailed RFP <ChevronRight className="w-3.5 h-3.5" />
+                      </Button>
+                  </div>
+
+                  <div className="bg-teal-50/50 rounded-3xl p-6 flex flex-col md:flex-row items-center gap-6 border border-teal-100 transition-all hover:bg-white hover:shadow-md group mt-4">
+                      <div className="w-12 h-12 bg-teal rounded-xl flex items-center justify-center text-white shrink-0 transition-transform group-hover:scale-110">
+                          <Bot className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1 text-center md:text-left">
+                          <h4 className="text-navy font-bold text-base mb-1">Try our <span className="text-teal">SFT Assistant</span></h4>
+                          <p className="text-gray-400 text-xs font-medium leading-relaxed">Fill your RFP through a quick, interactive chat conversation.</p>
+                      </div>
+                      <Button 
+                          type="button"
+                          onClick={() => navigate("/sft-bot")}
+                          className="h-10 px-5 rounded-lg bg-teal text-white hover:bg-navy transition-all font-black uppercase text-[10px] tracking-widest whitespace-nowrap flex items-center gap-2"
+                      >
+                          Start Chat <ChevronRight className="w-3.5 h-3.5" />
                       </Button>
                   </div>
               </div>

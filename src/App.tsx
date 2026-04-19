@@ -19,6 +19,8 @@ import BrokerRegister from "./pages/BrokerRegister";
 import ShareRequirementPage from "./pages/ShareRequirementPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import SFTBotPage from "./pages/SFTBotPage";
+
 
 import AdminLayout from "./layouts/AdminLayout";
 import BrokerLayout from "./layouts/BrokerLayout";
@@ -44,7 +46,9 @@ import AdminBrokerProposals from "./pages/admin/AdminBrokerProposals";
 import AdminPayments from "./pages/admin/AdminPayments";
 import ImageUploadExample from "./pages/ImageUploadExample";
 import SimpleUploadExample from "./pages/SimpleUploadExample";
+import BrokerAddSpaceBot from "./pages/broker/BrokerAddSpaceBot";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+
 import { AuthProvider } from "./context/AuthContext";
 import ChatBot from "./components/ChatBot";
 
@@ -98,7 +102,10 @@ const App = () => (
                 <Route path="handshakes" element={<BrokerHandshakes />} />
                 <Route path="profile" element={<BrokerProfile />} />
                 <Route path="submit-property" element={<BrokerPropertyForm />} />
+                <Route path="submit-property" element={<BrokerPropertyForm />} />
                 <Route path="edit-space/:id" element={<BrokerEditSpace />} />
+
+
               </Route>
 
               {/* Admin Routes */}
@@ -120,6 +127,8 @@ const App = () => (
               {/* Connect Platform RFP Routes */}
               <Route path="/share-requirement" element={<ShareRequirementPage />} />
               <Route path="/rfp-form" element={<ClientRFPForm />} />
+              <Route path="/sft-bot" element={<SFTBotPage />} />
+              <Route path="/broker/add-space-bot" element={<BrokerAddSpaceBot />} />
               <Route path="/broker/submit-property" element={<BrokerPropertyForm />} />
 
               {/* 404 Page */}
