@@ -158,6 +158,10 @@
   .animate-marquee:hover {
     animation-play-state: paused;
   }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+  }
 }
 
 @keyframes fadeIn {

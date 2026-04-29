@@ -11,7 +11,7 @@ const industries = [
 
 const Industries = () => {
     return (
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-white hidden md:block">
             <div className="container mx-auto px-4 text-center">
                 <h2 className="text-3xl md:text-4xl font-bold text-navy mb-12">
                     Industries <span className="text-teal">We Serve</span>

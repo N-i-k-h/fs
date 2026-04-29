@@ -30,11 +30,11 @@ const OurRegions = () => {
     };
 
     return (
-        <section className="py-24 bg-white overflow-hidden">
+        <section className="pt-0 pb-12 md:py-24 bg-white overflow-hidden">
             <div className="container mx-auto px-6">
                 
                 {/* Header */}
-                <div className="mb-10 md:mb-16 animate-in slide-in-from-left-4 duration-700">
+                <div className="mb-6 md:mb-16 animate-in slide-in-from-left-4 duration-700">
                     <span className="inline-block px-3 py-1 bg-teal/10 text-teal rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4">
                         Market Intelligence
                     </span>

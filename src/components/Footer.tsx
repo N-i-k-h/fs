@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
-    <footer className="bg-navy pt-16 pb-8 text-white">
+    <footer className="bg-white pt-16 pb-8 border-t border-teal/10 text-navy">
       <div className="container mx-auto px-6">
 
         {/* --- Top Section: 4 Columns --- */}
@@ -22,7 +22,7 @@ const Footer = () => {
                 <span className="text-teal">Xplore</span> SFT
               </span>
             </a>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-navy/60 text-sm leading-relaxed">
               Redefining how you work. Find the perfect workspace that matches your vibe, budget, and goals.
             </p>
             <div className="flex gap-4 pt-2">
@@ -35,8 +35,8 @@ const Footer = () => {
 
           {/* 2. Company Links */}
           <div>
-            <h3 className="text-lg font-bold text-white mb-6">Company</h3>
-            <ul className="space-y-3 text-sm text-gray-400">
+            <h3 className="text-lg font-bold text-navy mb-6">Company</h3>
+            <ul className="space-y-3 text-sm text-navy/60">
               <li><FooterLink href="#">About Us</FooterLink></li>
               <li><FooterLink href="#">Careers</FooterLink></li>
               <li><FooterLink href="#">Press</FooterLink></li>
@@ -47,8 +47,8 @@ const Footer = () => {
 
           {/* 3. Explore Spaces */}
           <div>
-            <h3 className="text-lg font-bold text-white mb-6">Workspaces</h3>
-            <ul className="space-y-3 text-sm text-gray-400">
+            <h3 className="text-lg font-bold text-navy mb-6">Workspaces</h3>
+            <ul className="space-y-3 text-sm text-navy/60">
               <li><FooterLink href="#">Private Cabins</FooterLink></li>
               <li><FooterLink href="#">Dedicated Desks</FooterLink></li>
               <li><FooterLink href="#">Meeting Rooms</FooterLink></li>
@@ -59,19 +59,19 @@ const Footer = () => {
 
           {/* 4. Contact & Newsletter */}
           <div>
-            <h3 className="text-lg font-bold text-white mb-6">Contact Us</h3>
-            <ul className="space-y-4 text-sm text-gray-400 mb-6">
+            <h3 className="text-lg font-bold text-navy mb-6">Contact Us</h3>
+            <ul className="space-y-4 text-sm text-navy/60 mb-6">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-teal shrink-0" />
                 <span>123 Startup Avenue, Indiranagar,<br />Bangalore, India 560038</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-teal shrink-0" />
-                <a href="mailto:hello@sft.com" className="hover:text-white transition-colors">hello@sft.com</a>
+                <a href="mailto:hello@sft.com" className="hover:text-teal transition-colors">hello@sft.com</a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-teal shrink-0" />
-                <a href="tel:+919876543210" className="hover:text-white transition-colors">+91 98765 43210</a>
+                <a href="tel:+919876543210" className="hover:text-teal transition-colors">+91 98765 43210</a>
               </li>
             </ul>
           </div>
@@ -79,10 +79,10 @@ const Footer = () => {
         </div>
 
         {/* --- Divider --- */}
-        <div className="border-t border-white/10 my-8" />
+        <div className="border-t border-teal/10 my-8" />
 
         {/* --- Bottom Section --- */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-navy/40">
           <p>© 2026 Xplore SFT. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-teal transition-colors">Privacy Policy</a>
@@ -107,7 +107,7 @@ const FooterLink = ({ href, children }) => (
 const SocialIcon = ({ icon, href }) => (
   <a
     href={href}
-    className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-teal hover:text-white transition-all duration-300"
+    className="w-10 h-10 rounded-full bg-teal/5 flex items-center justify-center text-teal hover:bg-teal hover:text-white transition-all duration-300"
   >
     {icon}
   </a>

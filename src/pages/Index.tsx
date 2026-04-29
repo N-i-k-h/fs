@@ -58,7 +58,7 @@ const Index = () => {
             <HowItWorks />
 
             {/* 2.5. Micro-Markets Map */}
-            {!user ? <OurRegions /> : null}
+            <OurRegions />
 
             {/* 3. Featured Individual Spaces */}
             <FeaturedSpaces />
