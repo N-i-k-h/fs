@@ -82,10 +82,12 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
       setScrollbarWidth(width);
       document.body.style.overflow = "hidden";
       document.body.style.paddingRight = `${width}px`;
+      if (isMenuOpen) document.body.classList.add("menu-open");
     } else {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "0px";
       setScrollbarWidth(0);
+      document.body.classList.remove("menu-open");
     }
   }, [isMenuOpen, isContactOpen]);
 

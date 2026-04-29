@@ -59,7 +59,7 @@ const SFTBotPage = () => {
       setMessages([
         { 
           id: 1, 
-          text: `Hi ${user?.name || 'there'}! 👋 I'm your SFT (Service Fulfillment Team) Assistant.`, 
+          text: `Hi ${user?.name || 'there'}! 👋 I'm your SFT Assistant.`, 
           isBot: true 
         },
         { 
@@ -238,40 +238,59 @@ const SFTBotPage = () => {
     <div className="min-h-screen bg-[#f0f4f8] flex flex-col font-sans">
       <Header />
       
-      <main className="flex-1 pt-20 pb-6 px-4 md:px-8 flex justify-center items-center">
-        <div className="w-full max-w-4xl h-[85vh] bg-white rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-gray-100">
+      <main className="flex-1 pt-16 md:pt-20 md:pb-6 md:px-8 flex justify-center items-center">
+        <div className="w-full h-[calc(100vh-64px)] md:h-[85vh] md:max-w-4xl bg-white md:rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row overflow-hidden md:border md:border-gray-100">
           
           {/* Left Panel: Progress & Info */}
-          <div className="w-full md:w-80 bg-gradient-to-br from-[#1e293b] to-[#0f172a] p-8 text-white flex flex-col justify-between relative overflow-hidden">
+          <div className="w-full md:w-80 bg-[#38bdf8] pt-0 p-6 md:p-8 text-white flex flex-col justify-start relative md:overflow-y-auto overflow-visible">
             <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
             
             <div className="relative z-10">
-              <Button 
-                variant="ghost" 
-                className="text-gray-400 hover:text-white mb-8 -ml-2 hover:bg-white/5"
-                onClick={() => navigate(-1)}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back
-              </Button>
+              {/* Mobile Header Bar */}
+              <div className="md:hidden flex items-center justify-between mb-0 sticky top-0 bg-[#38bdf8] py-4 px-6 z-50 rounded-b-[2rem] shadow-lg">
+                <Button 
+                  variant="ghost" 
+                  className="text-white p-0 hover:bg-transparent h-auto"
+                  onClick={() => navigate(-1)}
+                >
+                  <ArrowLeft className="w-5 h-5 mr-1" />
+                  <span className="font-bold text-xs">Back</span>
+                </Button>
+                <h2 className="text-lg font-black italic uppercase tracking-tighter">
+                  SFT <span className="text-navy">Assistant</span>
+                </h2>
+                <div className="w-10" /> {/* Spacer */}
+              </div>
+
+              {/* Desktop Header - Hidden on Mobile */}
+              <div className="hidden md:block">
+                <Button 
+                  variant="ghost" 
+                  className="text-gray-400 hover:text-white mb-8 -ml-2 hover:bg-white/5"
+                  onClick={() => navigate(-1)}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                </Button>
+                
+                <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">
+                  SFT <span className="text-navy">Assistant</span>
+                </h2>
+                <p className="text-white/80 text-sm font-medium mb-6">Conversational RFP Builder</p>
+              </div>
               
-              <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">
-                SFT <span className="text-teal-400">Assistant</span>
-              </h2>
-              <p className="text-gray-400 text-sm font-medium mb-10">Conversational RFP Builder</p>
-              
-              <div className="space-y-6">
+              <div className="space-y-3 hidden md:block">
                 {RFP_FIELDS.map((f, idx) => (
                   <div key={f.key} className="flex items-center gap-4 group">
                     <div className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300",
-                      idx < currentFieldIndex || formData[f.key] ? "bg-teal-500 text-white shadow-[0_0_15px_rgba(20,184,166,0.4)]" : 
-                      idx === currentFieldIndex ? "bg-white text-navy scale-110 shadow-lg" : "bg-white/10 text-gray-500"
+                      idx < currentFieldIndex || formData[f.key] ? "bg-navy text-white shadow-lg" : 
+                      idx === currentFieldIndex ? "bg-white text-navy scale-110 shadow-lg" : "bg-white/20 text-white/50"
                     )}>
                       {idx < currentFieldIndex || formData[f.key] ? <Check className="w-4 h-4" /> : idx + 1}
                     </div>
                     <span className={cn(
                       "text-sm font-bold uppercase tracking-widest transition-colors",
-                      idx === currentFieldIndex ? "text-white" : "text-gray-500"
+                      idx === currentFieldIndex ? "text-white" : "text-white/50"
                     )}>
                       {f.label}
                     </span>
@@ -280,7 +299,7 @@ const SFTBotPage = () => {
               </div>
             </div>
 
-            <div className="relative z-10 pt-8 mt-8 border-t border-white/10">
+            <div className="relative z-10 pt-8 mt-8 border-t border-white/10 hidden md:block">
               <div className="flex items-center gap-3 bg-white/5 p-4 rounded-2xl border border-white/10">
                 <div className="w-10 h-10 bg-teal-500/20 rounded-xl flex items-center justify-center">
                   <Bot className="w-6 h-6 text-teal-400" />

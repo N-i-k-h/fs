@@ -224,3 +224,8 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/50;
 }
+
+/* Hide floating chat bot when mobile menu is open */
+body.menu-open .floating-chat-bot {
+  display: none !important;
+}
