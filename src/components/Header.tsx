@@ -29,6 +29,7 @@ const BROKER_NAV_ITEMS: NavItem[] = [
   { label: "Home", path: "/", icon: Home },
   { label: "Dashboard", path: "/broker", icon: Building2 },
   { label: "My Spaces", path: "/broker/spaces", icon: Building2 },
+  { label: "Feature Bids", path: "/broker/feature-bids", icon: Building2 },
   { label: "Client RFPs", path: "/broker/requests", icon: FileText },
   { label: "Handshakes", path: "/broker/handshakes", icon: MessageSquare },
   { label: "Contact", path: "#", icon: Phone, action: "contact" },
@@ -39,6 +40,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { label: "Revenue", path: "/admin/payments", icon: Monitor },
   { label: "Tours", path: "/admin/requests", icon: FileText },
   { label: "RFPs", path: "/admin/rfps", icon: MessageSquare },
+  { label: "Feature Bids", path: "/admin/feature-bids", icon: Monitor },
   { label: "Proposals", path: "/admin/broker-proposals", icon: Building2 },
   { label: "Users", path: "/admin/users", icon: Search },
 ];
@@ -145,6 +147,14 @@ const Header = ({ mode }: { mode?: "client" | "broker" }) => {
                <div className="flex items-center gap-3">
                  <span className={cn("text-xs font-black", isBrokerMode ? "text-white" : "text-navy")}>{user.name}</span>
                  <div onClick={() => navigate(user.role === 'admin' ? '/admin' : (user.role === 'broker' ? '/broker' : '/dashboard'))} className="w-10 h-10 rounded-full bg-teal text-white flex items-center justify-center font-bold cursor-pointer hover:shadow-lg transition-shadow border-2 border-white">{user.name.charAt(0).toUpperCase()}</div>
+                 <Button 
+                   onClick={() => { logout(); navigate('/'); }} 
+                   variant="outline" 
+                   size="sm" 
+                   className={cn("ml-2 h-8 px-3 text-xs font-bold", isBrokerMode ? "border-white/40 text-white hover:bg-white hover:text-teal" : "border-red-500/50 text-red-500 hover:bg-red-50")}
+                 >
+                   Logout
+                 </Button>
                </div>
             ) : null}
           </div>

@@ -25,11 +25,27 @@ const FeaturedSpaces = () => {
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
+        let featureData = null;
+        try {
+            // First try to get paid featured spaces
+            const featureRes = await axios.get("/api/feature-bids/featured");
+            if (featureRes.data && featureRes.data.length > 0) {
+                featureData = featureRes.data;
+            }
+        } catch (err) {
+            console.warn("Featured bids not available or failed to load, falling back to all spaces.", err);
+        }
+
+        if (featureData && featureData.length > 0) {
+            setOffices(featureData.slice(0, 6));
+            return;
+        }
+
+        // Fallback to normal spaces if no featured spaces
         const res = await axios.get("/api/spaces");
-        // Limit to 6 for featured section, or filter by 'isFeatured' if property exists
         setOffices(res.data.slice(0, 6));
       } catch (error) {
-        console.error("Error fetching featured spaces:", error);
+        console.error("Error fetching fallback featured spaces:", error);
       }
     };
     fetchSpaces();

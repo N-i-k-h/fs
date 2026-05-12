@@ -40,9 +40,9 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
         <img 
           src={heroImage} 
           alt="Office Background" 
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover opacity-100"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-white/5 to-white" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80" />
       </div>
 
       {/* Main Content */}

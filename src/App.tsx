@@ -44,6 +44,8 @@ import AdminBrochures from "./pages/admin/AdminBrochures";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminBrokerProposals from "./pages/admin/AdminBrokerProposals";
 import AdminPayments from "./pages/admin/AdminPayments";
+import AdminFeatureBids from "./pages/admin/AdminFeatureBids";
+import BrokerFeatureBids from "./pages/broker/BrokerFeatureBids";
 import ImageUploadExample from "./pages/ImageUploadExample";
 import SimpleUploadExample from "./pages/SimpleUploadExample";
 import BrokerAddSpaceBot from "./pages/broker/BrokerAddSpaceBot";
@@ -104,6 +106,7 @@ const App = () => (
                 <Route path="submit-property" element={<BrokerPropertyForm />} />
                 <Route path="submit-property" element={<BrokerPropertyForm />} />
                 <Route path="edit-space/:id" element={<BrokerEditSpace />} />
+                <Route path="feature-bids" element={<BrokerFeatureBids />} />
 
 
               </Route>
@@ -122,6 +125,7 @@ const App = () => (
                 <Route path="payments" element={<AdminPayments />} />
                 <Route path="add-space" element={<AdminAddSpace />} />
                 <Route path="edit-space/:id" element={<AdminEditSpace />} />
+                <Route path="feature-bids" element={<AdminFeatureBids />} />
               </Route>
 
               {/* Connect Platform RFP Routes */}

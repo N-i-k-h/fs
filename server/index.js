@@ -44,6 +44,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/requests', require('./routes/requestRoutes'));
 app.use('/api/broker', require('./routes/brokerRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/feature-bids', require('./routes/featureBidRoutes'));
 
 // Upload Route (Cloudinary with Local Fallback)
 const { isCloudinaryConfigured } = require('./utils/cloudinary');
