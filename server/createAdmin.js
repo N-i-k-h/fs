@@ -8,36 +8,38 @@ const createSuperAdmin = async () => {
         await mongoose.connect(process.env.MONGO_URI);
         console.log('MongoDB Connected');
 
-        const email = 'admin@flickspace.com';
-        const password = 'AdminPassword123!';
+        const admins = [
+            { email: 'admin@flickspace.com', password: 'AdminPassword123!', name: 'Super Admin' },
+            { email: 'nikhilkashyapkn@gmail.com', password: 'adminsft@2026', name: 'Nikhil Admin' }
+        ];
 
-        let user = await User.findOne({ email });
-        if (user) {
-            console.log('User already exists, updating to admin role...');
-            user.role = 'admin';
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(password, salt);
-            await user.save();
-            console.log('✅ User updated to Admin');
-        } else {
-            console.log('Creating new Super Admin...');
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
+        for (const admin of admins) {
+            const email = admin.email.toLowerCase();
+            const password = admin.password;
+            
+            let user = await User.findOne({ email });
+            if (user) {
+                console.log(`User ${email} already exists, updating to admin role...`);
+                user.role = 'admin';
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(password, salt);
+                await user.save();
+                console.log(`✅ User ${email} updated to Admin`);
+            } else {
+                console.log(`Creating new Admin ${email}...`);
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
 
-            user = new User({
-                name: 'Super Admin',
-                email: email,
-                password: hashedPassword,
-                role: 'admin'
-            });
-            await user.save();
-            console.log('✅ Super Admin created successfully');
+                user = new User({
+                    name: admin.name,
+                    email: email,
+                    password: hashedPassword,
+                    role: 'admin'
+                });
+                await user.save();
+                console.log(`✅ Admin ${email} created successfully`);
+            }
         }
-
-        console.log('\n--- Admin Credentials ---');
-        console.log(`Email: ${email}`);
-        console.log(`Password: ${password}`);
-        console.log('-------------------------\n');
 
         process.exit();
     } catch (err) {

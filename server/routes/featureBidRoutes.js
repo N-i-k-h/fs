@@ -4,7 +4,7 @@ const FeatureBid = require('../models/FeatureBid');
 const auth = require('../middleware/auth');
 const Space = require('../models/Space');
 
-// Public: Get featured spaces
+// Public: Get featured spaces (only from paid bids)
 router.get('/featured', async (req, res) => {
     try {
         const paidBids = await FeatureBid.find({ status: 'paid' }).populate('spaceId');
@@ -16,6 +16,7 @@ router.get('/featured', async (req, res) => {
                 seen.add(bid.spaceId._id.toString());
             }
         }
+        
         res.json(spaces);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -77,6 +78,45 @@ router.put('/:id/pay', auth, async (req, res) => {
             await Space.findByIdAndUpdate(bid.spaceId, { isFeatured: true });
         }
         res.json(bid);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Partner/Admin: Delete a feature bid
+router.delete('/:id', async (req, res) => {
+    try {
+        const bid = await FeatureBid.findByIdAndDelete(req.params.id);
+        if (bid && bid.spaceId) {
+            // Remove featured status from the corresponding space
+            await Space.findByIdAndUpdate(bid.spaceId, { isFeatured: false });
+        }
+        res.json({ message: 'Feature bid deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Admin: Fix broken bid references
+router.put('/:id/fix-space', async (req, res) => {
+    try {
+        const { spaceId } = req.body;
+        // Look up space by numeric id or MongoDB _id
+        let space;
+        if (!isNaN(spaceId)) {
+            space = await Space.findOne({ id: Number(spaceId) });
+        } else {
+            space = await Space.findById(spaceId);
+        }
+        if (!space) return res.status(404).json({ error: 'Space not found' });
+        
+        const bid = await FeatureBid.findByIdAndUpdate(
+            req.params.id,
+            { spaceId: space._id },
+            { new: true }
+        ).populate('spaceId');
+        
+        res.json({ message: 'Bid fixed', bid });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

@@ -21,6 +21,8 @@ const requestSchema = new mongoose.Schema({
     micromarket: { type: String },
     isBrochureDownloaded: { type: Boolean, default: false },
     details: { type: Object }, // For flexible additional data
+    spaceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Space' },
+    spaceOwnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Request', requestSchema);

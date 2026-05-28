@@ -11,7 +11,13 @@ const AdminLayout = () => {
 
     useEffect(() => {
         const isAdminAuth = localStorage.getItem("adminAuth") === "true";
-        if (!isAdminAuth && (!user || user.role !== 'admin')) {
+        // If a real user is logged in with a non-admin role, redirect to broker portal
+        if (user && user.role !== 'admin') {
+            navigate("/broker");
+            return;
+        }
+        // If no user and no adminAuth, redirect to admin login
+        if (!isAdminAuth && !user) {
             navigate("/admin/login");
         }
     }, [user, navigate]);

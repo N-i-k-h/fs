@@ -34,7 +34,7 @@ const BrokerLogin = () => {
             login(res.data.token, user);
             localStorage.setItem("flickspace_mode", "broker");
             toast.success(`Welcome back, ${user.name}!`);
-            navigate('/');
+            navigate('/broker');
 
         } catch (err: any) {
             console.error(err);

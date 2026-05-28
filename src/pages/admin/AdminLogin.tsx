@@ -101,9 +101,7 @@ const AdminLogin = () => {
                         </CardFooter>
                     </form>
                 </Card>
-                <p className="text-center mt-8 text-gray-400 text-xs font-medium tracking-widest uppercase">
-                    &copy; 2026 Space Finders Tech &bull; Secure Portal
-                </p>
+
             </motion.div>
         </div>
     );

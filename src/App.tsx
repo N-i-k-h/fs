@@ -65,7 +65,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Routes>
               {/* Home Page */}
               <Route path="/" element={<Index />} />
@@ -99,21 +99,20 @@ const App = () => (
               {/* Broker Portal Routes */}
               <Route path="/broker" element={<BrokerLayout />}>
                 <Route index element={<BrokerDashboard />} />
+                <Route path="dashboard" element={<BrokerDashboard />} />
                 <Route path="spaces" element={<BrokerSpaces />} />
                 <Route path="requests" element={<BrokerRequests />} />
                 <Route path="handshakes" element={<BrokerHandshakes />} />
                 <Route path="profile" element={<BrokerProfile />} />
                 <Route path="submit-property" element={<BrokerPropertyForm />} />
-                <Route path="submit-property" element={<BrokerPropertyForm />} />
                 <Route path="edit-space/:id" element={<BrokerEditSpace />} />
                 <Route path="feature-bids" element={<BrokerFeatureBids />} />
-
-
               </Route>
 
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
+                <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="requests" element={<AdminRequests />} />
                 <Route path="rfps" element={<AdminRFPs />} />
                 <Route path="handshakes" element={<AdminHandshakes />} />

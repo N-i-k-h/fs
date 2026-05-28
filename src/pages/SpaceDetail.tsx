@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import {
   ArrowLeft, MapPin, Users, IndianRupee, CheckCircle, Car, Wifi, Coffee,
   Phone, Calendar, User, Printer, Zap, Shield, Tv,
@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ContactModal";
 import { toast } from "sonner";
@@ -139,16 +140,20 @@ const ScheduleForm = ({ space }: { space: any }) => {
   );
 };
 
-const HandshakeForm = ({ space }: { space: any }) => {
+const RFPForm = ({ space }: { space: any }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
     phone: user?.phone || "",
+    companyName: "",
     teamSize: "1-5",
     budget: "",
-    timeline: ""
+    timeline: "January 2026"
   });
+
+  const currentTimeline = formData.timeline || "January 2026";
+  const [month, year] = currentTimeline.includes(" ") ? currentTimeline.split(" ") : ["January", "2026"];
 
   useEffect(() => {
     if (user) {
@@ -170,21 +175,32 @@ const HandshakeForm = ({ space }: { space: any }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/requests/handshake', {
-        user: formData.name,
+      await axios.post('/api/requests/rfp', {
+        formData: {
+          clientName: formData.name,
+          companyName: formData.companyName,
+          decisionMakerName: formData.name,
+          decisionMakerEmail: formData.email,
+          phone: formData.phone,
+          totalSeats: parseInt(formData.teamSize.split('-')[0]) || 1,
+          budgetRange: formData.budget,
+          budgetType: "per seat",
+          expectedMoveIn: formData.timeline,
+          preferredLocation: space.location,
+          region: space.location,
+          solutionType: [Array.isArray(space.type) ? space.type[0] : space.type],
+          spaceId: space._id || space.id,
+          spaceName: space.name
+        },
         email: formData.email,
-        phone: formData.phone,
-        space: space.name,
-        seats: parseInt(formData.teamSize.split('-')[0]) || 1,
-        budget: formData.budget,
-        timeline: formData.timeline,
-        details: { mode: 'Handshake' }
+        user: formData.name,
+        spaceId: space._id || space.id
       });
-      toast.success("Handshake Initiated Successfully!");
-      setFormData({ name: "", email: "", phone: "", teamSize: "1-5", budget: "", timeline: "" });
+      toast.success("RFP Submitted Successfully!");
+      setFormData({ name: user?.name || "", email: user?.email || "", phone: user?.phone || "", companyName: "", teamSize: "1-5", budget: "", timeline: "January 2026" });
     } catch (error) {
       console.error(error);
-      toast.error("Failed to initiate handshake");
+      toast.error("Failed to submit RFP");
     } finally {
       setLoading(false);
     }
@@ -196,7 +212,19 @@ const HandshakeForm = ({ space }: { space: any }) => {
         <p className="text-xs font-bold text-teal uppercase tracking-widest">Connect Directly with Partner</p>
       </div>
       <div>
-        <label className="text-xs font-bold text-navy uppercase tracking-wide">Contact Person</label>
+        <label className="text-xs font-bold text-navy uppercase tracking-wide">Company Name <span className="text-red-500">*</span></label>
+        <input
+          name="companyName"
+          type="text"
+          className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
+          placeholder="e.g. Acme Corp"
+          required
+          value={formData.companyName}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <label className="text-xs font-bold text-navy uppercase tracking-wide">Contact Person <span className="text-red-500">*</span></label>
         <input
           name="name"
           type="text"
@@ -221,7 +249,7 @@ const HandshakeForm = ({ space }: { space: any }) => {
           />
         </div>
         <div>
-          <label className="text-xs font-bold text-navy uppercase tracking-wide">Phone</label>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Phone <span className="text-red-500">*</span></label>
           <input
             name="phone"
             type="tel"
@@ -250,7 +278,7 @@ const HandshakeForm = ({ space }: { space: any }) => {
           </select>
         </div>
         <div>
-          <label className="text-xs font-bold text-navy uppercase tracking-wide">Budget (Per Seat)</label>
+          <label className="text-xs font-bold text-navy uppercase tracking-wide">Budget (Per Seat) <span className="text-red-500">*</span></label>
           <input
             name="budget"
             type="text"
@@ -264,19 +292,47 @@ const HandshakeForm = ({ space }: { space: any }) => {
       </div>
       <div>
         <label className="text-xs font-bold text-navy uppercase tracking-wide">Expected Timeline</label>
-        <input
-          name="timeline"
-          type="text"
-          className="w-full mt-1 p-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-teal transition-colors"
-          placeholder="e.g. In 2 Months"
-          required
-          value={formData.timeline}
-          onChange={handleChange}
-        />
+        <div className="grid grid-cols-2 gap-3 mt-1">
+          <Select 
+            onValueChange={(val) => {
+              const currentVal = formData.timeline || "January 2026";
+              const currentYear = currentVal.includes(" ") ? currentVal.split(" ")[1] : "2026";
+              setFormData(prev => ({ ...prev, timeline: `${val} ${currentYear}` }));
+            }} 
+            value={month}
+          >
+            <SelectTrigger className="w-full bg-white border border-gray-200 rounded-lg text-sm h-11">
+              <SelectValue placeholder="Month" />
+            </SelectTrigger>
+            <SelectContent>
+              {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                <SelectItem key={m} value={m}>{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select 
+            onValueChange={(val) => {
+              const currentVal = formData.timeline || "January 2026";
+              const currentMonth = currentVal.includes(" ") ? currentVal.split(" ")[0] : "January";
+              setFormData(prev => ({ ...prev, timeline: `${currentMonth} ${val}` }));
+            }} 
+            value={year}
+          >
+            <SelectTrigger className="w-full bg-white border border-gray-200 rounded-lg text-sm h-11">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent>
+              {[2025, 2026, 2027, 2028, 2029, 2030].map(y => (
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <Button type="submit" disabled={loading} className="w-full bg-teal hover:bg-navy text-white font-bold h-12 shadow-lg shadow-teal/10 flex items-center justify-center gap-2">
-        <Handshake className="w-5 h-5" /> {loading ? "Initiating..." : "Initiate Handshake"}
+        <FileText className="w-5 h-5" /> {loading ? "Submitting..." : "Submit RFP"}
       </Button>
     </form>
   );
@@ -380,15 +436,24 @@ const SpaceDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const [space, setSpace] = useState<any>(null);
   const [relatedSpaces, setRelatedSpaces] = useState<any[]>([]);
 
   // --- LIGHTBOX STATE ---
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [inlineImageIndex, setInlineImageIndex] = useState(0);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<"tour" | "handshake">("handshake");
+
+  // Get unique, non-empty image paths
+  const uniqueImages = useMemo(() => {
+    return space?.images 
+      ? Array.from(new Set(space.images.map((img: string) => img?.trim()))).filter(Boolean) 
+      : [];
+  }, [space?.images]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -464,13 +529,17 @@ const SpaceDetail = () => {
 
   const nextImage = useCallback((e?: any) => {
     e?.stopPropagation();
-    if (space) setCurrentImageIndex((prev) => (prev + 1) % space.images.length);
-  }, [space]);
+    if (uniqueImages.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % uniqueImages.length);
+    }
+  }, [uniqueImages]);
 
   const prevImage = useCallback((e?: any) => {
     e?.stopPropagation();
-    if (space) setCurrentImageIndex((prev) => (prev - 1 + space.images.length) % space.images.length);
-  }, [space]);
+    if (uniqueImages.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + uniqueImages.length) % uniqueImages.length);
+    }
+  }, [uniqueImages]);
 
   const selectImage = (index: number, e: any) => {
     e?.stopPropagation();
@@ -539,29 +608,74 @@ const SpaceDetail = () => {
             </div>
           </div>
 
-          {/* GALLERY GRID - Top Layout */}
-          <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[400px] md:h-[500px] mb-8 rounded-2xl overflow-hidden">
-            {/* Main Large Image (2x2) */}
-            <div className="col-span-2 row-span-2 relative cursor-pointer group" onClick={() => openLightbox(0)}>
-              <img src={getImageUrl(space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Main" />
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-            </div>
-            {/* Secondary Images */}
-            <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(1)}>
-              <img src={getImageUrl(space.images[1] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 2" />
-            </div>
-            <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(2 % space.images.length)}>
-              <img src={getImageUrl(space.images[2] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 3" />
-            </div>
-            <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(3 % space.images.length)}>
-              <img src={getImageUrl(space.images[3] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 4" />
-            </div>
-            <div className="col-span-1 row-span-1 relative cursor-pointer group" onClick={() => openLightbox(4 % space.images.length)}>
-              <img src={getImageUrl(space.images[4] || space.images[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="img 5" />
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-lg hover:bg-black/40 transition-colors">
-                +{space.images.length} Photos
+          {/* GALLERY CAROUSEL - Top Layout */}
+          <div className="relative h-[400px] md:h-[500px] mb-8 rounded-2xl overflow-hidden group bg-gray-950">
+            {uniqueImages.length > 0 ? (
+              <div 
+                className="w-full h-full relative cursor-pointer"
+                onClick={() => openLightbox(inlineImageIndex)}
+              >
+                <img 
+                  src={getImageUrl(uniqueImages[inlineImageIndex])} 
+                  className="w-full h-full object-cover transition-all duration-500" 
+                  alt={`${space.name} - ${inlineImageIndex + 1}`} 
+                />
+                
+                {/* Image Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+
+                {/* Left & Right Navigation Buttons - Only if more than 1 unique image */}
+                {uniqueImages.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setInlineImageIndex((prev) => (prev - 1 + uniqueImages.length) % uniqueImages.length);
+                      }}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/45 hover:bg-teal hover:scale-105 active:scale-95 rounded-full text-white z-10 transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100 duration-300"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setInlineImageIndex((prev) => (prev + 1) % uniqueImages.length);
+                      }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/45 hover:bg-teal hover:scale-105 active:scale-95 rounded-full text-white z-10 transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100 duration-300"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+
+                    {/* Slide Indicator Text Overlay */}
+                    <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 tracking-wider">
+                      {inlineImageIndex + 1} / {uniqueImages.length}
+                    </div>
+
+                    {/* Dot Indicators */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                      {uniqueImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInlineImageIndex(idx);
+                          }}
+                          className={cn(
+                            "w-2 h-2 rounded-full transition-all duration-300",
+                            inlineImageIndex === idx ? "bg-teal w-6" : "bg-white/50 hover:bg-white"
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                <Building className="w-12 h-12" />
+                <span className="ml-2 font-medium">No Images Available</span>
+              </div>
+            )}
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 items-start">
@@ -603,13 +717,6 @@ const SpaceDetail = () => {
                       <p className="text-3xl font-bold text-teal">₹{space.price?.toLocaleString() || '0'}</p>
                       <p className="text-xs text-gray-500">Per Seat / Month</p>
                     </div>
-                    <button
-                      onClick={() => setContactModalOpen(true)}
-                      className="bg-navy hover:bg-teal text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 whitespace-nowrap"
-                    >
-                      <Phone className="w-4 h-4" />
-                      Get in Touch Directly
-                    </button>
                   </div>
                 </div>
               </div>
@@ -893,70 +1000,48 @@ const SpaceDetail = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100">
+                <div className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100 relative">
                   <h2 className="text-xl font-bold text-navy mb-1">
-                    {space.type === 'coworking' ? "Schedule a Tour" : "Get Direct Quote"}
+                    Submit RFP
                   </h2>
                   <p className="text-xs text-gray-500 mb-6 font-medium leading-relaxed">
-                    {space.type === 'coworking' 
-                      ? "Connect with our space concierge and secure your team's new home." 
-                      : "Request a custom proposal for your enterprise workspace requirement."
-                    }
+                    Submit your requirement details directly to this building's landlord/broker to request a proposal.
                   </p>
 
-                  {space.type === 'coworking' ? (
-                    <>
-                      <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
-                        <button
-                          onClick={() => setActiveTab("handshake")}
-                          className={cn(
-                            "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
-                            activeTab === "handshake" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
-                          )}
+                  <div className="relative min-h-[250px]">
+                    {/* Lock Overlay if user is not logged in */}
+                    {!user && (
+                      <div 
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (!target.closest('button')) {
+                            toast.error("Please login to give your requirements");
+                          }
+                        }}
+                        className="absolute inset-0 bg-white/95 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center p-4 text-center rounded-xl border border-gray-100 cursor-pointer"
+                      >
+                        <Lock className="w-8 h-8 text-teal mb-2" />
+                        <h4 className="font-bold text-navy text-sm mb-1">Login to give your requirements</h4>
+                        <p className="text-[10px] text-gray-400 mb-4 max-w-[200px]">You must be logged in to submit an RFP directly to this building.</p>
+                        <Button 
+                          onClick={() => {
+                            toast.info("Redirecting to login...");
+                            navigate("/login");
+                          }}
+                          className="bg-teal hover:bg-navy text-white text-xs px-6 py-2 h-9 rounded-lg font-bold"
                         >
-                          <Handshake className="w-4 h-4" /> Handshake
-                        </button>
-                        <button
-                          onClick={() => setActiveTab("tour")}
-                          className={cn(
-                            "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
-                            activeTab === "tour" ? "bg-white text-navy shadow-sm" : "text-gray-400 hover:text-navy"
-                          )}
-                        >
-                          <Calendar className="w-4 h-4" /> Request Tour
-                        </button>
+                          Login Now
+                        </Button>
                       </div>
+                    )}
 
-                      {activeTab === "tour" ? (
-                        <ScheduleForm space={space} />
-                      ) : (
-                        <HandshakeForm space={space} />
+                    <div 
+                      className={cn(
+                        "transition-all duration-300",
+                        !user && "opacity-30 pointer-events-none select-none"
                       )}
-                    </>
-                  ) : (
-                    <div className="bg-teal/5 p-6 rounded-2xl border border-teal/10 mb-6 text-center">
-                        <p className="text-sm font-bold text-navy mb-2">Enterprise Solutions</p>
-                        <p className="text-[10px] text-gray-500 font-medium">For managed and private office spaces, we recommend getting a direct quote or connecting via WhatsApp for customized commercials.</p>
-                    </div>
-                  )}
-
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
-                    <Button variant="outline" className="flex-1 text-xs h-9" onClick={() => navigate(`/quote/${space.id}`)}><FileText className="w-3 h-3 mr-1" /> Get Quote</Button>
-                    <Button className="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs h-9" onClick={() => window.open(`https://wa.me/919999999999?text=Hi, I am interested in ${space.name}`, '_blank')}><Phone className="w-3 h-3 mr-1" /> WhatsApp</Button>
-                  </div>
-
-                  <div className="mt-6 flex justify-between text-center px-2">
-                    <div className="flex flex-col items-center gap-1 cursor-pointer hover:text-teal transition-colors group">
-                      <div className="p-2 bg-gray-50 rounded-full group-hover:bg-teal/10"><Phone className="w-4 h-4 text-gray-400 group-hover:text-teal" /></div>
-                      <span className="text-[10px] font-bold text-gray-500">CALL</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1 cursor-pointer hover:text-teal transition-colors group">
-                      <div className="p-2 bg-gray-50 rounded-full group-hover:bg-teal/10"><User className="w-4 h-4 text-gray-400 group-hover:text-teal" /></div>
-                      <span className="text-[10px] font-bold text-gray-500">EMAIL</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1 cursor-pointer hover:text-teal transition-colors group">
-                      <div className="p-2 bg-gray-50 rounded-full group-hover:bg-teal/10"><FileText className="w-4 h-4 text-gray-400 group-hover:text-teal" /></div>
-                      <span className="text-[10px] font-bold text-gray-500">SHARE</span>
+                    >
+                      <RFPForm space={space} />
                     </div>
                   </div>
                 </div>
@@ -1094,14 +1179,19 @@ const SpaceDetail = () => {
       </main>
 
       {/* LIGHTBOX */}
-      {lightboxOpen && (
+      {lightboxOpen && uniqueImages.length > 0 && (
         <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-200" onClick={closeLightbox}>
           <div className="relative w-full flex-1 flex items-center justify-center overflow-hidden p-4 pb-24" onClick={(e) => e.stopPropagation()}>
-            <MagnifierContent src={getImageUrl(space.images[currentImageIndex])} />
+            <MagnifierContent src={getImageUrl(uniqueImages[currentImageIndex])} />
           </div>
           <button onClick={(e) => { e.stopPropagation(); closeLightbox(); }} className="absolute top-4 right-4 bg-black/50 p-3 rounded-full text-white z-[110] border border-white/20"><X className="w-6 h-6" /></button>
-          <button onClick={prevImage} className="absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-black/40 hover:bg-teal rounded-full text-white z-[110]"><ChevronLeft className="w-8 h-8" /></button>
-          <button onClick={nextImage} className="absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-black/40 hover:bg-teal rounded-full text-white z-[110]"><ChevronRight className="w-8 h-8" /></button>
+          
+          {uniqueImages.length > 1 && (
+            <>
+              <button onClick={prevImage} className="absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-black/40 hover:bg-teal rounded-full text-white z-[110] transition-all"><ChevronLeft className="w-8 h-8" /></button>
+              <button onClick={nextImage} className="absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-black/40 hover:bg-teal rounded-full text-white z-[110] transition-all"><ChevronRight className="w-8 h-8" /></button>
+            </>
+          )}
         </div>
       )}
 

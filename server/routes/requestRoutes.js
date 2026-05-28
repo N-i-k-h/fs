@@ -58,6 +58,11 @@ router.get('/analytics', async (req, res) => {
             bookings: monthlyData[key]
         }));
 
+        // 4. Recent Activity (Recent approved requests)
+        const recentActivity = await Request.find({ status: 'approved' })
+            .sort({ updatedAt: -1 })
+            .limit(5);
+
         // 5. Handshake Analytics
         const handshakeCount = await Proposal.countDocuments({ status: 'Handshake' });
         const proposalCount = await Proposal.countDocuments({});
@@ -328,17 +333,31 @@ router.post('/rfp', async (req, res) => {
             return res.status(400).json({ message: 'Missing form data' });
         }
 
+        const spaceId = req.body.spaceId || formData.spaceId;
+        let spaceDoc = null;
+        if (spaceId) {
+            const mongoose = require('mongoose');
+            if (mongoose.Types.ObjectId.isValid(spaceId)) {
+                spaceDoc = await Space.findById(spaceId).populate('owner');
+            } else {
+                spaceDoc = await Space.findOne({ id: Number(spaceId) }).populate('owner');
+            }
+        }
+
         const requestPayload = {
             user: user || formData.clientName || 'Anonymous User',
             email: email || formData.decisionMakerEmail || 'anonymous@flickspace.com',
             phone: formData.phone || formData.adminSpocEmail || 'N/A',
             companyName: formData.companyName || 'Confidential Company',
             clientName: formData.clientName || 'Anonymous',
-            space: 'Detailed Requirement',
+            space: spaceDoc ? spaceDoc.name : 'Detailed Requirement',
+            spaceName: spaceDoc ? spaceDoc.name : undefined,
+            spaceId: spaceDoc ? spaceDoc._id : undefined,
+            spaceOwnerId: (spaceDoc && spaceDoc.owner) ? (typeof spaceDoc.owner === 'object' ? spaceDoc.owner._id : spaceDoc.owner) : undefined,
             seats: Number(formData.totalSeats) || 0,
             budget: `${formData.budgetRange || 'TBD'} ${formData.budgetType ? '(' + formData.budgetType + ')' : ''}`,
             timeline: formData.expectedMoveIn || 'Flexible',
-            micromarket: formData.region || formData.preferredLocation || 'Not Specified',
+            micromarket: spaceDoc ? spaceDoc.location : (formData.region || formData.preferredLocation || 'Not Specified'),
             type: 'Detailed RFP',
             status: 'pending',
             details: formData
@@ -348,14 +367,22 @@ router.post('/rfp', async (req, res) => {
         const newRequest = new Request(requestPayload);
         const saved = await newRequest.save();
 
-        // 🚀 BROADCAST TO ALL BROKERS: Find ALL brokers to notify
+        // 🚀 BROADCAST OR TARGET NOTIFICATION: Find brokers to notify
         let brokerEmails = [];
         try {
-            const brokers = await User.find({ role: 'broker' });
-            brokerEmails = brokers.map(b => b.email);
-            
-            if (brokerEmails.length > 0) {
-                console.log(`[RFP-TRACE-${traceId}] 🎯 Broadcasting to ${brokerEmails.length} brokers`);
+            if (spaceDoc && spaceDoc.owner) {
+                const ownerId = typeof spaceDoc.owner === 'object' ? spaceDoc.owner._id : spaceDoc.owner;
+                const ownerUser = await User.findById(ownerId);
+                if (ownerUser && ownerUser.email) {
+                    brokerEmails = [ownerUser.email];
+                    console.log(`[RFP-TRACE-${traceId}] 🎯 Targeted RFP for space owner: ${ownerUser.email}`);
+                }
+            } else {
+                const brokers = await User.find({ role: 'broker' });
+                brokerEmails = brokers.map(b => b.email);
+                if (brokerEmails.length > 0) {
+                    console.log(`[RFP-TRACE-${traceId}] 🎯 Broadcasting to ${brokerEmails.length} brokers`);
+                }
             }
         } catch (err) {
             console.error(`[RFP-TRACE-${traceId}] ⚠️ Broker matching failed:`, err.message);
@@ -619,7 +646,14 @@ router.get('/rfp/:id/details', auth, async (req, res) => {
 // Get Requests for Broker Hub (Masked)
 router.get('/broker-hub', auth, async (req, res) => {
     try {
-        const requests = await Request.find({ type: 'Detailed RFP' }).sort({ createdAt: -1 });
+        const requests = await Request.find({ 
+            type: 'Detailed RFP',
+            $or: [
+                { spaceOwnerId: { $exists: false } },
+                { spaceOwnerId: null },
+                { spaceOwnerId: req.user.id }
+            ]
+        }).sort({ createdAt: -1 });
         
         // Fetch all payments for this broker
         const payments = await Payment.find({

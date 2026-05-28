@@ -35,14 +35,14 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
 
   return (
     <section className="relative min-h-[85vh] flex flex-col justify-center items-center overflow-hidden bg-white font-sans py-24">
-      {/* Background Image with Overlay */}
+      {/* Background Image with Clearer White Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
           src={heroImage} 
           alt="Office Background" 
-          className="w-full h-full object-cover opacity-100"
+          className="w-full h-full object-cover opacity-75"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/50 to-white/80" />
       </div>
 
       {/* Main Content */}
@@ -50,185 +50,62 @@ const HeroSection = ({ mode, setMode }: { mode: "client" | "broker", setMode: (m
         
         {!user ? (
           <>
-            {/* Desktop View - Unchanged */}
-            <div className="hidden md:flex w-full max-w-7xl px-4 gap-6 items-start">
-              {/* Left Card - Client */}
-              <div className="flex-1 backdrop-blur-md bg-white/80 rounded-[2rem] border border-white/40 shadow-xl p-8 md:p-10 flex flex-col group transition-all duration-500 hover:-translate-y-1">
-                <div>
-                  <p className="text-navy/50 font-bold uppercase tracking-widest text-[10px] mb-2">The Modern Enterprise</p>
-                  <h2 className="text-3xl md:text-5xl font-black text-navy uppercase italic tracking-tighter leading-none mb-6">
-                    FOR <span className="text-teal">CLIENTS</span>
-                  </h2>
-                  <p className="text-navy/70 text-base md:text-lg font-medium leading-relaxed mb-8 max-w-lg">
-                    Discover curated private cabins, dedicated desks, and meeting rooms. Get direct landlord access, data-backed cost comparisons, and flexible booking options.
-                  </p>
-                  <Button 
-                    onClick={() => { setMode("client"); navigate("/login"); }}
-                    className="h-16 px-12 bg-[#38bdf8] hover:bg-[#38bdf8]/90 text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl transition-all hover:scale-105 active:scale-95"
-                  >
-                    Client Login <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
-
-                <div className="mt-4 flex items-center border-t border-navy/5 pt-3">
-                  <div className="flex flex-1 justify-between items-center px-2">
-                    <div className="flex flex-col items-center gap-1">
-                      <Compass className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">Explore SFT</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Layout className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">Studio SFT</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Send className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">RFP Platform</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Activity className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">Market Intel</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Right Card - Partner */}
-              <div className="flex-1 backdrop-blur-md bg-white/80 rounded-[2rem] border border-white/40 shadow-xl p-8 md:p-10 flex flex-col group transition-all duration-500 hover:-translate-y-1">
-                <div>
-                  <p className="text-navy/50 font-bold uppercase tracking-widest text-[10px] mb-2">Landlords & Operators</p>
-                  <h2 className="text-3xl md:text-5xl font-black text-navy uppercase italic tracking-tighter leading-none mb-6">
-                    FOR <span className="text-teal">PARTNERS</span>
-                  </h2>
-                  <p className="text-navy/70 text-base md:text-lg font-medium leading-relaxed mb-8 max-w-lg">
-                    Reach pre-qualified clients, manage availability, and leverage market intelligence. Streamline your leasing operations with automated leads.
-                  </p>
-                  <Button 
-                    onClick={() => { setMode("broker"); navigate("/broker/login"); }}
-                    className="h-16 px-12 bg-[#38bdf8] hover:bg-[#38bdf8]/90 text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl transition-all hover:scale-105 active:scale-95"
-                  >
-                    Partner Login <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
-
-                <div className="mt-4 flex items-center border-t border-navy/5 pt-3">
-                  <div className="flex flex-1 justify-between items-center px-2">
-                    <div className="flex flex-col items-center gap-1">
-                      <LayoutGrid className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">Broker CRM</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Layout className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">Studio SFT</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Target className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">Lead Gen</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <BarChart3 className="w-5 h-5 text-[#38bdf8]" />
-                      <span className="text-[7px] font-bold text-navy/50 uppercase text-center leading-none">Market Intel</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile View - New Layout */}
-            <div className="flex md:hidden w-full flex-col items-center px-6">
-              {/* Mobile Toggle Button */}
-              <div className="inline-flex bg-gray-100/80 backdrop-blur-sm p-1 rounded-2xl border border-gray-200 mb-10 w-full max-w-[320px] shadow-inner">
+            {/* Full Hero - No Card */}
+            <div className="w-full flex flex-col items-center px-6 md:px-4 text-center" key={mobileTab}>
+              {/* Toggle Button */}
+              <div className="inline-flex bg-gray-100 backdrop-blur-sm p-1 rounded-2xl border border-gray-200 mb-10 md:mb-14 w-full max-w-[400px] shadow-inner">
                 <button 
                   onClick={() => setMobileTab("client")}
                   className={cn(
-                    "flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300",
+                    "flex-1 py-3 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300",
                     mobileTab === "client" ? "bg-white text-navy shadow-md" : "text-gray-400 hover:text-navy/60"
                   )}
                 >
-                  Client Login
+                  Client
                 </button>
                 <button 
                   onClick={() => setMobileTab("broker")}
                   className={cn(
-                    "flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300",
+                    "flex-1 py-3 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300",
                     mobileTab === "broker" ? "bg-white text-navy shadow-md" : "text-gray-400 hover:text-navy/60"
                   )}
                 >
-                  Partner Login
+                  Partner
                 </button>
               </div>
 
-              {/* Active Card for Mobile */}
-              <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {/* Hero Content */}
+              <div className="animate-in fade-in duration-500 max-w-4xl">
                 {mobileTab === "client" ? (
-                  <div className="backdrop-blur-md bg-white/80 rounded-[2.5rem] border border-white/40 shadow-xl p-8 flex flex-col items-center text-center">
-                    <p className="text-navy/50 font-bold uppercase tracking-widest text-[9px] mb-2">The Modern Enterprise</p>
-                    <h2 className="text-4xl font-black text-navy uppercase italic tracking-tighter leading-none mb-6">
-                      FOR <span className="text-teal">CLIENTS</span>
-                    </h2>
-                    <p className="text-navy/70 text-base font-medium leading-relaxed mb-8">
-                      Discover curated private cabins, dedicated desks, and meeting rooms with direct landlord access.
+                  <>
+                    <h1 className="text-4xl md:text-7xl lg:text-8xl font-black text-navy uppercase italic tracking-tighter leading-[0.9] mb-6">
+                      Your Next<br />Workspace, <span className="text-teal">Discovered.</span>
+                    </h1>
+                    <p className="text-navy/60 text-base md:text-xl font-medium leading-relaxed mb-10 max-w-3xl mx-auto">
+                      Discover premium private cabins, dedicated desks, and meeting rooms with direct landlord access.
                     </p>
                     <Button 
                       onClick={() => { setMode("client"); navigate("/login"); }}
-                      className="w-full h-16 bg-[#38bdf8] text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl"
+                      className="h-14 md:h-16 px-10 md:px-14 bg-[#38bdf8] hover:bg-navy text-white rounded-2xl font-black uppercase tracking-widest text-xs md:text-sm shadow-xl shadow-sky-500/20 transition-all hover:scale-105 active:scale-95"
                     >
-                      Client Login <ArrowRight className="ml-2 w-5 h-5" />
+                      Get Started <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
-                    
-                    <div className="mt-8 grid grid-cols-4 gap-4 w-full border-t border-navy/5 pt-6">
-                      <div className="flex flex-col items-center gap-1">
-                        <Compass className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">Explore</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1">
-                        <Layout className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">Studio</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1">
-                        <Send className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">RFP</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1">
-                        <Activity className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">Intel</span>
-                      </div>
-                    </div>
-                  </div>
+                  </>
                 ) : (
-                  <div className="backdrop-blur-md bg-white/80 rounded-[2.5rem] border border-white/40 shadow-xl p-8 flex flex-col items-center text-center">
-                    <p className="text-navy/50 font-bold uppercase tracking-widest text-[9px] mb-2">Landlords & Operators</p>
-                    <h2 className="text-4xl font-black text-navy uppercase italic tracking-tighter leading-none mb-6">
-                      FOR <span className="text-teal">PARTNERS</span>
-                    </h2>
-                    <p className="text-navy/70 text-base font-medium leading-relaxed mb-8">
-                      Reach pre-qualified clients, manage availability, and leverage real-time market intelligence.
+                  <>
+                    <h1 className="text-4xl md:text-7xl lg:text-8xl font-black text-navy uppercase italic tracking-tighter leading-[0.9] mb-6">
+                      Fill Every Seat.<br />Maximize <span className="text-teal">Revenue.</span>
+                    </h1>
+                    <p className="text-navy/60 text-base md:text-xl font-medium leading-relaxed mb-10 max-w-3xl mx-auto">
+                      List your workspace, automate your leasing pipeline, and connect directly with verified enterprise clients.
                     </p>
                     <Button 
                       onClick={() => { setMode("broker"); navigate("/broker/login"); }}
-                      className="w-full h-16 bg-[#38bdf8] text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl"
+                      className="h-14 md:h-16 px-10 md:px-14 bg-[#38bdf8] hover:bg-navy text-white rounded-2xl font-black uppercase tracking-widest text-xs md:text-sm shadow-xl shadow-sky-500/20 transition-all hover:scale-105 active:scale-95"
                     >
                       Partner Login <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
-                    
-                    <div className="mt-8 grid grid-cols-4 gap-4 w-full border-t border-navy/5 pt-6">
-                      <div className="flex flex-col items-center gap-1">
-                        <LayoutGrid className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">CRM</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1">
-                        <Layout className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">Studio</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1">
-                        <Target className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">Leads</span>
-                      </div>
-                      <div className="flex flex-col items-center gap-1">
-                        <BarChart3 className="w-6 h-6 text-[#38bdf8]" />
-                        <span className="text-[7px] font-bold text-navy/50 uppercase">Intel</span>
-                      </div>
-                    </div>
-                  </div>
+                  </>
                 )}
               </div>
             </div>

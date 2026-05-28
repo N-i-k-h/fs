@@ -4,6 +4,16 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const BrokerFeatureBids = () => {
     const [spaces, setSpaces] = useState<any[]>([]);
@@ -51,6 +61,25 @@ const BrokerFeatureBids = () => {
             fetchBidsAndSpaces();
         } catch (error) {
             toast.error("Payment failed");
+        }
+    };
+
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+
+    const handleDelete = (id: string) => {
+        setDeleteId(id);
+    };
+
+    const executeDelete = async (id: string) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`/api/feature-bids/${id}`, { headers: { "x-auth-token": token } });
+            toast.success("Feature bid deleted successfully");
+            fetchBidsAndSpaces();
+        } catch (error) {
+            toast.error("Failed to delete feature bid");
+        } finally {
+            setDeleteId(null);
         }
     };
 
@@ -107,19 +136,37 @@ const BrokerFeatureBids = () => {
                                     bid.status === 'paid' ? 'bg-blue-100 text-blue-700' :
                                     'bg-yellow-100 text-yellow-700'
                                 }>{bid.status.toUpperCase()}</Badge>
-                                {bid.status === 'accepted' && (
-                                    <div className="mt-2">
-                                        <Button onClick={() => handlePay(bid._id)} size="sm" className="bg-navy hover:bg-navy/90 text-white w-full">
+                                <div className="mt-2 space-x-2 flex items-center">
+                                    {bid.status === 'accepted' && (
+                                        <Button onClick={() => handlePay(bid._id)} size="sm" className="bg-navy hover:bg-navy/90 text-white">
                                             Pay Now
                                         </Button>
-                                    </div>
-                                )}
+                                    )}
+                                    <Button onClick={() => handleDelete(bid._id)} size="sm" variant="outline" className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600">
+                                        Delete
+                                    </Button>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
                 ))}
                 {bids.length === 0 && <p className="text-gray-500">No bids submitted yet.</p>}
             </div>
+
+            <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will delete the feature bid and remove the space from the landing page.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => deleteId && executeDelete(deleteId)} className="bg-red-600 hover:bg-red-700 text-white">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };

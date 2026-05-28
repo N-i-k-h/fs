@@ -32,7 +32,8 @@ const Login = () => {
             login(res.data.token, res.data.user);
             toast.success("Welcome back!");
             if (res.data.user.role === 'admin') navigate('/admin');
-            else navigate('/');
+            else if (res.data.user.role === 'broker') navigate('/broker');
+            else navigate('/dashboard');
         } catch (err: any) {
             console.error(err);
             toast.error(err.response?.data?.msg || "Login failed");
@@ -65,7 +66,8 @@ const Login = () => {
             toast.success("Welcome back!");
             const userRole = res.data.user.role;
             if (userRole === 'admin') navigate('/admin');
-            else navigate('/');
+            else if (userRole === 'broker') navigate('/broker');
+            else navigate('/dashboard');
         } catch (err) {
             console.error(err);
             toast.error("Google Auth Error");
